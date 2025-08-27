@@ -67,37 +67,106 @@
       color: #888;
     }
 
-    /* Mute button styles */
-    #muteButton {
+    /* Audio controls container */
+    #audioControls {
       position: fixed;
       bottom: 20px;
       right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      z-index: 9999;
+      user-select: none;
+      font-size: 0;
+      /* Add subtle glass effect */
+      background: rgba(20, 20, 40, 0.7);
+      padding: 12px 16px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Mute, skip buttons */
+    .audio-button {
       background: linear-gradient(135deg, #4717f6, #0f3460);
       border: none;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      transition: background 0.3s ease;
-      user-select: none;
-      z-index: 9999;
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: 0;
     }
 
-    #muteButton:hover {
+    .audio-button:hover {
       background: linear-gradient(135deg, #0f3460, #4717f6);
+      transform: scale(1.1);
     }
 
     /* Icon styles */
-    #muteButton svg {
+    .audio-button svg {
       width: 24px;
       height: 24px;
       fill: white;
       pointer-events: none;
+    }
+
+    /* Vertical volume slider */
+    #volumeSlider {
+      -webkit-appearance: none;
+      width: 8px;
+      height: 110px;
+      background: #3a3a6a;
+      border-radius: 10px;
+      cursor: pointer;
+      transform: rotate(-90deg);
+      outline: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+      transition: box-shadow 0.3s ease;
+    }
+
+    #volumeSlider:hover {
+      box-shadow: 0 7px 22px rgba(0,0,0,0.7);
+    }
+
+    /* Slider thumb */
+    #volumeSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      background: #6f6cff;
+      cursor: pointer;
+      border-radius: 50%;
+      border: 3px solid #0f3460;
+      transition: background 0.3s ease;
+      margin-top: -7px; /* Center the thumb */
+      box-shadow: 0 0 8px #a0a0ffaa;
+    }
+    #volumeSlider::-webkit-slider-thumb:hover {
+      background: #4a4ad3;
+      box-shadow: 0 0 14px #8c8cffdd;
+    }
+
+    /* Firefox */
+    #volumeSlider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      background: #6f6cff;
+      cursor: pointer;
+      border-radius: 50%;
+      border: 3px solid #0f3460;
+      transition: background 0.3s ease;
+      box-shadow: 0 0 8px #a0a0ffaa;
+    }
+    #volumeSlider::-moz-range-thumb:hover {
+      background: #4a4ad3;
+      box-shadow: 0 0 14px #8c8cffdd;
     }
   </style>
 </head>
@@ -113,22 +182,46 @@
     <h2>Bypass: elephant</h2>
   </div>
 
-  <!-- Mute/unmute button -->
-  <button id="muteButton" aria-label="Mute or unmute lofi music" title="Mute/unmute">
-    <!-- Speaker with sound waves (unmuted) icon by default -->
-    <svg id="soundOnIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M3 9v6h4l5 5V4L7 9H3z"/>
-      <path d="M16.5 12a4.5 4.5 0 0 1-4.5 4.5v-9a4.5 4.5 0 0 1 4.5 4.5z"/>
-      <path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.503 4.503 0 0 1 19 12z"/>
-    </svg>
-    <!-- Speaker with X (muted) icon hidden by default -->
-    <svg id="soundOffIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="display:none;">
-      <path d="M16.5 12a4.5 4.5 0 0 1-4.5 4.5v-9a4.5 4.5 0 0 1 4.5 4.5z"/>
-      <path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.503 4.503 0 0 1 19 12z"/>
-      <path d="M3 9v6h4l5 5V4L7 9H3z" fill="none"/>
-      <line x1="19" y1="5" x2="5" y2="19" stroke="white" stroke-width="2"/>
-    </svg>
-  </button>
+  <!-- Audio controls: mute, skip, volume -->
+  <div id="audioControls" aria-label="Audio player controls">
+    <button id="muteButton" class="audio-button" aria-pressed="false" aria-label="Mute or unmute lofi music" title="Mute/unmute">
+      <!-- Speaker with sound waves (unmuted) icon -->
+      <svg id="soundOnIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M5 9v6h4l5 5V4L9 9H5z"/>
+        <path d="M16.5 12a4.5 4.5 0 0 1-4.5 4.5v-9a4.5 4.5 0 0 1 4.5 4.5z"/>
+        <path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.503 4.503 0 0 1 19 12z"/>
+      </svg>
+      <!-- Speaker with X (muted) icon hidden -->
+      <svg id="soundOffIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="display:none;">
+        <path d="M5 9v6h4l5 5V4L9 9H5z" fill="none"/>
+        <line x1="19" y1="5" x2="5" y2="19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="5" y1="5" x2="19" y2="19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button id="skipButton" class="audio-button" aria-label="Skip to next track" title="Skip">
+      <!-- Skip icon -->
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" >
+        <polygon points="6,4 16,12 6,20" fill="white" />
+        <rect x="17" y="4" width="2" height="16" fill="white" rx="1" ry="1"/>
+      </svg>
+    </button>
+
+    <input
+      type="range"
+      id="volumeSlider"
+      min="0"
+      max="1"
+      step="0.01"
+      title="Volume"
+      aria-label="Volume control"
+      value="0.5"
+      role="slider"
+      aria-valuemin="0"
+      aria-valuemax="1"
+      aria-valuenow="0.5"
+    />
+  </div>
 
   <script>
     // Session-based protection
@@ -139,7 +232,7 @@
     }
 
     function openIframe() {
-      const url = prompt("Enter the URL of the website you wan't to view:");
+      const url = prompt("Enter the URL of the website you want to view:");
 
       if (url) {
         const win = window.open();
@@ -174,10 +267,9 @@
 
     // Audio player setup
     const playlist = [
-      "lofi1.mp3",
-      "lofi2.mp3",
-      "lofi3.mp3",
-      "lofi4.mp3"
+      "https://cdn.pixabay.com/download/audio/2022/03/25/audio_7f3e4a6706.mp3?filename=lofi-chill-beats-130bpm-11496.mp3",
+      "https://cdn.pixabay.com/download/audio/2022/03/24/audio_4b7e776f4f.mp3?filename=lofi-chill-hip-hop-10884.mp3",
+      "https://cdn.pixabay.com/download/audio/2022/03/25/audio_3e1c1d138f.mp3?filename=lofi-hip-hop-11683.mp3"
     ];
 
     let currentTrackIndex = 0;
@@ -187,35 +279,86 @@
     audio.volume = 0.5;
     audio.autoplay = true;
 
+    // Button click sound effect
+    const clickSound = new Audio("https://actions.google.com/sounds/v1/ui/click.ogg");
+    clickSound.volume = 0.2;
+
     // Play next track on end
     audio.addEventListener("ended", () => {
+      nextTrack();
+    });
+
+    function nextTrack() {
       currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
       audio.src = playlist[currentTrackIndex];
       audio.play();
-    });
+    }
 
-    // Play audio on load (user interaction might be required in some browsers)
+    // Play audio on load (some browsers require user interaction)
     window.addEventListener("load", () => {
       audio.play().catch(() => {
         // Autoplay blocked, will play on user interaction
       });
     });
 
-    // Mute button toggle
+    // Controls
     const muteButton = document.getElementById("muteButton");
     const soundOnIcon = document.getElementById("soundOnIcon");
     const soundOffIcon = document.getElementById("soundOffIcon");
+    const skipButton = document.getElementById("skipButton");
+    const volumeSlider = document.getElementById("volumeSlider");
 
-    muteButton.addEventListener("click", () => {
-      audio.muted = !audio.muted;
-      if (audio.muted) {
+    function updateMuteIcon() {
+      if (audio.paused || audio.muted || audio.volume === 0) {
         soundOnIcon.style.display = "none";
         soundOffIcon.style.display = "block";
+        muteButton.setAttribute("aria-pressed", "true");
       } else {
         soundOnIcon.style.display = "block";
         soundOffIcon.style.display = "none";
+        muteButton.setAttribute("aria-pressed", "false");
       }
+    }
+
+    muteButton.addEventListener("click", () => {
+      clickSound.currentTime = 0;
+      clickSound.play();
+
+      if (!audio.paused) {
+        audio.pause();
+        audio.muted = true;
+      } else {
+        audio.muted = false;
+        audio.play();
+      }
+      updateMuteIcon();
     });
+
+    skipButton.addEventListener("click", () => {
+      clickSound.currentTime = 0;
+      clickSound.play();
+
+      nextTrack();
+      if (audio.paused) {
+        audio.play();
+      }
+      updateMuteIcon();
+    });
+
+    volumeSlider.addEventListener("input", () => {
+      clickSound.currentTime = 0;
+      clickSound.play();
+
+      audio.volume = volumeSlider.value;
+      if (audio.volume == 0) {
+        audio.muted = true;
+      } else {
+        audio.muted = false;
+      }
+      updateMuteIcon();
+    });
+
+    updateMuteIcon();
   </script>
 </body>
 </html>
