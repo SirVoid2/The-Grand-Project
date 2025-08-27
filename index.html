@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Prompt</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .background {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      filter: blur(8px);
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: -1;
+    }
+
+    .login-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 30px;
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      text-align: center;
+      color: white;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      width: 200px;
+      margin-top: 10px;
+    }
+
+    input[type="password"]:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="background"></div>
+
+  <div class="login-box">
+    <h2>Enter Password</h2>
+    <input type="password" id="password" placeholder="Password" autofocus>
+  </div>
+
+  <script>
+    document.getElementById("password").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        const pass = e.target.value;
+        if (pass === "bsod") {
+          alert("Access granted."); // Or redirect to another page
+          // window.location.href = "welcome.html"; // Uncomment to redirect
+        } else {
+          window.location.href = "badpass.html";
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
