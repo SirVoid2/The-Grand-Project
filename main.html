@@ -1,268 +1,515 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Grand Project</title>
+  <title>The Grand Project — Water Ripple Background + Dark/Light Mode</title>
   <style>
+    /* Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      background: var(--bg-gradient);
+      overflow-x: hidden;
+      user-select: none;
+      transition: background 0.8s ease, color 0.8s ease;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+      height: 100vh;
+      /* make room for canvas */
+    }
+
+    /* Theme variables */
     :root {
-      --bg: #1a1a2e;
-      --container-bg: #2a2a4a;
-      --text: #fff;
-      --accent: #4717f6;
-      --accent2: #0f3460;
+      --bg-gradient: 
+        radial-gradient(circle at 20% 30%, rgba(138,120,255,0.15) 0%, transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(138,120,255,0.10) 0%, transparent 50%),
+        linear-gradient(135deg, #1f233d 0%, #121629 100%);
+      --text-color: #e0e0ff;
+      --container-bg: rgba(255 255 255 / 0.1);
+      --container-border: rgba(138 120 255 / 0.3);
+      --button-bg: linear-gradient(135deg, #8a78ff, #a293ff);
+      --button-bg-hover: linear-gradient(135deg, #a293ff, #8a78ff);
+      --button-shadow: rgba(138, 120, 255, 0.5);
+      --button-shadow-hover: rgba(138, 120, 255, 0.8);
+      --ripple-color: rgba(255 255 255 / 0.3);
+      --focus-outline: #a293ffcc;
+      --shape1-color: #8a78ff;
+      --shape2-color: #a293ff;
     }
 
+    /* Light mode overrides */
     body.light-theme {
-      --bg: #f5f5f5;
-      --container-bg: #ffffff;
-      --text: #000;
+      --bg-gradient:
+        radial-gradient(circle at 30% 40%, rgba(168, 156, 255, 0.25) 0%, transparent 70%),
+        radial-gradient(circle at 75% 75%, rgba(168, 156, 255, 0.15) 0%, transparent 60%),
+        linear-gradient(135deg, #f8f9fb 0%, #dde1e7 100%);
+      --text-color: #242424;
+      --container-bg: rgba(255 255 255 / 0.85);
+      --container-border: rgba(138 120 255 / 0.4);
+      --button-bg: linear-gradient(135deg, #7464ff, #8f7aff);
+      --button-bg-hover: linear-gradient(135deg, #8f7aff, #7464ff);
+      --button-shadow: rgba(115, 99, 255, 0.4);
+      --button-shadow-hover: rgba(115, 99, 255, 0.7);
+      --ripple-color: rgba(0 0 0 / 0.12);
+      --focus-outline: #7464ffcc;
+      --shape1-color: #7a7cff;
+      --shape2-color: #9a9eff;
     }
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      transition: background 0.3s, color 0.3s;
+    /* Background floating shapes */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.15;
+      pointer-events: none;
+      animation: float 30s ease-in-out infinite alternate;
+      transition: background-color 0.8s ease;
+      z-index: 1;
+    }
+    body::before {
+      width: 450px;
+      height: 450px;
+      top: -100px;
+      left: -120px;
+      background: var(--shape1-color);
+      animation-delay: 0s;
+    }
+    body::after {
+      width: 300px;
+      height: 300px;
+      bottom: -80px;
+      right: -100px;
+      background: var(--shape2-color);
+      animation-delay: 15s;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0) scale(1); }
+      50% { transform: translateY(30px) translateX(20px) scale(1.05); }
+      100% { transform: translateY(0) translateX(0) scale(1); }
     }
 
-    .container {
-      text-align: center;
-      padding: 40px;
+    /* The ripple canvas behind everything */
+    #rippleCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none; /* Let clicks pass through */
+      z-index: 0;
+      mix-blend-mode: screen;
+      opacity: 0.2;
+      transition: opacity 0.8s ease;
+    }
+    body.light-theme #rippleCanvas {
+      mix-blend-mode: multiply;
+      opacity: 0.1;
+    }
+
+    main.container {
       background: var(--container-bg);
-      margin: 80px auto;
-      max-width: 700px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: saturate(180%) blur(18px);
+      -webkit-backdrop-filter: saturate(180%) blur(18px);
+      border-radius: 24px;
+      max-width: 720px;
+      width: 90vw;
+      padding: 48px 40px 56px;
+      box-shadow:
+        0 8px 24px var(--button-shadow),
+        inset 0 0 18px rgba(255 255 255 / 0.15);
+      border: 1.5px solid var(--container-border);
+      text-align: center;
+      user-select: text;
+      animation: fadeUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: background 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease;
+      position: relative;
+      z-index: 10;
     }
 
-    .link-button {
+    h1 {
+      font-weight: 900;
+      font-size: clamp(2.4rem, 4vw, 3rem);
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+      color: var(--button-bg-hover);
+      text-shadow: 0 0 14px var(--button-bg-hover);
+      transition: color 0.8s ease, text-shadow 0.8s ease;
+    }
+
+    h2 {
+      font-weight: 400;
+      color: var(--text-color);
+      opacity: 0.7;
+      margin-top: 48px;
+      font-style: italic;
+      font-size: 1.1rem;
+      letter-spacing: 1.3px;
+      transition: color 0.8s ease;
+    }
+
+    a.link-button, button.link-button {
       display: inline-block;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 1.2rem;
-      color: var(--text);
-      background-image: linear-gradient(45deg, var(--accent), var(--accent2));
-      text-decoration: none;
-      border-radius: 50px;
+      margin: 10px 14px;
+      padding: 14px 48px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-color);
+      background: var(--button-bg);
       border: none;
+      border-radius: 32px;
+      box-shadow:
+        0 6px 20px var(--button-shadow);
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      user-select: none;
+      transition:
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.3s ease,
+        color 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+    }
+    a.link-button:focus-visible,
+    button.link-button:focus-visible {
+      outline: 3px solid var(--focus-outline);
+      outline-offset: 4px;
     }
 
-    .link-button:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    a.link-button:hover, button.link-button:hover {
+      background: var(--button-bg-hover);
+      box-shadow:
+        0 12px 36px var(--button-shadow-hover);
+      transform: translateY(-6px) scale(1.08);
+      color: #fff;
+    }
+    a.link-button:active, button.link-button:active {
+      transform: translateY(-3px) scale(0.97);
+      box-shadow:
+        0 7px 26px var(--button-shadow-hover);
     }
 
-    h2 { color: #888; }
+    /* Ripple effect on click */
+    button.link-button::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      width: 100px; height: 100px;
+      top: 50%; left: 50%;
+      pointer-events: none;
+      background: var(--ripple-color);
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+    button.link-button:active::after {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      transition: transform 0s, opacity 0.3s ease 0.2s;
+    }
 
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 520px) {
+      main.container {
+        padding: 36px 28px 44px;
+        width: 95vw;
+      }
+      h1 {
+        font-size: 2.2rem;
+        margin-bottom: 32px;
+      }
+      a.link-button, button.link-button {
+        padding: 12px 36px;
+        font-size: 1.1rem;
+        margin: 8px 12px;
+      }
+    }
+
+    /* Dark/light toggle button container */
     #themeToggle {
       position: fixed;
       top: 20px;
       right: 20px;
-      padding: 10px 20px;
-      border-radius: 25px;
+      width: 56px;
+      height: 56px;
+      background: transparent;
       border: none;
       cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: white;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-    }
-
-    #audioControls {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 12px 16px;
-      background: rgba(20,20,40,0.7);
-      border-radius: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-    }
-
-    .audio-button {
-      background: linear-gradient(135deg,var(--accent),var(--accent2));
-      border: none;
       border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.3);
+      transition: background-color 0.5s ease, box-shadow 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      z-index: 10000;
+      user-select: none;
+    }
+    #themeToggle:hover {
+      box-shadow:
+        0 6px 16px rgba(0,0,0,0.45);
+      background-color: rgba(255 255 255 / 0.1);
+    }
+    #themeToggle:focus-visible {
+      outline: 2px solid var(--focus-outline);
+      outline-offset: 2px;
     }
 
-    .audio-button:hover {
-      transform: scale(1.1);
-    }
-
-    .audio-button svg {
-      width: 24px;
-      height: 24px;
-      fill: white;
+    /* Sun/Moon SVG styling */
+    #themeToggle svg {
+      width: 26px;
+      height: 26px;
+      stroke: var(--button-bg-hover);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      transition: all 0.5s ease;
+      user-select: none;
       pointer-events: none;
     }
 
-    #visualizer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 150px;
-      z-index: 0;
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      padding: 0 10px;
-      box-sizing: border-box;
+    /* Sun rays */
+    #themeToggle .sun-rays {
+      transform-origin: center;
+      transition: transform 0.5s ease;
     }
 
-    .bar {
-      width: 5px;
-      background: var(--accent);
-      height: 10%;
-      border-radius: 3px;
-      transition: height 0.05s ease-out;
+    /* Moon crescent */
+    #themeToggle .moon {
+      transform-origin: center;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Toggle states */
+    body.light-theme #themeToggle .sun-rays {
+      transform: scale(1);
+      opacity: 1;
+    }
+    body.light-theme #themeToggle .moon {
+      opacity: 0;
+      transform: scale(0);
+    }
+    body:not(.light-theme) #themeToggle .sun-rays {
+      transform: scale(0);
+      opacity: 0;
+    }
+    body:not(.light-theme) #themeToggle .moon {
+      opacity: 1;
+      transform: scale(1);
     }
   </style>
 </head>
 <body>
-  <button id="themeToggle">🌙 Toggle Theme</button>
+  <canvas id="rippleCanvas"></canvas>
 
-  <div class="container">
+  <button id="themeToggle" aria-label="Toggle dark and light mode" title="Toggle dark and light mode" aria-pressed="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" role="img" focusable="false">
+      <circle class="moon" cx="12" cy="12" r="9" stroke="none" fill="var(--button-bg-hover)" />
+      <circle class="moon" cx="16" cy="8" r="9" fill="#121629" />
+      <g class="sun-rays" stroke="var(--button-bg-hover)">
+        <line x1="12" y1="1" x2="12" y2="4"/>
+        <line x1="12" y1="20" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="4" y2="12"/>
+        <line x1="20" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+      </g>
+    </svg>
+  </button>
+
+  <main class="container" role="main" aria-label="The Grand Project main content">
     <h1>Welcome to The Grand Project</h1>
-    <a href="https://discord.com/app" class="link-button" target="_blank" rel="noopener">Discord</a>
-    <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener">Spotify</a>
-    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener">Geforce Now</a>
-    <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener">ChatGPT</a>
-    <button class="link-button" onclick="openIframe()">Open Iframe</button>
+    <nav aria-label="Primary links">
+      <a href="https://discord.com/app" class="link-button" target="_blank" rel="noopener noreferrer" aria-label="Open Discord in new tab">Discord</a>
+      <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener noreferrer" aria-label="Open Spotify in new tab">Spotify</a>
+      <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener noreferrer" aria-label="Open Geforce Now in new tab">Geforce Now</a>
+      <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener noreferrer" aria-label="Open ChatGPT in new tab">ChatGPT</a>
+      <button class="link-button" onclick="openIframe()" aria-label="Open iframe prompt">Open Iframe</button>
+    </nav>
     <h2>Bypass: elephant</h2>
-  </div>
-
-  <div id="audioControls">
-    <button id="playPauseBtn" class="audio-button" title="Play/Pause">
-      <svg id="playIcon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19" /></svg>
-      <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
-    </button>
-    <button id="skipBtn" class="audio-button" title="Skip">
-      <svg viewBox="0 0 24 24"><polygon points="6,4 16,12 6,20" fill="white"/><rect x="17" y="4" width="2" height="16" fill="white" rx="1"/></svg>
-    </button>
-  </div>
-
-  <div id="visualizer"></div>
+  </main>
 
   <script>
-    // Theme toggle
-    document.getElementById("themeToggle").addEventListener("click", () => {
-      document.body.classList.toggle("light-theme");
-      document.getElementById("themeToggle").textContent =
-        document.body.classList.contains("light-theme") ? "🌞 Toggle Theme" : "🌙 Toggle Theme";
+    // Fade-in main container on DOM ready
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.querySelector("main.container");
+      container.style.opacity = "1";
+      container.style.transform = "translateY(0)";
     });
 
-    // Iframe open
+    // Prevent iframe embedding (clickjacking)
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+
+    // Block direct URL access unless sessionStorage.auth == "true"
+    if (sessionStorage.getItem("auth") !== "true") {
+      window.location.href = "badpass.html";
+    } else {
+      sessionStorage.removeItem("auth");
+    }
+
+    // Notification logic
+    function showNotification() {
+      if (Notification.permission === "granted") {
+        const notification = new Notification("The Grand Project", {
+          body: "Do you want to go to the website?",
+          icon: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png"
+        });
+        notification.onclick = () => {
+          window.focus();
+          window.location.href = "/";
+          notification.close();
+        };
+      }
+    }
+
+    window.addEventListener("load", () => {
+      if ("Notification" in window) {
+        if (Notification.permission === "default") {
+          Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+              showNotification();
+              setInterval(showNotification, 30 * 60 * 1000);
+            }
+          });
+        } else if (Notification.permission === "granted") {
+          showNotification();
+          setInterval(showNotification, 30 * 60 * 1000);
+        }
+      }
+    });
+
+    // Iframe open prompt helper
     function openIframe() {
       const url = prompt("Enter URL:");
       if (url) {
         const win = window.open("", "_blank");
         if (win) {
-          win.document.write(\`
-            <html><body style="margin:0"><iframe src="\${url}" style="width:100vw;height:100vh;border:none"></iframe></body></html>
-          \`);
+          win.document.write(`
+            <html><body style="margin:0">
+              <iframe src="${url}" style="width:100vw;height:100vh;border:none"></iframe>
+            </body></html>
+          `);
         } else {
           alert("Popup blocked. Please allow popups for this site.");
         }
       }
     }
 
-    // Audio setup with local files
-    const playlist = [
-      "lofi1.mp3",
-      "lofi2.mp3",
-      "lofi3.mp3",
-      "lofi4.mp3"
-    ];
+    // Dark/light mode toggle logic with persistence
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const bodyEl = document.body;
 
-    let currentTrack = 0;
-    const playIcon = document.getElementById("playIcon");
-    const pauseIcon = document.getElementById("pauseIcon");
-
-    let audio = new Audio();
-    audio.crossOrigin = "anonymous";
-    audio.src = playlist[currentTrack];
-    audio.loop = false;
-    audio.volume = 0.5;
-
-    const visualizer = document.getElementById("visualizer");
-    const numBars = 64;
-    const bars = [];
-
-    for (let i = 0; i < numBars; i++) {
-      const bar = document.createElement("div");
-      bar.className = "bar";
-      visualizer.appendChild(bar);
-      bars.push(bar);
+    // Load stored theme or default to dark
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      bodyEl.classList.add('light-theme');
+      themeToggleBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      bodyEl.classList.remove('light-theme');
+      themeToggleBtn.setAttribute('aria-pressed', 'false');
     }
 
-    let ctx = new (window.AudioContext || window.webkitAudioContext)();
-    let analyser = ctx.createAnalyser();
-    let source;
-
-    function connectAudio() {
-      if (source) {
-        source.disconnect();
+    // Toggle function
+    themeToggleBtn.addEventListener('click', () => {
+      if (bodyEl.classList.contains('light-theme')) {
+        bodyEl.classList.remove('light-theme');
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.setAttribute('aria-pressed', 'false');
+      } else {
+        bodyEl.classList.add('light-theme');
+        localStorage.setItem('theme', 'light');
+        themeToggleBtn.setAttribute('aria-pressed', 'true');
       }
-      source = ctx.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(ctx.destination);
-      analyser.fftSize = 256;
-    }
-    connectAudio();
+    });
 
+    // --- Water ripple effect ---
+    const canvas = document.getElementById('rippleCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let drops = [];
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Drop object
+    class Drop {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 0;
+        this.maxRadius = 60 + Math.random() * 40;
+        this.lineWidth = 2;
+        this.alpha = 0.3;
+        this.growthRate = 1 + Math.random() * 1.5;
+      }
+      update() {
+        this.radius += this.growthRate;
+        this.alpha -= 0.005;
+        if (this.alpha < 0) this.alpha = 0;
+      }
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(138, 120, 255, ${this.alpha})`;
+        ctx.lineWidth = this.lineWidth;
+        ctx.shadowColor = `rgba(138, 120, 255, ${this.alpha * 0.7})`;
+        ctx.shadowBlur = 10;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      isDead() {
+        return this.alpha <= 0;
+      }
+    }
+
+    // Handle mouse moves
+    window.addEventListener('mousemove', (e) => {
+      drops.push(new Drop(e.clientX, e.clientY));
+    });
+
+    // Animation loop
     function animate() {
-      requestAnimationFrame(animate);
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      analyser.getByteFrequencyData(dataArray);
-      for (let i = 0; i < numBars; i++) {
-        const value = dataArray[i];
-        bars[i].style.height = `${(value / 255) * 100}%`;
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = drops.length - 1; i >= 0; i--) {
+        drops[i].update();
+        drops[i].draw(ctx);
+        if (drops[i].isDead()) {
+          drops.splice(i, 1);
+        }
       }
+
+      requestAnimationFrame(animate);
     }
     animate();
 
-    document.getElementById("playPauseBtn").addEventListener("click", async () => {
-      if (ctx.state === 'suspended') {
-        await ctx.resume();
-      }
-      if (audio.paused) {
-        audio.play();
-        playIcon.style.display = "none";
-        pauseIcon.style.display = "block";
-      } else {
-        audio.pause();
-        playIcon.style.display = "block";
-        pauseIcon.style.display = "none";
-      }
-    });
-
-    document.getElementById("skipBtn").addEventListener("click", async () => {
-      if (ctx.state === 'suspended') {
-        await ctx.resume();
-      }
-      currentTrack = (currentTrack + 1) % playlist.length;
-      audio.src = playlist[currentTrack];
-      audio.play();
-      playIcon.style.display = "none";
-      pauseIcon.style.display = "block";
-      connectAudio();
-    });
   </script>
 </body>
 </html>
