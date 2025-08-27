@@ -3,19 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Enter Password</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .background {
       background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
       background-size: cover;
-      filter: blur(8px);
+      filter: blur(10px);
       height: 100%;
       width: 100%;
       position: absolute;
@@ -27,26 +34,85 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 30px;
-      border-radius: 12px;
-      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
       text-align: center;
       color: white;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      max-width: 90%;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
     }
 
     input[type="password"] {
-      padding: 10px;
+      padding: 12px 15px;
       font-size: 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: none;
-      width: 200px;
+      width: 100%;
+      max-width: 250px;
       margin-top: 10px;
+      transition: all 0.3s ease;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      backdrop-filter: blur(6px);
+    }
+
+    input[type="password"]::placeholder {
+      color: rgba(255, 255, 255, 0.5);
     }
 
     input[type="password"]:focus {
       outline: none;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .toggle {
+      margin-top: 10px;
+      display: block;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .submit-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(45deg, #4717f6, #0f3460);
+      color: white;
+      transition: 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(45deg, #0f3460, #4717f6);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .loading {
+      display: none;
+      margin-top: 15px;
+      color: #fff;
+    }
+
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 30px 20px;
+      }
+
+      input[type="password"] {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -57,18 +123,43 @@
   <div class="login-box">
     <h2>Enter Password</h2>
     <input type="password" id="password" placeholder="Password" autofocus>
+    <span class="toggle" onclick="togglePassword()">Show Password</span>
+    <button class="submit-btn" onclick="submitPassword()">Submit</button>
+    <div class="loading" id="loading">Loading...</div>
   </div>
 
   <script>
-    document.getElementById("password").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        const pass = e.target.value.trim();
+    function togglePassword() {
+      const input = document.getElementById("password");
+      const toggle = document.querySelector(".toggle");
+      if (input.type === "password") {
+        input.type = "text";
+        toggle.textContent = "Hide Password";
+      } else {
+        input.type = "password";
+        toggle.textContent = "Show Password";
+      }
+    }
+
+    function submitPassword() {
+      const pass = document.getElementById("password").value.trim();
+      const loading = document.getElementById("loading");
+      loading.style.display = "block";
+
+      setTimeout(() => {
         if (pass === "bsod") {
-          sessionStorage.setItem("auth", "true"); // Store a flag
+          sessionStorage.setItem("auth", "true");
           window.location.href = "main.html";
         } else {
           window.location.href = "badpass.html";
         }
+      }, 1000); // Simulate loading
+    }
+
+    // Also allow "Enter" key
+    document.getElementById("password").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        submitPassword();
       }
     });
   </script>
