@@ -2,59 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Grand Project</title>
   <style>
-    /* General body styling */
+    /* Body and background */
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      background-color: #1a1a2e; /* Dark purple background */
+      background: linear-gradient(-45deg, #1a1a2e, #0f3460, #4717f6, #1a1a2e);
+      background-size: 400% 400%;
+      animation: gradientBG 20s ease infinite, fadeIn 1s ease forwards;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
       text-align: center;
     }
 
-    /* Container for the content */
-    .container {
-      padding: 40px;
-      background: #2a2a4a; /* Slightly lighter purple for the container */
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow */
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-    /* Heading style */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .container {
+      padding: 40px;
+      background: rgba(42, 42, 74, 0.75);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      max-width: 480px;
+      width: 90%;
+    }
+
     h1 {
       font-size: 2.5rem;
       margin-bottom: 20px;
-      color: #45e9e450; /* Blue heading */
+      color: #45e9e450;
     }
 
-    /* Link button styling */
     .link-button {
       display: inline-block;
       padding: 15px 30px;
       margin: 10px;
       font-size: 1.2rem;
       color: #fff;
-      background-image: linear-gradient(45deg, #4717f6, #0f3460); /* Gradient background */
+      background-image: linear-gradient(45deg, #4717f6, #0f3460);
       text-decoration: none;
       border-radius: 50px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      user-select: none;
     }
 
-    /* Hover effect for the link */
     .link-button:hover {
-      transform: translateY(-5px); /* Lift the button slightly */
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* Larger shadow on hover */
-      background-image: linear-gradient(45deg, #0f3460, #4717f6); /* Change gradient direction */
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      background-image: linear-gradient(45deg, #0f3460, #4717f6);
     }
 
-    /* Link visited state */
+    .link-button:active {
+      transform: scale(0.97);
+    }
+
     .link-button:visited {
       color: #ccc;
     }
@@ -62,63 +79,333 @@
     h2 {
       margin-top: 30px;
       font-size: 1.1rem;
-      color: #888;
+      color: #aaa;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 10, 20, 0.9);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .spinner {
+      border: 6px solid rgba(255, 255, 255, 0.1);
+      border-top: 6px solid #45e9e4;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .link-button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+
+    /* Audio widget styling */
+    #audioWidget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: rgba(42, 42, 74, 0.85);
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #45e9e4;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, padding 0.3s ease;
+      overflow: hidden;
+      z-index: 1500;
+    }
+
+    #audioWidget.expanded {
+      width: 250px;
+      height: 110px;
+      border-radius: 15px;
+      padding: 10px 15px;
+      cursor: default;
+      flex-direction: column;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    #audioWidget .header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    #audioWidget .title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+
+    #audioWidget button {
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+
+    #audioWidget button:hover {
+      color: #71c7ff;
+    }
+
+    #audioWidget .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    #audioWidget .playPauseBtn {
+      font-size: 28px;
+      user-select: none;
+    }
+
+    #audioWidget input[type="range"] {
+      -webkit-appearance: none;
+      width: 150px;
+      height: 6px;
+      border-radius: 3px;
+      background: #3a3a6a;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #audioWidget input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #45e9e4;
+      cursor: pointer;
+      box-shadow: 0 0 3px #3ad9e0;
+      transition: background 0.3s ease;
+    }
+
+    #audioWidget input[type="range"]:hover::-webkit-slider-thumb {
+      background: #71c7ff;
+      box-shadow: 0 0 6px #71c7ff;
+    }
+
+    #audioWidget input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #45e9e4;
+      cursor: pointer;
+      box-shadow: 0 0 3px #3ad9e0;
+      transition: background 0.3s ease;
+    }
+
+    #audioWidget input[type="range"]:hover::-moz-range-thumb {
+      background: #71c7ff;
+      box-shadow: 0 0 6px #71c7ff;
     }
   </style>
+
   <script>
-    // Session-based protection
+    // Session protection
     if (sessionStorage.getItem("auth") !== "true") {
       window.location.href = "badpass.html";
     } else {
-      sessionStorage.removeItem("auth"); // Clear flag after entry
+      sessionStorage.removeItem("auth");
     }
 
-    // Function to open a iframe in fullscreen iframe
+    // Open iframe with loading spinner
     function openIframe() {
-      const url = prompt("Enter the URL of the website you wan't to view:");
-
+      const url = prompt("Enter the URL of the website you want to view:");
       if (url) {
-        const win = window.open();
-        win.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <style>
-              html, body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                overflow: hidden;
-              }
-              iframe {
-                width: 100%;
-                height: 100%;
-                border: none;
-              }
-            </style>
-          </head>
-          <body>
-            <iframe src="${url}"></iframe>
-          </body>
-          </html>
-        `);
-        win.document.close();
+        const overlay = document.getElementById("loadingOverlay");
+        overlay.style.display = "flex";
+
+        setTimeout(() => {
+          const win = window.open();
+          win.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                html, body {
+                  margin: 0;
+                  padding: 0;
+                  height: 100%;
+                  overflow: hidden;
+                }
+                iframe {
+                  width: 100%;
+                  height: 100%;
+                  border: none;
+                }
+              </style>
+            </head>
+            <body>
+              <iframe src="${url}"></iframe>
+            </body>
+            </html>
+          `);
+          win.document.close();
+          overlay.style.display = "none";
+        }, 1000);
       } else {
         alert("No URL entered.");
       }
     }
+
+    // Audio widget functionality
+    document.addEventListener("DOMContentLoaded", () => {
+      const widget = document.getElementById("audioWidget");
+      const audio = document.getElementById("lofiAudio");
+      const toggleBtn = document.getElementById("playPauseBtn");
+      const volumeSlider = document.getElementById("volumeSlider");
+      const closeBtn = document.getElementById("closeWidgetBtn");
+
+      // Initialize volume & muted
+      audio.volume = 0.5;
+      audio.muted = false;
+      volumeSlider.value = audio.volume * 100;
+
+      // Toggle expand/collapse widget
+      widget.addEventListener("click", (e) => {
+        // Only expand if clicking outside controls when collapsed
+        if (!widget.classList.contains("expanded")) {
+          widget.classList.add("expanded");
+        }
+      });
+
+      // Play/pause toggle
+      toggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (audio.paused) {
+          audio.play();
+          toggleBtn.textContent = "⏸️";
+        } else {
+          audio.pause();
+          toggleBtn.textContent = "▶️";
+        }
+      });
+
+      // Close widget (collapse)
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        widget.classList.remove("expanded");
+      });
+
+      // Volume slider
+      volumeSlider.addEventListener("input", (e) => {
+        audio.volume = e.target.value / 100;
+        if (audio.volume === 0) {
+          audio.pause();
+          toggleBtn.textContent = "▶️";
+        } else {
+          if (audio.paused) audio.play();
+          toggleBtn.textContent = "⏸️";
+        }
+      });
+
+      // Initialize play/pause icon based on audio state
+      if (audio.paused) {
+        toggleBtn.textContent = "▶️";
+      } else {
+        toggleBtn.textContent = "⏸️";
+      }
+    });
   </script>
 </head>
 <body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <!-- Main Container -->
   <div class="container">
     <h1>Welcome to The Grand Project</h1>
-    <a href="https://discord.com/app" class="link-button" target="_blank">Discord</a>
-    <a href="https://open.spotify.com/" class="link-button" target="_blank">Spotify</a>
-    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank">Geforce Now</a>
-    <a href="https://chatgpt.com/" class="link-button" target="_blank">ChatGPT</a>
+    <a href="https://discord.com/app" class="link-button" target="_blank" rel="noopener noreferrer">Discord</a>
+    <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener noreferrer">Spotify</a>
+    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener noreferrer">Geforce Now</a>
+    <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener noreferrer">ChatGPT</a>
     <a href="#" class="link-button" onclick="openIframe()">Iframe</a>
 
     <h2>Bypass: elephant</h2>
   </div>
+
+  <!-- Lofi audio player (hidden controls) -->
+  <audio id="lofiAudio" src="https://cdn.pixabay.com/download/audio/2022/03/22/audio_5e7b98bc54.mp3?filename=lofi-hip-hop-1-11652.mp3" loop autoplay></audio>
+
+  <!-- Audio Widget -->
+  <div id="audioWidget" title="Click to expand">
+    <div class="header" style="display:none;">
+      <span class="title">Lofi Beats</span>
+      <button id="closeWidgetBtn" aria-label="Close audio widget">✖️</button>
+    </div>
+    <div class="controls" style="display:none;">
+      <button id="playPauseBtn" class="playPauseBtn" aria-label="Play/Pause">▶️</button>
+      <input id="volumeSlider" type="range" min="0" max="100" aria-label="Volume control" />
+    </div>
+  </div>
+
+  <script>
+    // Show/hide controls based on expanded state
+    const widget = document.getElementById("audioWidget");
+    const header = widget.querySelector(".header");
+    const controls = widget.querySelector(".controls");
+
+    widget.addEventListener("click", () => {
+      if (widget.classList.contains("expanded")) {
+        header.style.display = "flex";
+        controls.style.display = "flex";
+      } else {
+        header.style.display = "none";
+        controls.style.display = "none";
+      }
+    });
+
+    // Also toggle on initial load for correct state
+    if (widget.classList.contains("expanded")) {
+      header.style.display = "flex";
+      controls.style.display = "flex";
+    } else {
+      header.style.display = "none";
+      controls.style.display = "none";
+    }
+  </script>
 </body>
 </html>
