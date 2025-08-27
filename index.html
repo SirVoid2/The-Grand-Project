@@ -62,16 +62,16 @@
   <script>
     document.getElementById("password").addEventListener("keydown", function(e) {
       if (e.key === "Enter") {
-        const pass = e.target.value;
+        const pass = e.target.value.trim();
         if (pass === "bsod") {
-          alert("Access granted."); // Or redirect to another page
-          // window.location.href = "welcome.html"; // Uncomment to redirect
+          window.location.href = "main.html"; // Redirect on correct password
         } else {
-          window.location.href = "badpass.html";
+          window.location.href = "badpass.html"; // Redirect on wrong password
         }
       }
     });
   </script>
+
 
 </body>
 </html>
