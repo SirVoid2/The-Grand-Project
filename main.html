@@ -68,7 +68,7 @@
   <script>
     // Session-based protection
     if (sessionStorage.getItem("auth") !== "true") {
-      window.location.href = "index.html";
+      window.location.href = "badpass.html";
     } else {
       sessionStorage.removeItem("auth"); // Clear flag after entry
     }
