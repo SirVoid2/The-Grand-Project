@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Grand Project</title>
   <style>
     /* General body styling */
@@ -51,9 +51,9 @@
 
     /* Hover effect for the link */
     .link-button:hover {
-      transform: translateY(-5px); /* Lift the button slightly */
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* Larger shadow on hover */
-      background-image: linear-gradient(45deg, #0f3460, #4717f6); /* Change gradient direction */
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      background-image: linear-gradient(45deg, #0f3460, #4717f6);
     }
 
     /* Link visited state */
@@ -67,156 +67,69 @@
       color: #888;
     }
 
-    /* Audio Widget Styles */
-    #audioWidget {
+    /* Mute button styles */
+    #muteButton {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 60px;
-      height: 60px;
       background: linear-gradient(135deg, #4717f6, #0f3460);
+      border: none;
       border-radius: 50%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      width: 50px;
+      height: 50px;
       cursor: pointer;
-      overflow: hidden;
-      transition: width 0.4s ease, height 0.4s ease, border-radius 0.4s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       color: white;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.3s ease;
       user-select: none;
       z-index: 9999;
     }
 
-    #audioWidget.expanded {
-      width: 340px;
-      height: 160px;
-      border-radius: 15px;
-      cursor: default;
-      padding: 15px 20px;
+    #muteButton:hover {
+      background: linear-gradient(135deg, #0f3460, #4717f6);
     }
 
-    #audioWidget .header {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    #audioWidget .close-btn {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-
-    #audioWidget .close-btn:hover {
-      color: #f44336;
-    }
-
-    #audioWidget .controls {
-      margin-top: 12px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    #audioWidget button.play-pause {
-      background: transparent;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-    }
-
-    #audioWidget button.play-pause svg {
+    /* Icon styles */
+    #muteButton svg {
+      width: 24px;
+      height: 24px;
       fill: white;
-      width: 28px;
-      height: 28px;
-      transition: fill 0.3s ease;
-    }
-
-    #audioWidget button.play-pause:hover svg {
-      fill: #45e9e4;
-    }
-
-    #audioWidget input[type="range"] {
-      flex-grow: 1;
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #audioWidget input[type="range"]:hover {
-      background: rgba(255, 255, 255, 0.6);
-    }
-
-    /* Range thumb */
-    #audioWidget input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: white;
-      cursor: pointer;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5);
-      transition: background-color 0.3s ease;
-    }
-    #audioWidget input[type="range"]::-webkit-slider-thumb:hover {
-      background-color: #4717f6;
-    }
-
-    /* Firefox */
-    #audioWidget input[type="range"]::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: white;
-      cursor: pointer;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5);
-      transition: background-color 0.3s ease;
-    }
-    #audioWidget input[type="range"]::-moz-range-thumb:hover {
-      background-color: #4717f6;
-    }
-
-    /* Hide header and controls when collapsed */
-    #audioWidget:not(.expanded) .header,
-    #audioWidget:not(.expanded) .controls,
-    #audioWidget:not(.expanded) .progress-bar {
-      display: none;
-    }
-
-    /* Progress Bar */
-    #audioWidget .progress-bar {
-      margin-top: 10px;
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    #audioWidget .progress-bar > div {
-      height: 100%;
-      width: 0%;
-      background: #45e9e4cc;
-      transition: width 0.1s linear;
+      pointer-events: none;
     }
   </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to The Grand Project</h1>
+    <a href="https://discord.com/app" class="link-button" target="_blank" rel="noopener noreferrer">Discord</a>
+    <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener noreferrer">Spotify</a>
+    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener noreferrer">Geforce Now</a>
+    <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+    <a href="#" class="link-button" onclick="openIframe()">Iframe</a>
+
+    <h2>Bypass: elephant</h2>
+  </div>
+
+  <!-- Mute/unmute button -->
+  <button id="muteButton" aria-label="Mute or unmute lofi music" title="Mute/unmute">
+    <!-- Speaker with sound waves (unmuted) icon by default -->
+    <svg id="soundOnIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+      <path d="M16.5 12a4.5 4.5 0 0 1-4.5 4.5v-9a4.5 4.5 0 0 1 4.5 4.5z"/>
+      <path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.503 4.503 0 0 1 19 12z"/>
+    </svg>
+    <!-- Speaker with X (muted) icon hidden by default -->
+    <svg id="soundOffIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="display:none;">
+      <path d="M16.5 12a4.5 4.5 0 0 1-4.5 4.5v-9a4.5 4.5 0 0 1 4.5 4.5z"/>
+      <path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.503 4.503 0 0 1 19 12z"/>
+      <path d="M3 9v6h4l5 5V4L7 9H3z" fill="none"/>
+      <line x1="19" y1="5" x2="5" y2="19" stroke="white" stroke-width="2"/>
+    </svg>
+  </button>
+
   <script>
     // Session-based protection
     if (sessionStorage.getItem("auth") !== "true") {
@@ -225,7 +138,6 @@
       sessionStorage.removeItem("auth"); // Clear flag after entry
     }
 
-    // Function to open a iframe in fullscreen iframe
     function openIframe() {
       const url = prompt("Enter the URL of the website you wan't to view:");
 
@@ -259,162 +171,49 @@
         alert("No URL entered.");
       }
     }
-  </script>
-</head>
-<body>
-  <div class="container">
-    <h1>Welcome to The Grand Project</h1>
-    <a href="https://discord.com/app" class="link-button" target="_blank" rel="noopener noreferrer">Discord</a>
-    <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener noreferrer">Spotify</a>
-    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener noreferrer">Geforce Now</a>
-    <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener noreferrer">ChatGPT</a>
-    <a href="#" class="link-button" onclick="openIframe()">Iframe</a>
 
-    <h2>Bypass: elephant</h2>
-  </div>
-
-  <!-- Audio Widget -->
-  <div id="audioWidget" aria-label="Lofi audio player widget" role="region" aria-expanded="false" tabindex="0">
-    <div class="header" role="banner">
-      <span>Lofi Beats</span>
-      <button class="close-btn" aria-label="Close audio player" title="Close">✖</button>
-    </div>
-    <div class="controls">
-      <button class="play-pause" aria-label="Play or pause audio" title="Play" aria-pressed="false">
-        <!-- Play icon SVG -->
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <polygon points="6,4 20,12 6,20" />
-        </svg>
-      </button>
-      <input type="range" id="volumeSlider" min="0" max="100" aria-label="Volume control" title="Volume" />
-    </div>
-    <div class="progress-bar" aria-label="Audio progress">
-      <div></div>
-    </div>
-    <audio id="lofiAudio" loop></audio>
-  </div>
-
-  <script>
-    const widget = document.getElementById("audioWidget");
-    const audio = document.getElementById("lofiAudio");
-    const playPauseBtn = widget.querySelector("button.play-pause");
-    const closeBtn = widget.querySelector("button.close-btn");
-    const volumeSlider = document.getElementById("volumeSlider");
-    const progressBar = widget.querySelector(".progress-bar > div");
-
-    // Playlist of lofi tracks
+    // Audio player setup
     const playlist = [
       "https://cdn.pixabay.com/download/audio/2022/03/25/audio_7f3e4a6706.mp3?filename=lofi-chill-beats-130bpm-11496.mp3",
       "https://cdn.pixabay.com/download/audio/2022/03/24/audio_4b7e776f4f.mp3?filename=lofi-chill-hip-hop-10884.mp3",
       "https://cdn.pixabay.com/download/audio/2022/03/25/audio_3e1c1d138f.mp3?filename=lofi-hip-hop-11683.mp3"
     ];
+
     let currentTrackIndex = 0;
-
-    // SVGs for play and pause icons
-    const playIcon = `
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <polygon points="6,4 20,12 6,20" />
-      </svg>
-    `;
-    const pauseIcon = `
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <rect x="6" y="4" width="5" height="16" />
-        <rect x="13" y="4" width="5" height="16" />
-      </svg>
-    `;
-
-    // Initialize widget
-    widget.classList.remove("expanded");
-    widget.setAttribute("aria-expanded", "false");
-    volumeSlider.value = 50;
-    audio.volume = 0.5;
+    const audio = new Audio();
     audio.src = playlist[currentTrackIndex];
-    audio.pause();
-    progressBar.style.width = "0%";
-    playPauseBtn.innerHTML = playIcon;
-    playPauseBtn.title = "Play";
-    playPauseBtn.setAttribute("aria-pressed", "false");
+    audio.loop = false;
+    audio.volume = 0.5;
+    audio.autoplay = true;
 
-    // Play/pause toggle
-    playPauseBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      if (audio.paused) {
-        audio.play();
-        playPauseBtn.innerHTML = pauseIcon;
-        playPauseBtn.title = "Pause";
-        playPauseBtn.setAttribute("aria-pressed", "true");
-      } else {
-        audio.pause();
-        playPauseBtn.innerHTML = playIcon;
-        playPauseBtn.title = "Play";
-        playPauseBtn.setAttribute("aria-pressed", "false");
-      }
-    });
-
-    // Volume slider
-    volumeSlider.addEventListener("input", e => {
-      const vol = e.target.value / 100;
-      audio.volume = vol;
-      if (vol === 0) {
-        audio.pause();
-        playPauseBtn.innerHTML = playIcon;
-        playPauseBtn.title = "Play";
-        playPauseBtn.setAttribute("aria-pressed", "false");
-      } else if (audio.paused) {
-        audio.play();
-        playPauseBtn.innerHTML = pauseIcon;
-        playPauseBtn.title = "Pause";
-        playPauseBtn.setAttribute("aria-pressed", "true");
-      }
-    });
-
-    // Expand widget on click except buttons/slider
-    widget.addEventListener("click", e => {
-      if (["BUTTON", "INPUT"].includes(e.target.tagName)) return;
-
-      if (!widget.classList.contains("expanded")) {
-        widget.classList.add("expanded");
-        widget.setAttribute("aria-expanded", "true");
-      }
-    });
-
-    // Close button collapses widget
-    closeBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      widget.classList.remove("expanded");
-      widget.setAttribute("aria-expanded", "false");
-    });
-
-    // Keyboard toggle (space/enter)
-    widget.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        if (widget.classList.contains("expanded")) {
-          widget.classList.remove("expanded");
-          widget.setAttribute("aria-expanded", "false");
-        } else {
-          widget.classList.add("expanded");
-          widget.setAttribute("aria-expanded", "true");
-        }
-      }
-    });
-
-    // Update progress bar as audio plays
-    audio.addEventListener("timeupdate", () => {
-      if (audio.duration) {
-        const progressPercent = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = `${progressPercent}%`;
-      }
-    });
-
-    // When track ends, play next track
+    // Play next track on end
     audio.addEventListener("ended", () => {
       currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
       audio.src = playlist[currentTrackIndex];
       audio.play();
-      playPauseBtn.innerHTML = pauseIcon;
-      playPauseBtn.title = "Pause";
-      playPauseBtn.setAttribute("aria-pressed", "true");
+    });
+
+    // Play audio on load (user interaction might be required in some browsers)
+    window.addEventListener("load", () => {
+      audio.play().catch(() => {
+        // Autoplay blocked, will play on user interaction
+      });
+    });
+
+    // Mute button toggle
+    const muteButton = document.getElementById("muteButton");
+    const soundOnIcon = document.getElementById("soundOnIcon");
+    const soundOffIcon = document.getElementById("soundOffIcon");
+
+    muteButton.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      if (audio.muted) {
+        soundOnIcon.style.display = "none";
+        soundOffIcon.style.display = "block";
+      } else {
+        soundOnIcon.style.display = "block";
+        soundOffIcon.style.display = "none";
+      }
     });
   </script>
 </body>
