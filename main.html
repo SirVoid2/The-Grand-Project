@@ -1,78 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Grand Project</title>
-    <style>
-        /* General body styling */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #1a1a2e; /* Dark purple background */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff;
-            text-align: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Grand Project</title>
+  <style>
+    /* General body styling */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #1a1a2e; /* Dark purple background */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      text-align: center;
+    }
 
-        /* Container for the content */
-        .container {
-            padding: 40px;
-            background: #2a2a4a; /* Slightly lighter purple for the container */
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow */
-        }
+    /* Container for the content */
+    .container {
+      padding: 40px;
+      background: #2a2a4a; /* Slightly lighter purple for the container */
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow */
+    }
 
-        /* Heading style */
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #45e9e450; /*Blue heading */
-        }
+    /* Heading style */
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #45e9e450; /*Blue heading */
+    }
 
-        /* Link button styling */
-        .link-button {
-            display: inline-block;
-            padding: 15px 30px;
-            margin-top: 20px;
-            font-size: 1.2rem;
-            color: #fff;
-            background-image: linear-gradient(45deg, #4717f6, #0f3460); /* Gradient background */
-            text-decoration: none;
-            border-radius: 50px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
+    /* Link button styling */
+    .link-button {
+      display: inline-block;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1.2rem;
+      color: #fff;
+      background-image: linear-gradient(45deg, #4717f6, #0f3460); /* Gradient background */
+      text-decoration: none;
+      border-radius: 50px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
 
-        /* Hover effect for the link */
-        .link-button:hover {
-            transform: translateY(-5px); /* Lift the button slightly */
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* Larger shadow on hover */
-            background-image: linear-gradient(45deg, #0f3460, #4717f6); /* Change gradient direction */
-        }
+    /* Hover effect for the link */
+    .link-button:hover {
+      transform: translateY(-5px); /* Lift the button slightly */
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* Larger shadow on hover */
+      background-image: linear-gradient(45deg, #0f3460, #4717f6); /* Change gradient direction */
+    }
 
-        /* Link visited state */
-        .link-button:visited {
-            color: #ccc; /* Optional: change color after visited */
-        }
-    </style>
+    /* Link visited state */
+    .link-button:visited {
+      color: #ccc;
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      color: #888;
+    }
+  </style>
+  <script>
+    // Session-based protection
+    if (sessionStorage.getItem("auth") !== "true") {
+      window.location.href = "index.html";
+    } else {
+      sessionStorage.removeItem("auth"); // Clear flag after entry
+    }
+  </script>
 </head>
-<body onload="promptForPassword()">
-    <div class="container">
-        <h1>Welcome to The Grand Project</h1>
-        <a href="https://the-grand-tv.vercel.app" class="link-button" target="_blank">
-            Tv
-        </a>
-        <a href="https://the-grand-music.vercel.app" class="link-button" target="_blank">
-            Music
-        </a>
-        <a href="https://the-grand-game.vercel.app" class="link-button" target="_blank">
-            Games
-        </a>
-        <h2> Bypass: elephant</h2>
-    </div>
+<body>
+  <div class="container">
+    <h1>Welcome to The Grand Project</h1>
+    <a href="https://the-grand-tv.vercel.app" class="link-button" target="_blank">Tv</a>
+    <a href="https://the-grand-music.vercel.app" class="link-button" target="_blank">Music</a>
+    <a href="https://the-grand-game.vercel.app" class="link-button" target="_blank">Games</a>
+    <h2>Bypass: elephant</h2>
+  </div>
 </body>
 </html>
