@@ -64,14 +64,14 @@
       if (e.key === "Enter") {
         const pass = e.target.value.trim();
         if (pass === "bsod") {
-          window.location.href = "main.html"; // Redirect on correct password
+          sessionStorage.setItem("auth", "true"); // Store a flag
+          window.location.href = "main.html";
         } else {
-          window.location.href = "badpass.html"; // Redirect on wrong password
+          window.location.href = "badpass.html";
         }
       }
     });
   </script>
-
 
 </body>
 </html>
