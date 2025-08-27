@@ -60,7 +60,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="promptForPassword()">
     <div class="container">
         <h1>Welcome to The Grand Project</h1>
         <a href="https://the-grand-tv.vercel.app" class="link-button" target="_blank">
@@ -74,5 +74,16 @@
         </a>
         <h2> Bypass: elephant</h2>
     </div>
+    
+    <script>
+        function promptForPassword() {
+            var correctPassword = "bsod";
+            var enteredPassword = prompt("Please enter the password to view this page.");
+
+            if (enteredPassword !== correctPassword) {
+                window.location.href = "badpass.html";
+            }
+        }
+    </script>
 </body>
 </html>
