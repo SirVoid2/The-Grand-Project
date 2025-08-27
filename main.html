@@ -24,6 +24,7 @@
       transition: transform 0.3s, box-shadow 0.3s;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       cursor: pointer; user-select: none;
+      border: none;
     }
     .link-button:hover {
       transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.6);
@@ -81,20 +82,20 @@
 <body>
   <div class="container">
     <h1>Welcome to The Grand Project</h1>
-    <a href="https://discord.com/app" class="link-button" target="_blank">Discord</a>
-    <a href="https://open.spotify.com/" class="link-button" target="_blank">Spotify</a>
-    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank">Geforce Now</a>
-    <a href="https://chatgpt.com/" class="link-button" target="_blank">ChatGPT</a>
-    <a href="#" class="link-button" onclick="openIframe()">Iframe</a>
+    <a href="https://discord.com/app" class="link-button" target="_blank" rel="noopener">Discord</a>
+    <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener">Spotify</a>
+    <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener">Geforce Now</a>
+    <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener">ChatGPT</a>
+    <button class="link-button" onclick="openIframe()" type="button">Open Iframe</button>
     <h2>Bypass: elephant</h2>
   </div>
 
   <div id="audioControls" aria-label="Audio Player Controls">
-    <button id="muteButton" class="audio-button" aria-pressed="false" title="Mute/Unmute">
-      <svg id="soundOnIcon" viewBox="0 0 24 24"><path d="M5 9v6h4l5 5V4L9 9H5z"/><path d="M16.5 12a4.5 4.5 0 01-4.5 4.5v-9a4.5 4.5 0 014.5 4.5z"/><path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.5033004.503 0 0119 12z"/></svg>
+    <button id="muteButton" class="audio-button" type="button" aria-label="Mute or unmute audio" title="Mute/Unmute">
+      <svg id="soundOnIcon" viewBox="0 0 24 24"><path d="M5 9v6h4l5 5V4L9 9H5z"/><path d="M16.5 12a4.5 4.5 0 01-4.5 4.5v-9a4.5 4.5 0 014.5 4.5z"/><path d="M19 12c0 1.77-1.02 3.29-2.5 4.03v-8.06A4.503 4.503 0 0119 12z"/></svg>
       <svg id="soundOffIcon" viewBox="0 0 24 24" style="display:none;"><path d="M5 9v6h4l5 5V4L9 9H5z" fill="none"/><line x1="19" y1="5" x2="5" y2="19" stroke="white" stroke-width="2"/><line x1="5" y1="5" x2="19" y2="19" stroke="white" stroke-width="2"/></svg>
     </button>
-    <button id="skipButton" class="audio-button" title="Skip">
+    <button id="skipButton" class="audio-button" type="button" aria-label="Skip track" title="Skip">
       <svg viewBox="0 0 24 24"><polygon points="6,4 16,12 6,20" fill="white"/><rect x="17" y="4" width="2" height="16" fill="white" rx="1"/></svg>
     </button>
     <div class="volume-container">
@@ -105,9 +106,25 @@
   <script>
     if (sessionStorage.getItem("auth") !== "true") location.href = "badpass.html";
     else sessionStorage.removeItem("auth");
-    function openIframe(){
+
+    function openIframe() {
       const url = prompt("Enter URL:");
-      if(url) window.open().document.write(`<iframe src="${url}" style="border:none;width:100%;height:100%"></iframe>`);
+      if (!url) return;
+      const win = window.open("", "_blank");
+      if (win) {
+        win.document.write(`
+          <!DOCTYPE html>
+          <html lang="en">
+          <head><title>Iframe View</title></head>
+          <body style="margin:0">
+            <iframe src="${url}" style="border:none;width:100vw;height:100vh;" frameborder="0"></iframe>
+          </body>
+          </html>
+        `);
+        win.document.close();
+      } else {
+        alert("Popup blocked. Please allow popups for this site.");
+      }
     }
 
     const playlist = [
@@ -131,7 +148,7 @@
 
     document.getElementById("muteButton").addEventListener("click", () => {
       clickSound.play();
-      if (audio.paused) {
+      if (audio.paused || audio.muted) {
         audio.play();
         audio.muted = false;
       } else {
@@ -169,7 +186,6 @@
       }
     }
 
-    // Enable play after user interaction
     document.body.addEventListener("click", () => {
       audio.play().catch(()=>{});
     }, { once: true });
