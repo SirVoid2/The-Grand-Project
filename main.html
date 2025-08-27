@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Grand Project</title>
   <style>
@@ -181,51 +181,24 @@
       }
     }
 
-    // Audio logic
+    // Audio setup with local files
     const playlist = [
       "lofi1.mp3",
-      "lofi12.mp3",
+      "lofi2.mp3",
       "lofi3.mp3",
       "lofi4.mp3"
     ];
 
     let currentTrack = 0;
-    const audio = new Audio(playlist[currentTrack]);
-    audio.loop = false;
-    audio.volume = 0.5;
-
     const playIcon = document.getElementById("playIcon");
     const pauseIcon = document.getElementById("pauseIcon");
 
-    function togglePlayPause() {
-      if (audio.paused) {
-        audio.play();
-        playIcon.style.display = "none";
-        pauseIcon.style.display = "block";
-      } else {
-        audio.pause();
-        playIcon.style.display = "block";
-        pauseIcon.style.display = "none";
-      }
-    }
+    let audio = new Audio();
+    audio.crossOrigin = "anonymous";
+    audio.src = playlist[currentTrack];
+    audio.loop = false;
+    audio.volume = 0.5;
 
-    document.getElementById("playPauseBtn").addEventListener("click", togglePlayPause);
-
-    document.getElementById("skipBtn").addEventListener("click", () => {
-      currentTrack = (currentTrack + 1) % playlist.length;
-      audio.src = playlist[currentTrack];
-      audio.play();
-      playIcon.style.display = "none";
-      pauseIcon.style.display = "block";
-    });
-
-    document.body.addEventListener("click", () => {
-      audio.play().catch(() => {});
-      playIcon.style.display = "none";
-      pauseIcon.style.display = "block";
-    }, { once: true });
-
-    // Visualizer
     const visualizer = document.getElementById("visualizer");
     const numBars = 64;
     const bars = [];
@@ -237,25 +210,59 @@
       bars.push(bar);
     }
 
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const analyser = ctx.createAnalyser();
-    const source = ctx.createMediaElementSource(audio);
-    source.connect(analyser);
-    analyser.connect(ctx.destination);
-    analyser.fftSize = 256;
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+    let analyser = ctx.createAnalyser();
+    let source;
 
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+    function connectAudio() {
+      if (source) {
+        source.disconnect();
+      }
+      source = ctx.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(ctx.destination);
+      analyser.fftSize = 256;
+    }
+    connectAudio();
 
     function animate() {
       requestAnimationFrame(animate);
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
       analyser.getByteFrequencyData(dataArray);
       for (let i = 0; i < numBars; i++) {
         const value = dataArray[i];
-        bars[i].style.height = \`\${(value / 255) * 100}%\`;
+        bars[i].style.height = `${(value / 255) * 100}%`;
       }
     }
     animate();
+
+    document.getElementById("playPauseBtn").addEventListener("click", async () => {
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      if (audio.paused) {
+        audio.play();
+        playIcon.style.display = "none";
+        pauseIcon.style.display = "block";
+      } else {
+        audio.pause();
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+      }
+    });
+
+    document.getElementById("skipBtn").addEventListener("click", async () => {
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      currentTrack = (currentTrack + 1) % playlist.length;
+      audio.src = playlist[currentTrack];
+      audio.play();
+      playIcon.style.display = "none";
+      pauseIcon.style.display = "block";
+      connectAudio();
+    });
   </script>
 </body>
 </html>
