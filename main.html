@@ -17,87 +17,124 @@
       --bg: #f5f5f5;
       --container-bg: #ffffff;
       --text: #000;
-      --accent: #4717f6;
-      --accent2: #0f3460;
     }
 
     body {
-      display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; margin: 0;
-      background-color: var(--bg);
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      color: var(--text); text-align: center;
+      background: var(--bg);
+      color: var(--text);
       transition: background 0.3s, color 0.3s;
     }
 
     .container {
-      padding: 40px; background: var(--container-bg);
-      border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      transition: background 0.3s;
+      text-align: center;
+      padding: 40px;
+      background: var(--container-bg);
+      margin: 80px auto;
+      max-width: 700px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     .link-button {
-      display: inline-block; padding: 15px 30px; margin: 10px;
-      font-size: 1.2rem; color: var(--text);
+      display: inline-block;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1.2rem;
+      color: var(--text);
       background-image: linear-gradient(45deg, var(--accent), var(--accent2));
-      text-decoration: none; border-radius: 50px;
-      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      cursor: pointer; user-select: none;
+      text-decoration: none;
+      border-radius: 50px;
       border: none;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .link-button:hover {
-      transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-      background-image: linear-gradient(45deg, var(--accent2), var(--accent));
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
 
-    h2 { margin-top: 30px; font-size: 1.1rem; color: #888; }
+    h2 { color: #888; }
+
+    #themeToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    }
 
     #audioControls {
-      position: fixed; bottom: 20px; right: 20px;
-      display: flex; align-items: center; gap: 15px;
-      z-index: 9999; padding: 12px 16px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 16px;
       background: rgba(20,20,40,0.7);
-      border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      backdrop-filter: blur(10px); user-select: none;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
     }
 
     .audio-button {
       background: linear-gradient(135deg,var(--accent),var(--accent2));
-      border: none; border-radius: 50%; width:48px; height:48px;
-      cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-      display: flex; align-items: center; justify-content: center;
-      color: white; transition: background 0.3s, transform 0.2s;
-      font-size: 0;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
     }
 
     .audio-button:hover {
-      background: linear-gradient(135deg,var(--accent2),var(--accent));
       transform: scale(1.1);
     }
 
     .audio-button svg {
-      width: 24px; height: 24px; fill: white; pointer-events: none;
+      width: 24px;
+      height: 24px;
+      fill: white;
+      pointer-events: none;
     }
 
-    #themeToggle {
-      position: fixed; top: 20px; right: 20px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: white; border: none; border-radius: 25px;
-      padding: 10px 18px; cursor: pointer;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-      font-size: 0.9rem;
-      transition: background 0.3s;
+    #visualizer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      z-index: 0;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      padding: 0 10px;
+      box-sizing: border-box;
     }
 
-    #themeToggle:hover {
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
+    .bar {
+      width: 5px;
+      background: var(--accent);
+      height: 10%;
+      border-radius: 3px;
+      transition: height 0.05s ease-out;
     }
   </style>
 </head>
 <body>
-  <button id="themeToggle" type="button">🌙 Toggle Theme</button>
+  <button id="themeToggle">🌙 Toggle Theme</button>
 
   <div class="container">
     <h1>Welcome to The Grand Project</h1>
@@ -105,104 +142,119 @@
     <a href="https://open.spotify.com/" class="link-button" target="_blank" rel="noopener">Spotify</a>
     <a href="https://play.geforcenow.com/mall/" class="link-button" target="_blank" rel="noopener">Geforce Now</a>
     <a href="https://chatgpt.com/" class="link-button" target="_blank" rel="noopener">ChatGPT</a>
-    <button class="link-button" onclick="openIframe()" type="button">Open Iframe</button>
+    <button class="link-button" onclick="openIframe()">Open Iframe</button>
     <h2>Bypass: elephant</h2>
   </div>
 
-  <div id="audioControls" aria-label="Audio Player Controls">
-    <button id="muteButton" class="audio-button" type="button" aria-label="Play or pause music" title="Play/Pause">
-      <svg id="soundOnIcon" viewBox="0 0 24 24"><path d="M5 9v6h4l5 5V4L9 9H5z"/><path d="M16.5 12a4.5 4.5 0 01-4.5 4.5v-9a4.5 4.5 0 014.5 4.5z"/></svg>
-      <svg id="soundOffIcon" viewBox="0 0 24 24" style="display:none;">
-        <path d="M6 6L18 18M6 18L18 6" stroke="white" stroke-width="2"/>
-      </svg>
+  <div id="audioControls">
+    <button id="playPauseBtn" class="audio-button" title="Play/Pause">
+      <svg id="playIcon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19" /></svg>
+      <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
     </button>
-    <button id="skipButton" class="audio-button" type="button" aria-label="Skip track" title="Skip">
+    <button id="skipBtn" class="audio-button" title="Skip">
       <svg viewBox="0 0 24 24"><polygon points="6,4 16,12 6,20" fill="white"/><rect x="17" y="4" width="2" height="16" fill="white" rx="1"/></svg>
     </button>
   </div>
 
+  <div id="visualizer"></div>
+
   <script>
-    // Theme Toggle
-    const themeToggle = document.getElementById("themeToggle");
-    themeToggle.addEventListener("click", () => {
+    // Theme toggle
+    document.getElementById("themeToggle").addEventListener("click", () => {
       document.body.classList.toggle("light-theme");
-      themeToggle.textContent = document.body.classList.contains("light-theme") ? "🌞 Toggle Theme" : "🌙 Toggle Theme";
+      document.getElementById("themeToggle").textContent =
+        document.body.classList.contains("light-theme") ? "🌞 Toggle Theme" : "🌙 Toggle Theme";
     });
 
-    // Auth Check
-    if (sessionStorage.getItem("auth") !== "true") location.href = "badpass.html";
-    else sessionStorage.removeItem("auth");
-
-    // Iframe Prompt
+    // Iframe open
     function openIframe() {
       const url = prompt("Enter URL:");
-      if (!url) return;
-      const win = window.open("", "_blank");
-      if (win) {
-        win.document.write(`
-          <!DOCTYPE html>
-          <html lang="en">
-          <head><title>Iframe View</title></head>
-          <body style="margin:0">
-            <iframe src="${url}" style="border:none;width:100vw;height:100vh;" frameborder="0"></iframe>
-          </body>
-          </html>
-        `);
-        win.document.close();
-      } else {
-        alert("Popup blocked. Please allow popups for this site.");
+      if (url) {
+        const win = window.open("", "_blank");
+        if (win) {
+          win.document.write(\`
+            <html><body style="margin:0"><iframe src="\${url}" style="width:100vw;height:100vh;border:none"></iframe></body></html>
+          \`);
+        } else {
+          alert("Popup blocked. Please allow popups for this site.");
+        }
       }
     }
 
-    // Audio Logic
+    // Audio logic
     const playlist = [
       "https://cdn.pixabay.com/download/audio/2022/03/25/audio_7f3e4a6706.mp3?filename=lofi-chill-beats-130bpm-11496.mp3",
       "https://cdn.pixabay.com/download/audio/2022/03/24/audio_4b7e776f4f.mp3?filename=lofi-chill-hip-hop-10884.mp3",
       "https://cdn.pixabay.com/download/audio/2022/03/25/audio_3e1c1d138f.mp3?filename=lofi-hip-hop-11683.mp3"
     ];
+
     let currentTrack = 0;
-    const audio = new Audio();
-    audio.src = playlist[currentTrack];
+    const audio = new Audio(playlist[currentTrack]);
+    audio.loop = false;
     audio.volume = 0.5;
 
-    function nextTrack() {
+    const playIcon = document.getElementById("playIcon");
+    const pauseIcon = document.getElementById("pauseIcon");
+
+    function togglePlayPause() {
+      if (audio.paused) {
+        audio.play();
+        playIcon.style.display = "none";
+        pauseIcon.style.display = "block";
+      } else {
+        audio.pause();
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+      }
+    }
+
+    document.getElementById("playPauseBtn").addEventListener("click", togglePlayPause);
+
+    document.getElementById("skipBtn").addEventListener("click", () => {
       currentTrack = (currentTrack + 1) % playlist.length;
       audio.src = playlist[currentTrack];
       audio.play();
-    }
-
-    document.getElementById("muteButton").addEventListener("click", () => {
-      if (audio.paused) {
-        audio.play();
-        audio.muted = false;
-      } else {
-        audio.pause();
-        audio.muted = true;
-      }
-      updateMuteIcon();
+      playIcon.style.display = "none";
+      pauseIcon.style.display = "block";
     });
 
-    document.getElementById("skipButton").addEventListener("click", () => {
-      nextTrack();
-      updateMuteIcon();
-    });
-
-    function updateMuteIcon() {
-      const on = document.getElementById("soundOnIcon");
-      const off = document.getElementById("soundOffIcon");
-      if (audio.paused || audio.muted) {
-        on.style.display = "none";
-        off.style.display = "block";
-      } else {
-        on.style.display = "block";
-        off.style.display = "none";
-      }
-    }
-
-    // Start playback after first click
     document.body.addEventListener("click", () => {
       audio.play().catch(() => {});
+      playIcon.style.display = "none";
+      pauseIcon.style.display = "block";
     }, { once: true });
+
+    // Visualizer
+    const visualizer = document.getElementById("visualizer");
+    const numBars = 64;
+    const bars = [];
+
+    for (let i = 0; i < numBars; i++) {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      visualizer.appendChild(bar);
+      bars.push(bar);
+    }
+
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = ctx.createAnalyser();
+    const source = ctx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(ctx.destination);
+    analyser.fftSize = 256;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      analyser.getByteFrequencyData(dataArray);
+      for (let i = 0; i < numBars; i++) {
+        const value = dataArray[i];
+        bars[i].style.height = \`\${(value / 255) * 100}%\`;
+      }
+    }
+    animate();
   </script>
 </body>
 </html>
