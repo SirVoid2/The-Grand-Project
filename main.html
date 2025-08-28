@@ -7,115 +7,122 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       display: flex;
       height: 100vh;
-      background: url('https://picsum.photos/1920/1080?blur=8') no-repeat center center fixed;
-      background-size: cover;
+      overflow: hidden;
     }
+
     .sidebar {
-      width: 220px;
+      width: 250px;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(10px);
-      color: #fff;
-      padding: 20px;
       display: flex;
       flex-direction: column;
+      padding: 20px;
     }
+
     .sidebar h2 {
-      font-size: 20px;
-      margin-bottom: 15px;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      text-align: center;
     }
+
+    .sidebar p {
+      font-size: 1em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
     .sidebar button {
-      margin: 5px 0;
-      padding: 10px;
+      margin: 8px 0;
+      padding: 12px;
       border: none;
-      border-radius: 10px;
-      background: linear-gradient(145deg, #00f, #0ff);
-      color: #fff;
-      font-size: 15px;
+      border-radius: 12px;
+      font-size: 1em;
       cursor: pointer;
-      transition: transform 0.2s;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
     }
+
     .sidebar button:hover {
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
       transform: scale(1.05);
     }
+
     .content {
       flex: 1;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       position: relative;
+      overflow: hidden;
     }
-    iframe {
-      width: 100%;
+
+    .iframe-panel {
+      position: absolute;
+      top: 0;
+      right: -100%;
+      width: calc(100% - 250px);
       height: 100%;
       border: none;
-      display: none;
+      transition: right 0.5s ease-in-out;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(15px);
     }
-    .openTabBtn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+
+    .iframe-panel.active {
+      right: 0;
+    }
+
+    .welcome {
+      font-size: 2em;
       background: rgba(0,0,0,0.5);
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 6px;
-      z-index: 10;
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(8px);
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <h2>The Grand Project</h2>
-    <div id="userBox" style="margin-bottom:15px; font-weight:bold;">Loading...</div>
+    <p id="userBox">Welcome, <span id="username">User</span></p>
     <button onclick="openIframe('https://discord.com')">Discord</button>
-    <button onclick="openIframe('https://chat.openai.com')">AI Chatbot</button>
-    <button onclick="openIframe('https://www.nvidia.com/en-us/geforce-now/')">GeForce</button>
-    <button onclick="openIframe('https://www.youtube.com')">Music</button>
+    <button onclick="openIframe('https://huggingface.co/spaces/yuntian-deng/ChatGPT')">AI Chatbot</button>
+    <button onclick="openIframe('https://www.nvidia.com/en-us/geforce-now/')">GeForce Now</button>
+    <button onclick="openIframe('https://music.youtube.com')">Music</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <div class="content" id="content">
-    <h1 style="color:white;text-shadow:0 0 10px black;">Welcome! Select a service.</h1>
-    <iframe id="proxyFrame"></iframe>
-    <button id="openTabBtn" class="openTabBtn" style="display:none;">🔗 Open in New Tab</button>
+  <div class="content">
+    <div class="welcome">Select an option from the sidebar</div>
+    <iframe id="iframePanel" class="iframe-panel"></iframe>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabase = window.supabase.createClient(
-      "https://keijxjexmfwlgetxyczr.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww"
-    );
-
-    const proxyBase = "https://keijxjexmfwlgetxyczr.supabase.co/functions/v1/dynamic-api?url=";
-
-    // Check login
-    async function checkLogin() {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error || !user) {
-        window.location.href = "login.html";
-        return;
-      }
-      document.getElementById("userBox").innerText = "👤 " + (user.email || "User");
+    // 🔹 Load username from localStorage (set during login)
+    const username = localStorage.getItem("username");
+    if (username) {
+      document.getElementById("username").textContent = username;
+    } else {
+      // If not logged in → redirect
+      window.location.href = "login.html";
     }
-
-    checkLogin();
 
     function openIframe(url) {
-      const iframe = document.getElementById("proxyFrame");
-      const openTabBtn = document.getElementById("openTabBtn");
-      iframe.src = proxyBase + encodeURIComponent(url);
-      iframe.style.display = "block";
-      openTabBtn.style.display = "block";
-      openTabBtn.onclick = () => window.open(url, "_blank");
+      const panel = document.getElementById("iframePanel");
+      panel.src = url;
+      panel.classList.add("active");
     }
 
-    async function logout() {
-      await supabase.auth.signOut();
-      localStorage.removeItem("supabase.auth.token");
+    function logout() {
+      localStorage.removeItem("username");
+      localStorage.removeItem("token");
       window.location.href = "login.html";
     }
   </script>
