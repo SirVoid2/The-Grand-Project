@@ -6,13 +6,12 @@
   <title>The Grand Project</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css">
   <style>
-    /* Base styles */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #111;
       color: #eee;
-      display: none; /* Hide until auth check passes */
+      display: none;
       height: 100vh;
       overflow: hidden;
     }
@@ -45,6 +44,17 @@
       color: #111;
     }
 
+    .sidebar button {
+      margin-top: 10px;
+      padding: 10px;
+      background: #8a78ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     #themeToggle {
       position: absolute;
       top: 15px;
@@ -64,6 +74,7 @@
       background: #222;
       border-radius: 12px;
       overflow: hidden;
+      height: 100%;
     }
 
     .chat-header {
@@ -121,6 +132,29 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+    .side-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background: #1c1c2e;
+      transition: right 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-panel.visible {
+      right: 0;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -131,41 +165,44 @@
     <a href="https://open.spotify.com" target="_blank">Spotify</a>
     <a href="https://play.geforcenow.com/mall" target="_blank">GeForce Now</a>
     <a href="https://chatgpt.com" target="_blank">ChatGPT</a>
+    <button id="toggleAssistant">Toggle AI Assistant</button>
+    <button id="toggleIframe">Toggle Side Iframe</button>
   </div>
 
   <button id="themeToggle" title="Toggle Theme">🌙</button>
 
-  <div class="chat-container">
-    <div class="chat-header">AI Assistant</div>
-    <div id="chatlog"></div>
-    <form id="userInput" autocomplete="off">
-      <input type="text" id="userText" placeholder="Ask me something…" />
-      <button type="submit" id="sendBtn">Send</button>
-    </form>
+  <div id="assistantPanel" class="side-panel">
+    <div class="chat-container">
+      <div class="chat-header">AI Assistant</div>
+      <div id="chatlog"></div>
+      <form id="userInput" autocomplete="off">
+        <input type="text" id="userText" placeholder="Ask me something…" />
+        <button type="submit" id="sendBtn">Send</button>
+      </form>
+    </div>
   </div>
 
-  <!-- Auth Check -->
-  <script>
-    // --- Simple Auth Check ---
-    const auth = 1;  // Set this to 1 for access, anything else will redirect to badpass.html
+  <div id="iframePanel" class="side-panel">
+    <iframe src="https://example.com"></iframe>
+  </div>
 
-    // If auth is not 1, redirect to badpass.html
+  <script>
+    const auth = 1;
     if (auth !== 1) {
-      window.location.href = "badpass.html";  // Redirect to badpass.html
+      window.location.href = "badpass.html";
     } else {
-      // Show page if authorized
       document.body.style.display = "flex";
     }
+
+    const assistantPanel = document.getElementById("assistantPanel");
+    const iframePanel = document.getElementById("iframePanel");
+
+    document.getElementById("toggleAssistant").onclick = () => {
+      assistantPanel.classList.toggle("visible");
+      iframePanel.classList.remove("visible");
+    };
+    document.getElementById("toggleIframe").onclick = () => {
+      iframePanel.classList.toggle("visible");
+      assistantPanel.classList.remove("visible");
+    };
   </script>
-
-  <!-- External Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjs/lib/browser/math.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-
-  <!-- Main Script -->
-  <script src="main.js"></script>
-
-</body>
-</html>
