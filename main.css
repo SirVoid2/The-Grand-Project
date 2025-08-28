@@ -4,7 +4,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background: #0d0d0d;
   color: #eee;
-  display: none;
+  display: flex; /* was none → now flex so it shows */
   height: 100vh;
   overflow: hidden;
   transition: background 0.3s ease, color 0.3s ease;
