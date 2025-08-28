@@ -54,26 +54,7 @@
       font-weight: bold;
       cursor: pointer;
     }
-
-#themeToggle {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 16px;
-  background: #8a78ff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 16px;
-  transition: background 0.3s ease;
-}
-
-    #themeToggle:hover {
-      background: #a99aff;
-    }
-
+    
     .chat-container {
       flex: 1;
       display: flex;
@@ -141,6 +122,26 @@
       cursor: pointer;
     }
 
+    #themeToggle {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 16px;
+      background: #8a78ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;       /* match sidebar buttons */
+      cursor: pointer;
+      padding: 10px;
+      font-family: 'Segoe UI', sans-serif;
+      box-sizing: border-box;
+      transition: background 0.3s ease;
+    }
+    
+    #themeToggle:hover {
+      background: #a99aff;
+    }
     .side-panel {
       position: fixed;
       top: 0;
