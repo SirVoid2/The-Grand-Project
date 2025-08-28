@@ -100,7 +100,7 @@
 <body>
   <div class="container">
     <h2>Register</h2>
-    <input type="email" id="regEmail" placeholder="Email" required>
+    <input type="text" id="regUsername" placeholder="Username" required>
 
     <!-- Password with toggle -->
     <div class="input-group">
@@ -130,8 +130,7 @@
   <script>
     const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
-
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     function togglePassword(id, el) {
       const input = document.getElementById(id);
@@ -178,7 +177,7 @@
     }
 
     async function register() {
-      const email = document.getElementById("regEmail").value;
+      const username = document.getElementById("regUsername").value.trim();
       const password = document.getElementById("regPassword").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
       const errorBox = document.getElementById("errorBox");
@@ -195,13 +194,29 @@
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      // check if username exists
+      const { data: existing } = await supabaseClient
+        .from("users")
+        .select("id")
+        .eq("username", username)
+        .maybeSingle();
+
+      if (existing) {
+        errorBox.style.color = "red";
+        errorBox.textContent = "❌ Username already taken!";
+        return;
+      }
+
+      // insert into users table
+      const { error } = await supabaseClient
+        .from("users")
+        .insert([{ username, password }]);
 
       if (error) {
         errorBox.style.color = "red";
-        errorBox.textContent = error.message;
+        errorBox.textContent = "❌ " + error.message;
       } else {
-        localStorage.setItem("username", email.split("@")[0]);
+        localStorage.setItem("username", username);
         errorBox.style.color = "lime";
         errorBox.textContent = "✅ Registered! Redirecting to login...";
         setTimeout(() => {
