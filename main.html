@@ -3,230 +3,227 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Water Ripple with iframe and URL blocking</title>
+  <title>The Grand Project</title>
   <style>
-    html, body {
-      margin: 0; padding: 0;
-      height: 100%;
-      width: 100%;
+    :root {
+      --bg: #111;
+      --text: #eee;
+      --accent: #8a78ff;
+      --card-bg: rgba(20, 20, 40, 0.85);
+    }
+
+    body.light-theme {
+      --bg: #f4f4f4;
+      --text: #222;
+      --accent: #5a4edd;
+      --card-bg: #ffffffcc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
       overflow: hidden;
-      background: #121629;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
     }
-    #rippleCanvas {
-      display: block;
-      background: linear-gradient(135deg, #1f233d, #121629);
-      border-radius: 24px;
-      max-width: 720px;
+
+    .container {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      padding: 24px 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.3);
       width: 90vw;
-      height: 90vh;
-      cursor: pointer;
-      box-shadow: 0 0 30px rgba(138, 120, 255, 0.5);
-    }
-    #themeToggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 56px;
-      height: 56px;
-      background: rgba(255 255 255 / 0.1);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: background-color 0.5s ease;
+      max-width: 700px;
+      text-align: center;
       z-index: 10;
     }
-    #themeToggle:hover {
-      background: rgba(255 255 255 / 0.2);
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: var(--accent);
     }
-    #themeToggle svg {
-      width: 28px;
-      height: 28px;
-      fill: #8a78ff;
-      transition: fill 0.6s ease;
+
+    a {
+      display: inline-block;
+      margin: 0 10px 12px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
     }
-    body.light-theme #themeToggle svg {
-      fill: #5a4edd;
-      filter: drop-shadow(0 0 1px rgba(138,120,255,0.8));
+
+    a:hover {
+      color: var(--text);
+    }
+
+    #themeToggle {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--accent);
+      z-index: 100;
+    }
+
+    /* AI Chat Box */
+    #chatbox {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90vw;
+      max-width: 700px;
+      height: 40vh;
+      background: var(--card-bg);
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      padding: 10px 16px;
+      z-index: 10;
+    }
+
+    #chatlog {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      padding-right: 5px;
+    }
+
+    .msg {
+      margin: 6px 0;
+    }
+
+    .bot { color: var(--accent); }
+    .user { font-weight: 600; }
+
+    #userInput {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    #userText {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    #sendBtn {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
 
-  <canvas id="rippleCanvas" aria-label="Water ripple simulation" role="img"></canvas>
+<button id="themeToggle" title="Toggle Theme">🌙</button>
 
-  <button id="themeToggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="5"/>
-      <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <line x1="12" y1="1" x2="12" y2="3"/>
-        <line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/>
-        <line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </g>
-    </svg>
-  </button>
+<div class="container">
+  <h1>Welcome to The Grand Project</h1>
+  <a href="https://discord.com/app" target="_blank">Discord</a>
+  <a href="https://open.spotify.com/" target="_blank">Spotify</a>
+  <a href="https://play.geforcenow.com/mall/" target="_blank">Geforce Now</a>
+  <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
+</div>
 
-  <script>
-    // === Fast Iframe blocking ===
-    if (window.self !== window.top) {
-      // If loaded inside iframe, redirect or block immediately
-      document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top: 40vh;'>Access Denied: iframe embedding is blocked.</h1>";
-      throw new Error("Iframe embedding blocked");
+<!-- AI Bot -->
+<div id="chatbox">
+  <div id="chatlog"></div>
+  <div id="userInput">
+    <input type="text" id="userText" placeholder="Ask the AI something..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  // BLOCK direct URL access
+  if (sessionStorage.getItem("auth") !== "true") {
+    location.replace("badpass.html");
+  } else {
+    sessionStorage.removeItem("auth");
+  }
+
+  // THEME TOGGLE
+  const toggle = document.getElementById("themeToggle");
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("light-theme");
+    toggle.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
+  });
+
+  // NOTIFICATIONS
+  function notifyReminder() {
+    if (Notification.permission === "granted") {
+      new Notification("Still here?", {
+        body: "Want to visit a site again?",
+        icon: "https://cdn-icons-png.flaticon.com/512/5948/5948527.png"
+      });
     }
+  }
 
-    // === Fast URL access blocking ===
-    // Only allow if referrer is from your own domain (example.com) or blank (allow direct if you want)
-    // Change 'yourdomain.com' to your actual domain name!
-    const allowedDomain = "the-grand-project.vercel.app";
-
-    if (document.referrer) {
-      try {
-        const refDomain = new URL(document.referrer).hostname;
-        if (!refDomain.includes(allowedDomain)) {
-          // Referrer is from a domain NOT allowed, block access immediately
-          document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top: 40vh;'>Access Denied: Unauthorized access.</h1>";
-          throw new Error("Unauthorized referrer blocked");
-        }
-      } catch {
-        // Malformed referrer? Block anyway
-        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top: 40vh;'>Access Denied: Unauthorized access.</h1>";
-        throw new Error("Malformed referrer blocked");
+  if ("Notification" in window && Notification.permission !== "denied") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        setInterval(notifyReminder, 1800000); // 30 minutes
       }
-    } else {
-      // No referrer - usually direct access or via bookmarks
-      // Uncomment below if you want to block direct URL typing as well:
-      /*
-      document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top: 40vh;'>Access Denied: Direct access blocked.</h1>";
-      throw new Error("Direct URL access blocked");
-      */
-    }
-
-    // === Ripple canvas setup ===
-
-    const canvas = document.getElementById('rippleCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let width, height;
-    let gridWidth, gridHeight;
-    const gridSpacing = 8;
-
-    let previous = [];
-    let current = [];
-    const damping = 0.98;
-
-    function setup() {
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
-
-      canvas.width = width;
-      canvas.height = height;
-
-      gridWidth = Math.floor(width / gridSpacing);
-      gridHeight = Math.floor(height / gridSpacing);
-
-      previous = new Array(gridWidth * gridHeight).fill(0);
-      current = new Array(gridWidth * gridHeight).fill(0);
-    }
-
-    setup();
-
-    window.addEventListener('resize', () => {
-      setup();
     });
+  }
 
-    function idx(x, y) {
-      return y * gridWidth + x;
-    }
+  // Simple AI Bot (client-side simulation)
+  const log = document.getElementById("chatlog");
+  const input = document.getElementById("userText");
+  const sendBtn = document.getElementById("sendBtn");
 
-    function updateWave() {
-      for(let y=1; y < gridHeight -1; y++) {
-        for(let x=1; x < gridWidth -1; x++) {
-          const i = idx(x,y);
-          current[i] = (
-            (previous[idx(x-1,y)] +
-             previous[idx(x+1,y)] +
-             previous[idx(x,y-1)] +
-             previous[idx(x,y+1)]) / 2
-          ) - current[i];
+  function botReply(msg) {
+    const response = msg.toLowerCase().includes("hi") ? "Hello there! 👋" :
+                     msg.toLowerCase().includes("help") ? "How can I assist you today?" :
+                     msg.toLowerCase().includes("project") ? "This is part of The Grand Project!" :
+                     "I'm just a simple AI! Ask me anything.";
 
-          current[i] *= damping;
-        }
-      }
-      [previous, current] = [current, previous];
-    }
+    addMsg("bot", response);
+  }
 
-    function drawWave() {
-      ctx.clearRect(0, 0, width, height);
+  function addMsg(type, text) {
+    const el = document.createElement("div");
+    el.className = `msg ${type}`;
+    el.textContent = text;
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+  }
 
-      for(let y=0; y < gridHeight; y++) {
-        for(let x=0; x < gridWidth; x++) {
-          const i = idx(x,y);
-          const val = previous[i];
+  sendBtn.onclick = () => {
+    const val = input.value.trim();
+    if (!val) return;
+    addMsg("user", val);
+    input.value = "";
+    setTimeout(() => botReply(val), 500);
+  };
 
-          const brightness = Math.min(Math.max(100 + val * 500, 0), 255);
-
-          ctx.fillStyle = `rgb(20, ${brightness}, ${brightness + 50})`;
-          ctx.fillRect(x * gridSpacing, y * gridSpacing, gridSpacing, gridSpacing);
-        }
-      }
-    }
-
-    function animate() {
-      updateWave();
-      drawWave();
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    function disturb(x, y, radius = 3, strength = 1) {
-      const gx = Math.floor(x / gridSpacing);
-      const gy = Math.floor(y / gridSpacing);
-
-      for(let dy = -radius; dy <= radius; dy++) {
-        for(let dx = -radius; dx <= radius; dx++) {
-          const nx = gx + dx;
-          const ny = gy + dy;
-          if(nx >= 0 && nx < gridWidth && ny >= 0 && ny < gridHeight) {
-            const i = idx(nx, ny);
-            previous[i] += strength;
-          }
-        }
-      }
-    }
-
-    canvas.addEventListener('mousemove', e => {
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      disturb(mx, my, 2, 1);
-    });
-
-    canvas.addEventListener('click', e => {
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      disturb(mx, my, 3, 3);
-    });
-
-    // Theme toggle button
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('light-theme');
-    });
-  </script>
-
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendBtn.click();
+  });
+</script>
 </body>
 </html>
