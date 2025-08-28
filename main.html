@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Grand Project — Water Ripple Background + Dark/Light Mode</title>
+  <title>The Grand Project — Realistic Water Ripple Background + Dark/Light Toggle</title>
   <style>
-    /* Reset */
+    /* Reset and no scroll */
     *, *::before, *::after {
       box-sizing: border-box;
     }
     html, body {
       margin: 0; padding: 0;
       height: 100%;
+      width: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text-color);
       background: var(--bg-gradient);
-      overflow-x: hidden;
+      overflow: hidden; /* No scroll */
       user-select: none;
       transition: background 0.8s ease, color 0.8s ease;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       position: relative;
       height: 100vh;
-      /* make room for canvas */
+      width: 100vw;
     }
 
     /* Theme variables */
@@ -96,21 +97,19 @@
       100% { transform: translateY(0) translateX(0) scale(1); }
     }
 
-    /* The ripple canvas behind everything */
+    /* Ripple canvas fixed behind */
     #rippleCanvas {
       position: fixed;
       top: 0; left: 0;
       width: 100vw;
       height: 100vh;
-      pointer-events: none; /* Let clicks pass through */
+      pointer-events: none; /* Pass through mouse */
       z-index: 0;
-      mix-blend-mode: screen;
-      opacity: 0.2;
+      opacity: 0.25;
       transition: opacity 0.8s ease;
     }
     body.light-theme #rippleCanvas {
-      mix-blend-mode: multiply;
-      opacity: 0.1;
+      opacity: 0.15;
     }
 
     main.container {
@@ -260,6 +259,7 @@
       justify-content: center;
       z-index: 10000;
       user-select: none;
+      outline-offset: 2px;
     }
     #themeToggle:hover {
       box-shadow:
@@ -267,71 +267,40 @@
       background-color: rgba(255 255 255 / 0.1);
     }
     #themeToggle:focus-visible {
-      outline: 2px solid var(--focus-outline);
-      outline-offset: 2px;
+      outline: 3px solid var(--focus-outline);
     }
 
-    /* Sun/Moon SVG styling */
+    /* Sun & moon SVG styling */
     #themeToggle svg {
-      width: 26px;
-      height: 26px;
-      stroke: var(--button-bg-hover);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
-      transition: all 0.5s ease;
-      user-select: none;
-      pointer-events: none;
+      width: 28px;
+      height: 28px;
+      fill: var(--button-bg-hover);
+      transition: fill 0.6s ease;
+    }
+    body.light-theme #themeToggle svg {
+      fill: var(--button-bg-hover);
+      filter: drop-shadow(0 0 1px rgba(138,120,255,0.8));
     }
 
-    /* Sun rays */
-    #themeToggle .sun-rays {
-      transform-origin: center;
-      transition: transform 0.5s ease;
-    }
-
-    /* Moon crescent */
-    #themeToggle .moon {
-      transform-origin: center;
-      transition: opacity 0.5s ease;
-    }
-
-    /* Toggle states */
-    body.light-theme #themeToggle .sun-rays {
-      transform: scale(1);
-      opacity: 1;
-    }
-    body.light-theme #themeToggle .moon {
-      opacity: 0;
-      transform: scale(0);
-    }
-    body:not(.light-theme) #themeToggle .sun-rays {
-      transform: scale(0);
-      opacity: 0;
-    }
-    body:not(.light-theme) #themeToggle .moon {
-      opacity: 1;
-      transform: scale(1);
-    }
   </style>
 </head>
 <body>
-  <canvas id="rippleCanvas"></canvas>
 
-  <button id="themeToggle" aria-label="Toggle dark and light mode" title="Toggle dark and light mode" aria-pressed="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true" role="img" focusable="false">
-      <circle class="moon" cx="12" cy="12" r="9" stroke="none" fill="var(--button-bg-hover)" />
-      <circle class="moon" cx="16" cy="8" r="9" fill="#121629" />
-      <g class="sun-rays" stroke="var(--button-bg-hover)">
-        <line x1="12" y1="1" x2="12" y2="4"/>
-        <line x1="12" y1="20" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
-        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="4" y2="12"/>
-        <line x1="20" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
-        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+  <canvas id="rippleCanvas" aria-hidden="true"></canvas>
+
+  <button id="themeToggle" aria-label="Toggle light and dark mode" aria-pressed="false" role="switch" title="Toggle light/dark mode">
+    <svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" >
+      <!-- Sun by default -->
+      <circle cx="12" cy="12" r="5" />
+      <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
       </g>
     </svg>
   </button>
@@ -419,68 +388,106 @@
     // Dark/light mode toggle logic with persistence
     const themeToggleBtn = document.getElementById('themeToggle');
     const bodyEl = document.body;
+    const themeIcon = document.getElementById('themeIcon');
+
+    // Set icon paths for sun/moon shapes
+    // We'll swap the SVG content for toggle with smooth fade
+
+    const sunSVG = `
+      <circle cx="12" cy="12" r="5" />
+      <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </g>
+    `;
+
+    const moonSVG = `
+      <path fill="currentColor" d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.79 9.79z"/>
+    `;
 
     // Load stored theme or default to dark
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
       bodyEl.classList.add('light-theme');
       themeToggleBtn.setAttribute('aria-pressed', 'true');
+      themeIcon.innerHTML = moonSVG;
     } else {
       bodyEl.classList.remove('light-theme');
       themeToggleBtn.setAttribute('aria-pressed', 'false');
+      themeIcon.innerHTML = sunSVG;
     }
 
     // Toggle function
     themeToggleBtn.addEventListener('click', () => {
       if (bodyEl.classList.contains('light-theme')) {
+        // Switch to dark
         bodyEl.classList.remove('light-theme');
         localStorage.setItem('theme', 'dark');
         themeToggleBtn.setAttribute('aria-pressed', 'false');
+        themeIcon.innerHTML = sunSVG;
       } else {
+        // Switch to light
         bodyEl.classList.add('light-theme');
         localStorage.setItem('theme', 'light');
         themeToggleBtn.setAttribute('aria-pressed', 'true');
+        themeIcon.innerHTML = moonSVG;
       }
     });
 
-    // --- Water ripple effect ---
+    // --- Realistic water ripple effect ---
+
     const canvas = document.getElementById('rippleCanvas');
     const ctx = canvas.getContext('2d');
 
     let width, height;
-    let drops = [];
+    let ripples = [];
 
     function resize() {
       width = window.innerWidth;
       height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = width * devicePixelRatio;
+      canvas.height = height * devicePixelRatio;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(devicePixelRatio, devicePixelRatio);
     }
     resize();
     window.addEventListener('resize', resize);
 
-    // Drop object
-    class Drop {
+    class Ripple {
       constructor(x, y) {
         this.x = x;
         this.y = y;
         this.radius = 0;
-        this.maxRadius = 60 + Math.random() * 40;
-        this.lineWidth = 2;
-        this.alpha = 0.3;
-        this.growthRate = 1 + Math.random() * 1.5;
+        this.maxRadius = 120 + Math.random() * 60;
+        this.alpha = 0.35 + Math.random() * 0.15;
+        this.lineWidth = 3;
+        this.speed = 1 + Math.random() * 0.7;
       }
       update() {
-        this.radius += this.growthRate;
-        this.alpha -= 0.005;
+        this.radius += this.speed;
+        this.alpha -= 0.003;
         if (this.alpha < 0) this.alpha = 0;
       }
       draw(ctx) {
+        // Create soft gradient ring ripple
+        const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.85, this.x, this.y, this.radius);
+        gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
+        gradient.addColorStop(0.85, `rgba(255, 255, 255, ${this.alpha * 0.25})`);
+        gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(138, 120, 255, ${this.alpha})`;
+        ctx.strokeStyle = gradient;
         ctx.lineWidth = this.lineWidth;
-        ctx.shadowColor = `rgba(138, 120, 255, ${this.alpha * 0.7})`;
-        ctx.shadowBlur = 10;
+        ctx.shadowColor = `rgba(255,255,255,${this.alpha * 0.3})`;
+        ctx.shadowBlur = 8;
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.stroke();
       }
@@ -489,20 +496,50 @@
       }
     }
 
-    // Handle mouse moves
+    // Smaller droplets for extra realism
+    class Drop {
+      constructor(x, y) {
+        this.x = x + (Math.random() * 20 - 10);
+        this.y = y + (Math.random() * 20 - 10);
+        this.radius = 1 + Math.random() * 1.5;
+        this.alpha = 0.5 + Math.random() * 0.3;
+        this.speed = 0.05 + Math.random() * 0.05;
+        this.dy = -this.speed * 0.8;
+      }
+      update() {
+        this.y += this.dy;
+        this.alpha -= 0.008;
+        if (this.alpha < 0) this.alpha = 0;
+      }
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.shadowColor = `rgba(255,255,255,${this.alpha * 0.8})`;
+        ctx.shadowBlur = 4;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      isDead() {
+        return this.alpha <= 0;
+      }
+    }
+
     window.addEventListener('mousemove', (e) => {
-      drops.push(new Drop(e.clientX, e.clientY));
+      ripples.push(new Ripple(e.clientX, e.clientY));
+      // Add a few drops per move for water splatter effect
+      for (let i = 0; i < 3; i++) {
+        ripples.push(new Drop(e.clientX, e.clientY));
+      }
     });
 
-    // Animation loop
     function animate() {
       ctx.clearRect(0, 0, width, height);
 
-      for (let i = drops.length - 1; i >= 0; i--) {
-        drops[i].update();
-        drops[i].draw(ctx);
-        if (drops[i].isDead()) {
-          drops.splice(i, 1);
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        ripples[i].update();
+        ripples[i].draw(ctx);
+        if (ripples[i].isDead()) {
+          ripples.splice(i, 1);
         }
       }
 
