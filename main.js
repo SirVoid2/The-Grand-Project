@@ -1,4 +1,3 @@
-<script>
 // ======================
 // AI + HAHA
 // ======================
@@ -142,4 +141,3 @@ clearChatBtn.addEventListener("click", () => {
 
 // ---- Initialize ----
 renderChatlog();
-</script>
