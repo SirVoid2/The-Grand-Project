@@ -1,340 +1,429 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Grand Project - AI Math + Code + Language</title>
+// THEME TOGGLE
+const toggle = document.getElementById("themeToggle");
+toggle.addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+  toggle.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
+});
 
-  <!-- Math.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
+const log = document.getElementById("chatlog");
+const input = document.getElementById("userText");
+const sendBtn = document.getElementById("sendBtn");
 
-  <!-- MathJax for LaTeX -->
-  <script>
-    window.MathJax = {
-      tex: { inlineMath: [['$', '$']] },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-
-  <!-- Prism.js for syntax highlighting -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-
-  <!-- Prettier for code formatting -->
-  <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
-  <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script>
-
-  <style>
-    :root {
-      --bg: #111;
-      --text: #eee;
-      --accent: #8a78ff;
-      --card-bg: rgba(20, 20, 40, 0.85);
-    }
-
-    body.light-theme {
-      --bg: #f4f4f4;
-      --text: #222;
-      --accent: #5a4edd;
-      --card-bg: #ffffffcc;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--card-bg);
-      padding: 24px 40px;
-      border-radius: 16px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.3);
-      width: 90vw;
-      max-width: 700px;
-      text-align: center;
-      z-index: 10;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-      color: var(--accent);
-    }
-
-    a {
-      display: inline-block;
-      margin: 0 10px 12px;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s;
-    }
-
-    a:hover {
-      color: var(--text);
-    }
-
-    #themeToggle {
-      position: fixed;
-      top: 15px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--accent);
-      z-index: 100;
-    }
-
-    #chatbox {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90vw;
-      max-width: 700px;
-      height: 50vh;
-      background: var(--card-bg);
-      border-radius: 12px 12px 0 0;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      padding: 10px 16px;
-      z-index: 10;
-    }
-
-    #chatlog {
-      flex: 1;
-      overflow-y: auto;
-      font-size: 0.95rem;
-      padding-right: 5px;
-    }
-
-    .msg {
-      margin: 6px 0;
-      white-space: pre-wrap;
-    }
-
-    .bot { color: var(--accent); }
-    .user { font-weight: 600; }
-
-    #userInput {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    #userText {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      outline: none;
-      font-size: 1rem;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    #sendBtn {
-      background: var(--accent);
-      border: none;
-      color: white;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    pre {
-      background: #222;
-      padding: 10px;
-      border-radius: 8px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
-
-<button id="themeToggle" title="Toggle Theme">🌙</button>
-
-<div class="container">
-  <h1>Welcome to The Grand Project</h1>
-  <a href="https://discord.com/app" target="_blank">Discord</a>
-  <a href="https://open.spotify.com/" target="_blank">Spotify</a>
-  <a href="https://play.geforcenow.com/mall/" target="_blank">Geforce Now</a>
-  <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
-</div>
-
-<div id="chatbox">
-  <div id="chatlog"></div>
-  <div id="userInput">
-    <input type="text" id="userText" placeholder="Ask the AI something..." autocomplete="off" />
-    <button id="sendBtn">Send</button>
-  </div>
-</div>
-
-<script>
-  // THEME TOGGLE
-  const toggle = document.getElementById("themeToggle");
-  toggle.addEventListener("click", () => {
-    document.body.classList.toggle("light-theme");
-    toggle.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
-  });
-
-  const log = document.getElementById("chatlog");
-  const input = document.getElementById("userText");
-  const sendBtn = document.getElementById("sendBtn");
-
-  function addMsg(type, text, raw = false) {
-    const el = document.createElement("div");
-    el.className = `msg ${type}`;
-    if (raw) {
-      el.innerHTML = text;
-      if (type === 'bot') {
-        MathJax.typesetPromise([el]);
-        Prism.highlightAllUnder(el);
-      }
-    } else {
-      el.textContent = text;
-    }
-    log.appendChild(el);
-    log.scrollTop = log.scrollHeight;
+function addMsg(type, textOrNode) {
+  const el = document.createElement("div");
+  el.className = `msg ${type}`;
+  if (typeof textOrNode === "string") {
+    el.textContent = textOrNode;
+  } else {
+    el.appendChild(textOrNode);
   }
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
 
-  sendBtn.onclick = () => {
-    const val = input.value.trim();
-    if (!val) return;
-    addMsg("user", val);
-    input.value = "";
-    setTimeout(() => botReply(val), 300);
+function getTime() {
+  return new Date().toLocaleTimeString();
+}
+
+function getDate() {
+  return new Date().toLocaleDateString();
+}
+
+// -----------------------
+// CODE EXPLANATIONS
+// -----------------------
+function explainCodeLang(code, lang) {
+  const keywords = {
+    python: {
+      def: "Defines a function.",
+      import: "Imports a module.",
+      class: "Defines a class.",
+      return: "Returns a value from a function.",
+      for: "Starts a for loop.",
+      if: "Conditional statement.",
+      elif: "Else if conditional.",
+      else: "Else conditional block."
+    },
+    javascript: {
+      function: "Defines a function.",
+      const: "Declares a constant variable.",
+      let: "Declares a block-scoped variable.",
+      var: "Declares a variable.",
+      return: "Returns a value from a function.",
+      if: "Conditional statement.",
+      else: "Else conditional block.",
+      for: "Starts a for loop.",
+      class: "Defines a class."
+    },
+    swift: {
+      func: "Defines a function.",
+      let: "Declares a constant.",
+      var: "Declares a variable.",
+      return: "Returns a value.",
+      if: "Conditional statement.",
+      else: "Else block.",
+      class: "Defines a class.",
+      enum: "Defines an enumeration.",
+      protocol: "Defines a protocol."
+    }
   };
+  const explanations = keywords[lang.toLowerCase()];
+  if (!explanations) return `Sorry, I don't have explanations for ${lang}.`;
 
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") sendBtn.click();
-  });
+  // Find first keyword in code
+  const words = code.match(/\b\w+\b/g);
+  if (!words) return "No keywords detected.";
+  for (const word of words) {
+    if (explanations[word]) {
+      return `Keyword "${word}": ${explanations[word]}`;
+    }
+  }
+  return "No recognized keywords found in code.";
+}
 
-  function isCodeInput(msg) {
-    // Simple heuristic: if starts with "run code:" or "format code:"
-    return msg.trim().toLowerCase().startsWith("run code:") || msg.trim().toLowerCase().startsWith("format code:");
+// -----------------------
+// TRANSLATIONS (simple word-based)
+// -----------------------
+const dictionaries = {
+  french: {
+    hello: "bonjour",
+    world: "monde",
+    how: "comment",
+    are: "êtes",
+    you: "vous",
+    thank: "merci",
+    yes: "oui",
+    no: "non",
+    please: "s'il vous plaît",
+    goodbye: "au revoir"
+  },
+  german: {
+    hello: "hallo",
+    world: "welt",
+    how: "wie",
+    are: "bist",
+    you: "du",
+    thank: "danke",
+    yes: "ja",
+    no: "nein",
+    please: "bitte",
+    goodbye: "auf wiedersehen"
+  },
+  chinese: {
+    hello: "你好",
+    world: "世界",
+    how: "怎么",
+    are: "是",
+    you: "你",
+    thank: "谢谢",
+    yes: "是",
+    no: "不",
+    please: "请",
+    goodbye: "再见"
+  },
+  italian: {
+    hello: "ciao",
+    world: "mondo",
+    how: "come",
+    are: "sei",
+    you: "tu",
+    thank: "grazie",
+    yes: "sì",
+    no: "no",
+    please: "per favore",
+    goodbye: "arrivederci"
+  }
+};
+
+function translatePhrase(phrase, lang) {
+  lang = lang.toLowerCase();
+  if (!dictionaries[lang]) return `Sorry, I don't support translation to ${lang}.`;
+
+  const dict = dictionaries[lang];
+  const words = phrase.toLowerCase().split(/\s+/);
+  let result = words.map(w => dict[w] || w).join(' ');
+  return `Translation (${lang}): ${result}`;
+}
+
+// -----------------------
+// MATH CAPABILITIES
+// -----------------------
+function isPrime(num) {
+  if (num <= 1) return false;
+  if (num <= 3) return true;
+  if (num % 2 === 0 || num % 3 === 0) return false;
+  for (let i = 5; i * i <= num; i += 6) {
+    if (num % i === 0 || num % (i + 2) === 0) return false;
+  }
+  return true;
+}
+
+function factorial(n) {
+  if (n < 0) return "No factorial for negative numbers";
+  if (n === 0) return 1;
+  let f = 1;
+  for (let i = 1; i <= n; i++) f *= i;
+  return f;
+}
+
+function fibonacci(n) {
+  if (n <= 0) return 0;
+  if (n === 1) return 1;
+  let a = 0, b = 1;
+  for (let i = 2; i <= n; i++) {
+    [a, b] = [b, a + b];
+  }
+  return b;
+}
+
+function matrixInverse(mat) {
+  try {
+    const m = math.matrix(mat);
+    const inv = math.inv(m);
+    return inv.toString();
+  } catch {
+    return "Invalid matrix or non-invertible.";
+  }
+}
+
+function calculateMathQuery(query) {
+  query = query.toLowerCase();
+
+  // factorial n
+  let fMatch = query.match(/factorial\s+(\d+)/);
+  if (fMatch) {
+    const n = parseInt(fMatch[1]);
+    return `Factorial of ${n} is ${factorial(n)}`;
   }
 
-  function botReply(msg) {
-    const cleaned = msg.toLowerCase();
+  // prime check
+  let pMatch = query.match(/is\s+(\d+)\s+prime/);
+  if (pMatch) {
+    const n = parseInt(pMatch[1]);
+    return isPrime(n) ? `${n} is prime.` : `${n} is not prime.`;
+  }
 
+  // fibonacci n
+  let fibMatch = query.match(/fibonacci\s+(\d+)/);
+  if (fibMatch) {
+    const n = parseInt(fibMatch[1]);
+    return `Fibonacci number at position ${n} is ${fibonacci(n)}`;
+  }
+
+  // mean of numbers
+  let meanMatch = query.match(/mean\s+of\s+([\d\s,]+)/);
+  if (meanMatch) {
+    const nums = meanMatch[1].split(/[,\s]+/).map(Number);
+    const mean = nums.reduce((a,b)=>a+b,0)/nums.length;
+    return `Mean is ${mean}`;
+  }
+
+  // median of numbers
+  let medianMatch = query.match(/median\s+of\s+([\d\s,]+)/);
+  if (medianMatch) {
+    const nums = medianMatch[1].split(/[,\s]+/).map(Number).sort((a,b)=>a-b);
+    const mid = Math.floor(nums.length / 2);
+    const median = nums.length % 2 !== 0 ? nums[mid] : (nums[mid-1] + nums[mid])/2;
+    return `Median is ${median}`;
+  }
+
+  // mode of numbers
+  let modeMatch = query.match(/mode\s+of\s+([\d\s,]+)/);
+  if (modeMatch) {
+    const nums = modeMatch[1].split(/[,\s]+/).map(Number);
+    const freq = {};
+    nums.forEach(n => freq[n] = (freq[n]||0) + 1);
+    let maxFreq = 0, modes = [];
+    for (const n in freq) {
+      if (freq[n] > maxFreq) {
+        maxFreq = freq[n];
+        modes = [n];
+      } else if (freq[n] === maxFreq) {
+        modes.push(n);
+      }
+    }
+    return `Mode(s): ${modes.join(", ")}`;
+  }
+
+  // matrix inverse [[a,b],[c,d]]
+  let matMatch = query.match(/matrix inverse\s*\[\[([^\]]+)\]\]/);
+  if (matMatch) {
     try {
-      if (isCodeInput(msg)) {
-        if (cleaned.startsWith("run code:")) {
-          const code = msg.slice(9).trim();
-          try {
-            const result = eval(code);
-            const output = (typeof result === 'undefined') ? "undefined" : JSON.stringify(result, null, 2);
-            addMsg("bot", `> Running JavaScript:\n<pre><code class="language-js">${escapeHtml(code)}</code></pre>\nResult:\n<pre><code>${escapeHtml(output)}</code></pre>`, true);
-          } catch (e) {
-            addMsg("bot", `Error running code: ${e.message}`);
-          }
-        } else if (cleaned.startsWith("format code:")) {
-          const code = msg.slice(12).trim();
-          try {
-            const formatted = prettier.format(code, {
-              parser: "babel",
-              plugins: prettierPlugins,
-              printWidth: 60,
-              tabWidth: 2,
-              useTabs: false,
-              semi: true,
-              singleQuote: true,
-            });
-            addMsg("bot", `> Original code:\n<pre><code class="language-js">${escapeHtml(code)}</code></pre>\n> Formatted code:\n<pre><code class="language-js">${escapeHtml(formatted)}</code></pre>`, true);
-          } catch (e) {
-            addMsg("bot", `Error formatting code: ${e.message}`);
-          }
-        }
-        return;
-      }
-
-      // MATH commands
-      if (cleaned.includes("simplify")) {
-        const expr = msg.replace(/simplify/i, "").trim();
-        const simplified = math.simplify(expr).toString();
-        return addMsg("bot", `Simplified: $$${simplified}$$`, true);
-      }
-
-      if (cleaned.includes("solve")) {
-        const expr = msg.replace(/solve/i, "").trim();
-        const equation = expr.includes('=') ? expr : `${expr} = 0`;
-        // math.solve returns an array or object — we convert to string safely
-        const res = math.solve ? math.solve(equation, 'x') : null;
-        if (res) {
-          return addMsg("bot", `Solution: $$x = ${res.toString()}$$`, true);
-        } else {
-          // fallback: evaluate normally
-          const result = math.evaluate(expr);
-          return addMsg("bot", `Result: $$${math.format(result)}$$`, true);
-        }
-      }
-
-      if (cleaned.includes("derivative of") || cleaned.includes("differentiate")) {
-        const expr = msg.replace(/derivative of|differentiate/i, "").trim();
-        try {
-          const deriv = math.derivative(expr, 'x').toString();
-          return addMsg("bot", `Derivative: $$${deriv}$$`, true);
-        } catch {
-          return addMsg("bot", "Sorry, I couldn't compute the derivative.");
-        }
-      }
-
-      if (cleaned.includes("convert")) {
-        try {
-          const res = math.evaluate(msg);
-          return addMsg("bot", `Conversion Result: $$${math.format(res)}$$`, true);
-        } catch {
-          return addMsg("bot", "Sorry, I couldn't convert that.");
-        }
-      }
-
-      // General math fallback:
-      try {
-        const res = math.evaluate(msg);
-        return addMsg("bot", `Result: $$${math.format(res)}$$`, true);
-      } catch {}
-
-      // Basic greetings and language
-      if (cleaned.includes("hi") || cleaned.includes("hello")) {
-        return addMsg("bot", "Hello there! 👋");
-      }
-      if (cleaned.includes("help")) {
-        return addMsg("bot", `You can ask me to:\n- Simplify math expressions (e.g., simplify x^2 + 2x + 1)\n- Solve equations (e.g., solve 2x + 3 = 7)\n- Differentiate (e.g., derivative of sin(x))\n- Convert units (e.g., convert 5 km to m)\n- Run JavaScript code: run code: console.log("hello")\n- Format JavaScript code: format code: var x=1+2;`);
-      }
-
-      addMsg("bot", "Sorry, I didn't understand that. Try asking math questions or code commands (run code: ... or format code: ...).");
-    } catch (e) {
-      addMsg("bot", `Error: ${e.message}`);
+      const matStr = "[[" + matMatch[1] + "]]";
+      const mat = JSON.parse(matStr);
+      return "Matrix inverse:\n" + matrixInverse(mat);
+    } catch {
+      return "Invalid matrix format.";
     }
   }
 
-  // Escape HTML for safe display inside <pre><code>
-  function escapeHtml(text) {
-    return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+  // Default to mathjs eval
+  try {
+    const res = math.evaluate(query);
+    return `Result: ${res}`;
+  } catch {
+    return "Sorry, I couldn't parse that math expression.";
   }
-</script>
+}
 
-</body>
-</html>
+// -----------------------
+// JOKES & FUN RESPONSES
+// -----------------------
+const jokes = {
+  tech: [
+    "Why do programmers prefer dark mode? Because light attracts bugs!",
+    "There are 10 types of people in the world: those who understand binary and those who don't.",
+    "Debugging: Being the detective in a crime movie where you are also the murderer."
+  ],
+  puns: [
+    "I would tell you a UDP joke, but you might not get it.",
+    "Why was the JavaScript developer sad? Because he didn't Node how to Express himself.",
+    "CSS walks into a bar, sees HTML and says, 'You look good today!'"
+  ],
+  dad: [
+    "I'm reading a book on anti-gravity. It's impossible to put down!",
+    "Why did the scarecrow win an award? Because he was outstanding in his field.",
+    "I told my wife she was drawing her eyebrows too high. She looked surprised."
+  ],
+  encouragement: [
+    "Keep pushing forward, you're doing great!",
+    "Mistakes are proof that you are trying.",
+    "Every expert was once a beginner."
+  ],
+  facts: [
+    "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion.",
+    "Honey never spoils. Archaeologists have found edible honey in ancient Egyptian tombs.",
+    "Octopuses have three hearts."
+  ]
+};
+
+function getRandomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// -----------------------
+// CODE ANALYSIS
+// -----------------------
+
+// Simple Python linting (detect missing colons in control structures)
+function lintPython(code) {
+  const lines = code.split('\n');
+  const errors = [];
+  const keywords = ['if', 'for', 'while', 'def', 'class', 'elif', 'else', 'try', 'except', 'with'];
+
+  lines.forEach((line, idx) => {
+    for (const kw of keywords) {
+      if (line.trim().startsWith(kw) && !line.trim().endsWith(':')) {
+        errors.push(`Line ${idx + 1}: Missing colon after '${kw}'`);
+      }
+    }
+  });
+  if (errors.length === 0) return "No linting errors found.";
+  return errors.join('\n');
+}
+
+// Run JavaScript code safely (basic sandbox using Function)
+function runJSCode(code) {
+  try {
+    let result = Function('"use strict";return (' + code + ')')();
+    return `JavaScript Result: ${result}`;
+  } catch (e) {
+    return `JavaScript Error: ${e.message}`;
+  }
+}
+
+// -----------------------
+// MAIN BOT REPLY FUNCTION
+// -----------------------
+function botReply(msg) {
+  const lower = msg.toLowerCase();
+
+  if (lower.includes("help")) {
+    return `You can ask me to:
+- Explain code (e.g. "Explain this python code: def foo():")
+- Do math (e.g. "factorial 5", "is 17 prime?", "mean of 1,2,3,4")
+- Translate (e.g. "translate hello world to french")
+- Tell a joke (e.g. "tell me a tech joke")
+- Analyze code (e.g. "lint this python code", "run this js code")`;
+  }
+
+  // Code explanation
+  let explainMatch = msg.match(/explain (?:this )?(\w+) code:([\s\S]+)/i);
+  if (explainMatch) {
+    const lang = explainMatch[1];
+    const code = explainMatch[2].trim();
+    return explainCodeLang(code, lang);
+  }
+
+  // Translation
+  let transMatch = msg.match(/translate ([\w\s]+) to (\w+)/i);
+  if (transMatch) {
+    const phrase = transMatch[1].trim();
+    const lang = transMatch[2].trim();
+    return translatePhrase(phrase, lang);
+  }
+
+  // Jokes
+  if (lower.includes("joke")) {
+    if (lower.includes("tech")) return getRandomFrom(jokes.tech);
+    if (lower.includes("pun")) return getRandomFrom(jokes.puns);
+    if (lower.includes("dad")) return getRandomFrom(jokes.dad);
+    if (lower.includes("encouragement")) return getRandomFrom(jokes.encouragement);
+    if (lower.includes("fact")) return getRandomFrom(jokes.facts);
+    return getRandomFrom([...jokes.tech, ...jokes.puns, ...jokes.dad, ...jokes.encouragement, ...jokes.facts]);
+  }
+
+  // Lint Python code
+  let lintMatch = msg.match(/lint this python code:([\s\S]+)/i);
+  if (lintMatch) {
+    const code = lintMatch[1].trim();
+    return lintPython(code);
+  }
+
+  // Run JS code
+  let runJsMatch = msg.match(/run this js code:([\s\S]+)/i);
+  if (runJsMatch) {
+    const code = runJsMatch[1].trim();
+    return runJSCode(code);
+  }
+
+  // Math queries
+  if (lower.match(/factorial|prime|fibonacci|mean|median|mode|matrix inverse|[\d+\-\/*\^()]/)) {
+    return calculateMathQuery(msg);
+  }
+
+  // Greetings
+  if (lower.includes("hi") || lower.includes("hello")) {
+    return "Hello there! 👋 How can I help you today?";
+  }
+
+  if (lower.includes("date")) {
+    return `Today's date is ${getDate()}`;
+  }
+
+  if (lower.includes("time")) {
+    return `Current time is ${getTime()}`;
+  }
+
+  return "Sorry, I didn't understand that. Try asking for help.";
+}
+
+// -----------------------
+// USER INTERACTION
+// -----------------------
+sendBtn.onclick = () => {
+  const val = input.value.trim();
+  if (!val) return;
+  addMsg("user", val);
+  input.value = "";
+  setTimeout(() => {
+    addMsg("bot", botReply(val));
+  }, 500);
+};
+
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendBtn.click();
+});
+
+// Initial greeting
+addMsg("bot", "Hi! I can explain code, do math, translate, tell jokes, and analyze code. Type 'help' for ideas.");
