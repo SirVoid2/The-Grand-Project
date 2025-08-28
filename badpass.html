@@ -17,12 +17,38 @@
       font-size: 24px;
       text-align: center;
     }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(45deg, #ff4c4c, #b30000);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(255, 76, 76, 0.6);
+    }
   </style>
 </head>
 <body>
-  <div>
-    <p><strong>Access Denied</strong></p>
-    <p>Unauthorized Access Nice Try Bucko.</p>
+  <div class="container">
+    <div>
+      <p><strong>Access Denied</strong></p>
+      <p>Unauthorized Access Nice Try Bucko.</p>
+    </div>
+    <button class="btn" onclick="window.location.href='index.html'">🔑 Back to Login</button>
   </div>
 </body>
 </html>
