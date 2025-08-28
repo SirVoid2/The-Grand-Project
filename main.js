@@ -1,3 +1,4 @@
+<script>
 // ======================
 // AI + HAHA
 // ======================
@@ -16,6 +17,12 @@ document.getElementById("toggleIframe").onclick = () => {
   assistantPanel.classList.remove("visible");
 };
 
+document.getElementById("themeToggle").onclick = () => {
+  playClick();
+  document.body.classList.toggle("light-theme");
+  document.getElementById("themeToggle").textContent =
+    document.body.classList.contains("light-theme") ? "☀️" : "🌙";
+};
 
 // ======================
 // Click Sounds
@@ -75,21 +82,38 @@ async function botReply(message) {
   conversationHistory.push({ role: "user", content: message });
 
   try {
-    // Example: HuggingFace free inference (replace with your own model if needed)
-    const response = await fetch("https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inputs: message }),
-    });
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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"
+        },
+        body: JSON.stringify({ inputs: message }),
+      }
+    );
 
     const data = await response.json();
     const reply = data?.generated_text || "⚠️ No reply from AI.";
 
-    typingMsg.textContent = reply;
+    // Typing animation effect
+    typingMsg.textContent = "";
     typingMsg.classList.remove("typing");
 
-    chatlogMessages.push({ sender: "bot", text: reply });
-    conversationHistory.push({ role: "assistant", content: reply });
+    const words = reply.split(" ");
+    let i = 0;
+    const interval = setInterval(() => {
+      typingMsg.textContent += (i > 0 ? " " : "") + words[i];
+      chatlog.scrollTop = chatlog.scrollHeight;
+      i++;
+      if (i >= words.length) {
+        clearInterval(interval);
+        chatlogMessages.push({ sender: "bot", text: typingMsg.textContent });
+        conversationHistory.push({ role: "assistant", content: reply });
+      }
+    }, 60);
+
   } catch (e) {
     typingMsg.textContent = "⚠️ Error: AI service not available.";
     typingMsg.classList.remove("typing");
@@ -118,3 +142,4 @@ clearChatBtn.addEventListener("click", () => {
 
 // ---- Initialize ----
 renderChatlog();
+</script>
