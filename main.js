@@ -16,12 +16,6 @@ document.getElementById("toggleIframe").onclick = () => {
   assistantPanel.classList.remove("visible");
 };
 
-document.getElementById("themeToggle").onclick = () => {
-  playClick();
-  document.body.classList.toggle("light-theme");
-  document.getElementById("themeToggle").textContent =
-    document.body.classList.contains("light-theme") ? "☀️" : "🌙";
-};
 
 // ======================
 // Click Sounds
