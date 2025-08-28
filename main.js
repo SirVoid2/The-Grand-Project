@@ -40,78 +40,30 @@ document.querySelectorAll("button, .sidebar a").forEach((el) => {
 });
 
 // ======================
-// Chatbot Logic (with memory + persistence)
+// Chatbot Logic (NO persistence)
 // ======================
 const chatlog = document.getElementById("chatlog");
 const userInputForm = document.getElementById("userInput");
 const userText = document.getElementById("userText");
 const clearChatBtn = document.getElementById("clearChatBtn");
 
-// Storage keys
-const LS_KEY_HISTORY = "grand_project_conversation_history_v1";
-const LS_KEY_CHATLOG = "grand_project_chatlog_v1";
-
-// In-memory structures
-let conversationHistory = [];   // [{role:"user"|"assistant", content:string}, ...]
-let chatlogMessages = [];       // [{sender:"user"|"bot", text:string}...]
-
-// ---- Helpers: Save / Load ----
-function saveState() {
-  const MAX_TURNS = 60;
-  const trimmedHistory =
-    conversationHistory.length > MAX_TURNS * 2
-      ? conversationHistory.slice(conversationHistory.length - MAX_TURNS * 2)
-      : conversationHistory;
-
-  const MAX_MSGS = 200;
-  const trimmedChatlog =
-    chatlogMessages.length > MAX_MSGS
-      ? chatlogMessages.slice(chatlogMessages.length - MAX_MSGS)
-      : chatlogMessages;
-
-  try {
-    localStorage.setItem(LS_KEY_HISTORY, JSON.stringify(trimmedHistory));
-    localStorage.setItem(LS_KEY_CHATLOG, JSON.stringify(trimmedChatlog));
-  } catch (e) {
-    try {
-      const halfHistory = trimmedHistory.slice(Math.floor(trimmedHistory.length / 2));
-      const halfChatlog = trimmedChatlog.slice(Math.floor(trimmedChatlog.length / 2));
-      localStorage.setItem(LS_KEY_HISTORY, JSON.stringify(halfHistory));
-      localStorage.setItem(LS_KEY_CHATLOG, JSON.stringify(halfChatlog));
-    } catch (_) {}
-  }
-}
-
-function loadState() {
-  try {
-    const h = JSON.parse(localStorage.getItem(LS_KEY_HISTORY) || "[]");
-    const c = JSON.parse(localStorage.getItem(LS_KEY_CHATLOG) || "[]");
-    if (Array.isArray(h)) conversationHistory = h;
-    if (Array.isArray(c)) chatlogMessages = c;
-  } catch {
-    conversationHistory = [];
-    chatlogMessages = [];
-  }
-}
+// In-memory structures (reset on refresh)
+let conversationHistory = [];
+let chatlogMessages = [];
 
 // ---- UI rendering ----
 function addMessage(text, sender, isTyping = false) {
   const msgDiv = document.createElement("div");
   msgDiv.className = `msg ${sender}`;
-  if (isTyping) {
-    msgDiv.classList.add("typing");
-    msgDiv.textContent = "🤖 typing…";
-  } else {
-    msgDiv.textContent = text;
-    chatlogMessages.push({ sender, text });
-    saveState();
-  }
+  msgDiv.textContent = isTyping ? "🤖 typing…" : text;
   chatlog.appendChild(msgDiv);
   chatlog.scrollTop = chatlog.scrollHeight;
+
+  if (!isTyping) chatlogMessages.push({ sender, text });
   return msgDiv;
 }
 
-function renderChatlogFromState() {
+function renderChatlog() {
   chatlog.innerHTML = "";
   for (const m of chatlogMessages) {
     const msgDiv = document.createElement("div");
@@ -127,34 +79,27 @@ async function botReply(message) {
   const typingMsg = addMessage("", "bot", true);
 
   conversationHistory.push({ role: "user", content: message });
-  saveState();
 
   try {
-    const response = await puter.ai.chat(conversationHistory);
+    // Example: HuggingFace free inference (replace with your own model if needed)
+    const response = await fetch("https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ inputs: message }),
+    });
 
-    conversationHistory.push({ role: "assistant", content: response });
-    saveState();
+    const data = await response.json();
+    const reply = data?.generated_text || "⚠️ No reply from AI.";
 
-    typingMsg.textContent = "";
+    typingMsg.textContent = reply;
     typingMsg.classList.remove("typing");
 
-    const words = response.split(" ");
-    let i = 0;
-    const interval = setInterval(() => {
-      typingMsg.textContent += (i > 0 ? " " : "") + words[i];
-      chatlog.scrollTop = chatlog.scrollHeight;
-      i++;
-      if (i >= words.length) {
-        clearInterval(interval);
-        chatlogMessages.push({ sender: "bot", text: typingMsg.textContent });
-        saveState();
-      }
-    }, 60);
+    chatlogMessages.push({ sender: "bot", text: reply });
+    conversationHistory.push({ role: "assistant", content: reply });
   } catch (e) {
     typingMsg.textContent = "⚠️ Error: AI service not available.";
     typingMsg.classList.remove("typing");
     chatlogMessages.push({ sender: "bot", text: typingMsg.textContent });
-    saveState();
   }
 }
 
@@ -165,7 +110,6 @@ userInputForm.addEventListener("submit", (e) => {
   if (!text) return;
   addMessage(text, "user");
   conversationHistory.push({ role: "user", content: text });
-  saveState();
   userText.value = "";
   setTimeout(() => botReply(text), 300);
 });
@@ -175,10 +119,8 @@ clearChatBtn.addEventListener("click", () => {
   playClick();
   conversationHistory = [];
   chatlogMessages = [];
-  saveState();
-  renderChatlogFromState();
+  renderChatlog();
 });
 
 // ---- Initialize ----
-loadState();
-renderChatlogFromState();
+renderChatlog();
