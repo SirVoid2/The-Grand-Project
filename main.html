@@ -6,77 +6,119 @@
   <title>The Grand Project</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css">
   <style>
+    /* Base styles */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #111;
       color: #eee;
-      display: none;
+      display: none; /* Hide until auth check passes */
       height: 100vh;
       overflow: hidden;
     }
 
     .sidebar {
       width: 220px;
-      background: #222;
+      background: rgba(34, 34, 34, 0.6);
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 10px #8a78ffaa;
+      border-radius: 0 12px 12px 0;
     }
 
     .sidebar h2 {
       font-size: 1.3rem;
       color: #8a78ff;
       margin-bottom: 12px;
+      text-shadow: 0 0 6px #8a78ff;
     }
 
-    .sidebar a {
-      color: #eee;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 8px;
-      border-radius: 6px;
-    }
-
-    .sidebar a:hover {
-      background: #8a78ff;
-      color: #111;
-    }
-
-    .sidebar button {
-      margin-top: 10px;
-      padding: 10px;
-      background: #8a78ff;
+    /* Glass/blurred buttons */
+    button, .sidebar a {
+      background: rgba(138, 120, 255, 0.3);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
+      padding: 10px 16px;
+      font-family: 'Segoe UI', sans-serif;
+      box-sizing: border-box;
+      text-decoration: none;
+      text-align: center;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 8px transparent;
+      display: inline-block;
     }
-    
+
+    button:hover, .sidebar a:hover {
+      background: rgba(138, 120, 255, 0.5);
+      box-shadow: 0 0 12px #8a78ff, 0 0 20px #a99aff;
+      color: #fff;
+    }
+
+    /* Remove default underline on sidebar links and make them block for easier clicking */
+    .sidebar a {
+      display: block;
+    }
+
+    #themeToggle {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 16px;
+      /* Same button styles as sidebar buttons */
+      background: rgba(138, 120, 255, 0.3);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 10px 16px;
+      font-family: 'Segoe UI', sans-serif;
+      box-sizing: border-box;
+      text-align: center;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 8px transparent;
+      display: inline-block;
+    }
+    #themeToggle:hover {
+      background: rgba(138, 120, 255, 0.5);
+      box-shadow: 0 0 12px #8a78ff, 0 0 20px #a99aff;
+      color: #fff;
+    }
+
     .chat-container {
       flex: 1;
       display: flex;
       flex-direction: column;
       margin: 20px;
-      background: #222;
+      background: rgba(34, 34, 34, 0.6);
       border-radius: 12px;
       overflow: hidden;
       height: 100%;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px #8a78ffaa;
     }
 
     .chat-header {
       padding: 16px;
       font-size: 1.5rem;
-      background: #1c1c2e;
+      background: rgba(28, 28, 46, 0.8);
       border-bottom: 1px solid #8a78ff;
+      text-shadow: 0 0 6px #8a78ff;
     }
 
     #chatlog {
       flex: 1;
       padding: 20px;
       overflow-y: auto;
+      color: #ccc;
     }
 
     .msg {
@@ -87,6 +129,7 @@
     .msg.user {
       text-align: right;
       font-weight: bold;
+      color: #ddd;
     }
 
     .msg.bot {
@@ -97,7 +140,8 @@
       display: flex;
       padding: 12px;
       border-top: 1px solid #444;
-      background: #1c1c2e;
+      background: rgba(28, 28, 46, 0.8);
+      backdrop-filter: blur(10px);
     }
 
     #userText {
@@ -107,53 +151,48 @@
       border-radius: 6px;
       font-size: 1rem;
       outline: none;
-      background: #333;
+      background: rgba(51, 51, 51, 0.6);
       color: #fff;
+      backdrop-filter: blur(5px);
+      box-shadow: inset 0 0 8px #8a78ff88;
     }
 
     #sendBtn {
       margin-left: 10px;
-      padding: 10px 16px;
-      background: #8a78ff;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #themeToggle {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 16px;
-      background: #8a78ff;
+      /* Same button style as sidebar buttons */
+      background: rgba(138, 120, 255, 0.3);
       color: white;
       border: none;
-      border-radius: 5px;
-      font-weight: bold;       /* match sidebar buttons */
+      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
-      padding: 10px;
+      padding: 10px 16px;
       font-family: 'Segoe UI', sans-serif;
       box-sizing: border-box;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 8px transparent;
     }
-    
-    #themeToggle:hover {
-      background: #a99aff;
+    #sendBtn:hover {
+      background: rgba(138, 120, 255, 0.5);
+      box-shadow: 0 0 12px #8a78ff, 0 0 20px #a99aff;
+      color: #fff;
     }
+
     .side-panel {
       position: fixed;
       top: 0;
-      right: -800px;
-      width: 800px;
+      right: -600px;
+      width: 600px;
       height: 100%;
-      background: #1c1c2e;
+      background: rgba(28, 28, 46, 0.9);
       transition: right 0.3s ease;
       z-index: 1000;
       display: flex;
       flex-direction: column;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px #8a78ffcc;
     }
+
     .side-panel.visible {
       right: 0;
     }
@@ -162,38 +201,46 @@
       width: 100%;
       height: 100%;
       border: none;
+      border-radius: 0 0 12px 12px;
+      background: #222;
+      backdrop-filter: blur(5px);
     }
   </style>
 </head>
 <body>
 
+  <!-- Sidebar Navigation -->
   <div class="sidebar">
     <h2>The Grand Project</h2>
-    <a href="https://discord.com/app" target="_blank">Discord</a>
-    <a href="https://open.spotify.com" target="_blank">Spotify</a>
-    <a href="https://play.geforcenow.com/mall" target="_blank">GeForce Now</a>
-    <a href="https://chatgpt.com" target="_blank">ChatGPT</a>
+    <a href="https://discord.com/app" target="_blank" rel="noopener noreferrer">Discord</a>
+    <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer">Spotify</a>
+    <a href="https://play.geforcenow.com/mall" target="_blank" rel="noopener noreferrer">GeForce Now</a>
+    <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
     <button id="toggleAssistant">Toggle AI Assistant</button>
     <button id="toggleIframe">Toggle Side Iframe</button>
   </div>
 
+  <!-- Theme Toggle -->
   <button id="themeToggle" title="Toggle Theme">🌙</button>
 
-  <div id="assistantPanel" class="side-panel">
+  <!-- AI Assistant Panel -->
+  <div id="assistantPanel" class="side-panel" aria-label="AI Assistant Panel">
     <div class="chat-container">
       <div class="chat-header">AI Assistant</div>
-      <div id="chatlog"></div>
+      <div id="chatlog" aria-live="polite" aria-relevant="additions"></div>
       <form id="userInput" autocomplete="off">
-        <input type="text" id="userText" placeholder="Ask me something…" />
-        <button type="submit" id="sendBtn">Send</button>
+        <input type="text" id="userText" placeholder="Ask me something…" aria-label="User input" />
+        <button type="submit" id="sendBtn" aria-label="Send message">Send</button>
       </form>
     </div>
   </div>
 
-  <div id="iframePanel" class="side-panel">
-    <iframe src="https://c08dc6fdc190.ngrok-free.app/"></iframe>
+  <!-- Iframe Panel -->
+  <div id="iframePanel" class="side-panel" aria-label="Side iframe panel">
+    <iframe src="https://example.com" title="Side Iframe Content"></iframe>
   </div>
 
+  <!-- Auth Check -->
   <script>
     const auth = 1;
     if (auth !== 1) {
@@ -201,16 +248,59 @@
     } else {
       document.body.style.display = "flex";
     }
+  </script>
 
+  <!-- Panel Toggle Logic -->
+  <script>
     const assistantPanel = document.getElementById("assistantPanel");
     const iframePanel = document.getElementById("iframePanel");
 
     document.getElementById("toggleAssistant").onclick = () => {
+      playClick();
       assistantPanel.classList.toggle("visible");
       iframePanel.classList.remove("visible");
     };
+
     document.getElementById("toggleIframe").onclick = () => {
+      playClick();
       iframePanel.classList.toggle("visible");
       assistantPanel.classList.remove("visible");
     };
+
+    document.getElementById("themeToggle").onclick = () => {
+      playClick();
+      // Example: toggle dark/light theme logic here if you want
+      alert('Theme toggled! (implement your theme logic here)');
+    };
   </script>
+
+  <!-- Howler.js for click sounds -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+
+  <script>
+    // Create a click sound instance
+    const clickSound = new Howl({
+      src: ['https://actions.google.com/sounds/v1/buttons/button_click.mp3'],
+      volume: 0.3
+    });
+
+    function playClick() {
+      clickSound.play();
+    }
+
+    // Optional: add click sound to all buttons automatically
+    document.querySelectorAll('button, .sidebar a').forEach(el => {
+      el.addEventListener('click', playClick);
+    });
+  </script>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs/lib/browser/math.min.js"></script>
+
+  <!-- Your main JS -->
+  <script src="main.js"></script>
+
+</body>
+</html>
