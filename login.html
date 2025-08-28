@@ -2,94 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login - The Grand Project</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>The Grand Project - Main</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+      font-family: Arial, sans-serif;
+      display: flex;
       height: 100vh;
+      background: url('https://picsum.photos/1920/1080?blur=8') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .sidebar {
+      width: 220px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    .sidebar button {
+      margin: 5px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #00f, #0ff);
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .sidebar button:hover {
+      transform: scale(1.05);
+    }
+    .content {
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
-
-    .glass-box {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 40px;
-      width: 320px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      color: white;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-      font-size: 26px;
-    }
-
-    input {
+    iframe {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      height: 100%;
       border: none;
-      border-radius: 10px;
-      outline: none;
-      font-size: 16px;
+      display: none;
     }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+    .openTabBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.5);
       color: white;
-      font-size: 16px;
+      border: none;
+      padding: 6px 10px;
       cursor: pointer;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-
-    .links {
-      margin-top: 15px;
-    }
-
-    .links a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 14px;
-      margin: 0 10px;
-      transition: opacity 0.2s ease;
-    }
-
-    .links a:hover {
-      opacity: 0.8;
+      border-radius: 6px;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-  <div class="glass-box">
-    <h2>Login</h2>
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-    <div class="links">
-      <a href="register.html">Register</a> | 
-      <a href="index.html">Home</a>
-    </div>
+  <div class="sidebar">
+    <h2>The Grand Project</h2>
+    <div id="userBox" style="margin-bottom:15px; font-weight:bold;">Loading...</div>
+    <button onclick="openIframe('https://discord.com')">Discord</button>
+    <button onclick="openIframe('https://chat.openai.com')">AI Chatbot</button>
+    <button onclick="openIframe('https://www.nvidia.com/en-us/geforce-now/')">GeForce</button>
+    <button onclick="openIframe('https://www.youtube.com')">Music</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="content" id="content">
+    <h1 style="color:white;text-shadow:0 0 10px black;">Welcome! Select a service.</h1>
+    <iframe id="proxyFrame"></iframe>
+    <button id="openTabBtn" class="openTabBtn" style="display:none;">🔗 Open in New Tab</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -99,20 +90,34 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww"
     );
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    const proxyBase = "https://keijxjexmfwlgetxyczr.supabase.co/functions/v1/dynamic-api?url=";
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        alert("❌ " + error.message);
-      } else {
-        alert("✅ Logged in!");
-        window.location.href = "main.html";
+    // Check login
+    async function checkLogin() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        window.location.href = "login.html";
+        return;
       }
-    });
+      document.getElementById("userBox").innerText = "👤 " + (user.email || "User");
+    }
+
+    checkLogin();
+
+    function openIframe(url) {
+      const iframe = document.getElementById("proxyFrame");
+      const openTabBtn = document.getElementById("openTabBtn");
+      iframe.src = proxyBase + encodeURIComponent(url);
+      iframe.style.display = "block";
+      openTabBtn.style.display = "block";
+      openTabBtn.onclick = () => window.open(url, "_blank");
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      localStorage.removeItem("supabase.auth.token");
+      window.location.href = "login.html";
+    }
   </script>
 </body>
 </html>

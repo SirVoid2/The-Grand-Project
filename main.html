@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Grand Project</title>
+  <title>The Grand Project - Main</title>
   <style>
     body {
       margin: 0;
@@ -69,6 +69,7 @@
 <body>
   <div class="sidebar">
     <h2>The Grand Project</h2>
+    <div id="userBox" style="margin-bottom:15px; font-weight:bold;">Loading...</div>
     <button onclick="openIframe('https://discord.com')">Discord</button>
     <button onclick="openIframe('https://chat.openai.com')">AI Chatbot</button>
     <button onclick="openIframe('https://www.nvidia.com/en-us/geforce-now/')">GeForce</button>
@@ -82,8 +83,26 @@
     <button id="openTabBtn" class="openTabBtn" style="display:none;">🔗 Open in New Tab</button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const supabase = window.supabase.createClient(
+      "https://keijxjexmfwlgetxyczr.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww"
+    );
+
     const proxyBase = "https://keijxjexmfwlgetxyczr.supabase.co/functions/v1/dynamic-api?url=";
+
+    // Check login
+    async function checkLogin() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        window.location.href = "login.html";
+        return;
+      }
+      document.getElementById("userBox").innerText = "👤 " + (user.email || "User");
+    }
+
+    checkLogin();
 
     function openIframe(url) {
       const iframe = document.getElementById("proxyFrame");
@@ -94,7 +113,8 @@
       openTabBtn.onclick = () => window.open(url, "_blank");
     }
 
-    function logout() {
+    async function logout() {
+      await supabase.auth.signOut();
       localStorage.removeItem("supabase.auth.token");
       window.location.href = "login.html";
     }
