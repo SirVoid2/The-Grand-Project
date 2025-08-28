@@ -269,7 +269,6 @@
         }
       }
 
-      // Default to eval
       const result = math.evaluate(msg);
       if (typeof result === 'function') {
         return addMsg("bot", "That's a function definition. Try using it in an expression.");
