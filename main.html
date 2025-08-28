@@ -144,17 +144,16 @@
     </form>
   </div>
 
-  <!-- Referrer Authentication Check -->
+  <!-- Auth Check -->
   <script>
-    // --- Referrer Auth Check ---
-    const allowedReferrer = "https://the-grand-project.vercel.app/index.html"; // Change this!
-    const disallowedReferrer = "badpass.html"; // Change this!
+    // --- Simple Auth Check ---
+    const auth = 1;  // Set this to 1 for access, anything else will redirect to badpass.html
 
-    if (document.referrer !== allowedReferrer) {
-      alert("Access denied. You must come from the login page.");
-      window.location.href = disallowedReferrer;
+    // If auth is not 1, redirect to badpass.html
+    if (auth !== 1) {
+      window.location.href = "badpass.html";  // Redirect to badpass.html
     } else {
-      // Show page if allowed
+      // Show page if authorized
       document.body.style.display = "flex";
     }
   </script>
