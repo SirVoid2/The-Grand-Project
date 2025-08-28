@@ -1,0 +1,18 @@
+<!DOCTYPE html><meta charset="utf-8">
+<title>PocketBase Connectivity Test</title>
+<div id="out" style="font:14px/1.5 system-ui, sans-serif"></div>
+<script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+<script>
+const log = (...a)=>document.getElementById("out").innerHTML += a.join(" ")+"<br>";
+const pb = new PocketBase("https://sale-leave.pockethost.io");
+(async () => {
+  try {
+    const health = await pb.health.check();
+    log("✅ Connected:", JSON.stringify(health));
+    log("Auth store valid?", pb.authStore.isValid);
+  } catch (e) {
+    log("❌ Could not reach PocketBase:", e?.message || e);
+    log("Tip: Do NOT open as file:// — host the HTML over https (e.g. Netlify).");
+  }
+})();
+</script>

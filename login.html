@@ -1,81 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
-      font-family: Arial, sans-serif;
-    }
-    .glass {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      width: 320px;
-    }
-    input, button {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-    }
-    input {
-      background: rgba(255,255,255,0.8);
-    }
-    button {
-      background: linear-gradient(135deg, #ff416c, #ff4b2b);
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    button:hover {
-      opacity: 0.8;
-    }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register – The Grand Project</title>
+<style>
+  body{margin:0;height:100vh;display:flex;justify-content:center;align-items:center;
+    background:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+  .glass{width:340px;padding:28px;border-radius:22px;color:#fff;text-align:center;
+    background:rgba(255,255,255,.14);backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.25);box-shadow:0 20px 40px rgba(0,0,0,.35);}
+  h2{margin:0 0 16px;font-size:28px;text-shadow:0 4px 22px rgba(255,255,255,.7);}
+  input,button{width:100%;padding:12px 14px;border:0;border-radius:12px;margin:8px 0;font-size:16px}
+  input{background:rgba(255,255,255,.9);color:#222}
+  button{cursor:pointer;color:#fff;font-weight:600;
+    background:linear-gradient(135deg,#51e1ff,#0072ff);box-shadow:inset 0 2px 4px rgba(255,255,255,.5),0 10px 18px rgba(0,0,0,.35);transition:.25s}
+  button:hover{transform:translateY(-2px)}
+  .msg{min-height:22px;margin-top:6px;font-size:14px}
+  .err{color:#ffb3b3}.ok{color:#b6ffb6}
+  a{color:#fff}
+</style>
 </head>
 <body>
   <div class="glass">
-    <h2>Login</h2>
-    <form id="loginForm">
+    <h2>Create Account</h2>
+    <form id="registerForm" autocomplete="on">
       <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <input type="password" id="password" placeholder="Password (min 8 chars)" minlength="8" required>
+      <button type="submit">Register</button>
+      <div class="msg" id="msg"></div>
     </form>
-    <p>Don’t have an account? <a href="register.html">Register</a></p>
+    <div>Already registered? <a href="login.html">Log in</a></div>
   </div>
 
-  <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
-  <script>
-    const pb = new PocketBase("https://sale-leave.pockethost.io");
-
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      try {
-        const authData = await pb.collection("users").authWithPassword(email, password);
-        localStorage.setItem("pb_auth", JSON.stringify({
-          token: pb.authStore.token,
-          model: pb.authStore.model
-        }));
-        window.location.href = "main.html";
-      } catch (err) {
-        alert("❌ " + err.message);
-      }
-    });
-  </script>
+<script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+<script>
+const pb = new PocketBase("https://sale-leave.pockethost.io");
+const $ = id => document.getElementById(id);
+$("registerForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  $("msg").className="msg"; $("msg").textContent="";
+  try{
+    await pb.collection("users").create({ email, password, passwordConfirm: password });
+    $("msg").classList.add("ok"); $("msg").textContent = "Registered! Redirecting to login…";
+    setTimeout(()=>location.href="login.html", 900);
+  }catch(err){
+    $("msg").classList.add("err");
+    $("msg").textContent = err?.data?.message || err?.message || "Registration failed.";
+  }
+});
+</script>
 </body>
 </html>
