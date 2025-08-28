@@ -44,7 +44,6 @@ function fibonacci(n) {
   }
   return a;
 }
-// More math helpers can be added here...
 
 // 3) Code explanation (basic, demo)
 function explainCode(code) {
@@ -58,17 +57,20 @@ const historyFacts = {
   ww2: "World War II (1939–1945) was the deadliest conflict in history, involving Axis and Allied powers.",
   coldWar: "The Cold War (1947–1991) was a geopolitical tension between the Soviet Union and the United States."
 };
+
 // 5) Science facts (rocket, physics)
 const scienceFacts = {
   rocket: "Rocket science involves propulsion principles, Newton's third law, and advanced fluid dynamics.",
   physics: "Physics studies matter, energy, forces, and the fundamental laws of the universe."
 };
+
 // 6) Catholic faith basics
 const catholicFaith = {
   prayer: "The Lord's Prayer is central: 'Our Father, who art in heaven...'",
   sacraments: "There are seven sacraments: Baptism, Eucharist, Confirmation, Reconciliation, Anointing of the Sick, Marriage, Holy Orders.",
   pope: "The Pope is the spiritual leader of the worldwide Catholic Church."
 };
+
 // 7) Spanish translations (basic dictionary)
 const spanishDict = {
   hello: "hola",
@@ -241,7 +243,13 @@ Ask me anything!`;
 function addMessage(text, sender = "bot") {
   const div = document.createElement("div");
   div.classList.add("msg", sender);
-  div.textContent = text;
+  if(sender === "bot") {
+    // Render markdown for bot messages
+    div.innerHTML = marked.parse(text);
+  } else {
+    // Escape HTML for user messages
+    div.textContent = text;
+  }
   chatlog.appendChild(div);
   chatlog.scrollTop = chatlog.scrollHeight;
 }
@@ -251,11 +259,25 @@ userInput.addEventListener("submit", e => {
   const query = userText.value.trim();
   if (!query) return;
   addMessage(query, "user");
+
+  userText.value = "";
+  userText.disabled = true;
+
+  // Show "bot is typing..." placeholder
+  addMessage("...", "bot");
+
   setTimeout(() => {
+    // Remove "..." message
+    const lastBotMsg = chatlog.querySelector(".msg.bot:last-child");
+    if(lastBotMsg && lastBotMsg.textContent === "...") {
+      chatlog.removeChild(lastBotMsg);
+    }
+
     const reply = generateReply(query);
     addMessage(reply, "bot");
-  }, 500);
-  userText.value = "";
+    userText.disabled = false;
+    userText.focus();
+  }, 800);
 });
 
 // Initial greeting
