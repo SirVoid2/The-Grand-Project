@@ -2,197 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Main - The Grand Project</title>
+  <title>Main</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       height: 100vh;
       display: flex;
-      background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
+      font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
     }
-
     .sidebar {
       width: 220px;
       background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      box-shadow: 4px 0 15px rgba(0,0,0,0.3);
-      padding: 30px 20px;
+      backdrop-filter: blur(12px);
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      border-right: 1px solid rgba(255,255,255,0.2);
-      z-index: 2;
+      border-right: 2px solid rgba(255,255,255,0.2);
     }
-
-    .sidebar h2 {
-      font-size: 1.8em;
-      margin-bottom: 40px;
-      text-shadow: 0 0 12px rgba(255,255,255,0.8);
-    }
-
-    .sidebar a {
-      display: block;
-      width: 100%;
-      text-align: center;
-      margin: 12px 0;
-      padding: 12px 20px;
-      font-size: 1.2em;
-      text-decoration: none;
-      color: #fff;
+    .sidebar button {
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
       border-radius: 12px;
-      background: linear-gradient(145deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
-      transition: all 0.3s ease;
-      box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 6px 12px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      font-weight: bold;
       cursor: pointer;
+      transition: 0.3s;
     }
-
-    .sidebar a:hover {
-      transform: translateY(-3px) scale(1.05);
-      background: linear-gradient(145deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15));
-      box-shadow: inset 0 3px 6px rgba(255,255,255,0.6), 0 10px 18px rgba(0,0,0,0.5);
+    .sidebar button:hover {
+      opacity: 0.8;
     }
-
-    .right-panel {
+    .content {
       flex: 1;
-      position: relative;
-      overflow: hidden;
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-left: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .right-panel h1 {
-      font-size: 3em;
-      text-shadow: 0 0 20px rgba(255,255,255,0.9);
-    }
-
-    .content-frame {
-      position: absolute;
-      top: 0;
-      right: -100%;
-      width: 100%;
-      height: 100%;
-      border: none;
-      transition: right 0.5s ease;
-      background: #000;
-    }
-
-    .content-frame.active {
-      right: 0;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: rgba(255,255,255,0.2);
-      border: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 1em;
-      cursor: pointer;
-      color: #fff;
-      z-index: 5;
-      transition: all 0.3s ease;
-    }
-
-    .close-btn:hover {
-      background: rgba(255,255,255,0.35);
-      transform: scale(1.05);
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      text-shadow: 2px 2px 6px black;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <h2>Menu</h2>
-    <a onclick="openContent('discord')">Discord</a>
-    <a onclick="openContent('chatgpt')">ChatGPT</a>
-    <a onclick="openContent('geforce')">GeForce</a>
-    <a onclick="openContent('music')">Music</a>
-    <a onclick="openContent('ai')">AI Chatbot</a>
-    <a id="loginBtn" onclick="loginLogout()">Login</a>
+    <h3 id="welcomeMsg">Welcome</h3>
+    <button onclick="window.open('https://discord.com','_blank')">Discord</button>
+    <button onclick="window.open('https://chat.openai.com','_blank')">ChatGPT</button>
+    <button onclick="window.open('https://www.nvidia.com/en-us/geforce-now/','_blank')">GeForce</button>
+    <button onclick="window.open('https://open.spotify.com','_blank')">Music</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+  <div class="content">
+    🌟 Main Page Content 🌟
   </div>
 
-  <div class="right-panel" id="rightPanel">
-    <h1>Welcome to The Grand Project</h1>
-    <iframe id="contentFrame" class="content-frame" src=""></iframe>
-    <button id="closeBtn" class="close-btn" style="display:none;" onclick="closeContent()">Close</button>
-  </div>
-
+  <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
   <script>
-    const frame = document.getElementById("contentFrame");
-    const closeBtn = document.getElementById("closeBtn");
-    const panelTitle = document.querySelector("#rightPanel h1");
-    const loginBtn = document.getElementById("loginBtn");
+    const pb = new PocketBase("https://sale-leave.pockethost.io");
 
-    // ✅ Set login/logout button text
-    if (localStorage.getItem("loggedIn") === "true") {
-      loginBtn.innerText = "Logout";
+    // Restore auth from localStorage
+    const saved = localStorage.getItem("pb_auth");
+    if (saved) {
+      const { token, model } = JSON.parse(saved);
+      pb.authStore.save(token, model);
+    }
+
+    if (!pb.authStore.isValid) {
+      window.location.href = "login.html";
     } else {
-      loginBtn.innerText = "Login";
+      document.getElementById("welcomeMsg").innerText =
+        "Welcome, " + (pb.authStore.model?.email || "User");
     }
 
-    // ✅ Restore last iframe state if user was logged in
-    if (localStorage.getItem("lastFrame")) {
-      frame.src = localStorage.getItem("lastFrame");
-      frame.classList.add("active");
-      closeBtn.style.display = "block";
-      panelTitle.style.display = "none";
-    }
-
-    function loginLogout() {
-      if (localStorage.getItem("loggedIn") === "true") {
-        // Logout
-        localStorage.removeItem("loggedIn");
-        localStorage.removeItem("currentUser");
-        localStorage.removeItem("lastFrame");
-        window.location.href = "login.html";
-      } else {
-        // Login
-        window.location.href = "login.html";
-      }
-    }
-
-    function openContent(type) {
-      let url = "";
-      let canIframe = true;
-
-      switch (type) {
-        case "discord": url = "https://discord.com"; canIframe = false; break;
-        case "chatgpt": url = "https://chat.openai.com"; canIframe = false; break;
-        case "geforce": url = "https://www.nvidia.com/en-us/geforce/"; canIframe = false; break;
-        case "music": url = "https://c08dc6fdc190.ngrok-free.app/"; break;
-        case "ai": url = "https://huggingface.co/spaces/yuntian-deng/ChatGPT"; break;
-      }
-
-      if (!canIframe) {
-        window.open(url, "_blank");
-        return;
-      }
-
-      // Save state
-      localStorage.setItem("lastFrame", url);
-
-      frame.src = url;
-      frame.classList.add("active");
-      closeBtn.style.display = "block";
-      panelTitle.style.display = "none";
-    }
-
-    function closeContent() {
-      frame.classList.remove("active");
-      frame.src = "";
-      closeBtn.style.display = "none";
-      panelTitle.style.display = "block";
-      localStorage.removeItem("lastFrame"); // Clear state
+    function logout() {
+      pb.authStore.clear();
+      localStorage.removeItem("pb_auth");
+      window.location.href = "index.html";
     }
   </script>
 </body>
