@@ -1,93 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Main – The Grand Project</title>
-<style>
-  body{margin:0;height:100vh;display:flex;color:#fff;
-    background:
-      radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%),
-      radial-gradient(1200px 600px at 90% 90%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%),
-      url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80')
-      center/cover no-repeat fixed;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
-  .sidebar{width:250px;padding:22px;display:flex;flex-direction:column;gap:10px;
-    background:rgba(255,255,255,.14);backdrop-filter:blur(18px);
-    border-right:1px solid rgba(255,255,255,.25);box-shadow:4px 0 24px rgba(0,0,0,.35);z-index:2}
-  .title{font-size:18px;opacity:.9;margin-bottom:6px;text-shadow:0 3px 18px rgba(255,255,255,.6)}
-  .btn{padding:12px 14px;border:0;border-radius:12px;color:#fff;cursor:pointer;text-align:center;
-    background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,.15));
-    box-shadow:inset 0 2px 4px rgba(255,255,255,.5),0 10px 18px rgba(0,0,0,.35);transition:.25s}
-  .btn:hover{transform:translateY(-2px)}
-  .btn-danger{background:linear-gradient(135deg,rgba(255,120,120,.45),rgba(255,60,60,.25))}
-  .content{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-  .placeholder{font-size:26px;text-shadow:0 0 22px rgba(255,255,255,.9)}
-  .panel{position:absolute;top:0;right:-100%;width:80%;height:100%;
-    background:rgba(0,0,0,.25);backdrop-filter:blur(12px);box-shadow:-6px 0 26px rgba(0,0,0,.5);transition:right .45s}
-  .panel.active{right:0}
-  .panel iframe{width:100%;height:100%;border:0}
-  .close{position:absolute;top:14px;right:14px}
-</style>
+  <meta charset="UTF-8">
+  <title>Main</title>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="title" id="welcomeMsg">Welcome</div>
-    <a class="btn" href="https://discord.com" target="_blank" rel="noopener">Discord</a>
-    <a class="btn" href="https://chat.openai.com" target="_blank" rel="noopener">ChatGPT</a>
-    <a class="btn" href="https://www.nvidia.com/en-us/geforce-now/" target="_blank" rel="noopener">GeForce Now</a>
-    <button class="btn" onclick="openPanel('music')">Music</button>
-    <button class="btn" onclick="openPanel('ai')">AI Chatbot</button>
-    <button class="btn btn-danger" onclick="logout()">Logout</button>
-  </div>
+  <h2 id="welcome">Loading...</h2>
+  <button onclick="logout()">Logout</button>
 
-  <div class="content">
-    <div class="placeholder" id="ph">✨ Select something from the sidebar ✨</div>
-    <div class="panel" id="panel">
-      <button class="btn close" onclick="closePanel()">Close</button>
-      <iframe id="frame" referrerpolicy="no-referrer"></iframe>
-    </div>
-  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://keijxjexmfwlgetxyczr.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww"
+    );
 
-<script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
-<script>
-const pb = new PocketBase("https://sale-leave.pockethost.io");
+    async function checkAuth() {
+      const session = JSON.parse(localStorage.getItem("sb_session"));
+      if (!session) {
+        window.location.href = "login.html";
+        return;
+      }
 
-// Redirect if not logged in; set welcome if logged in
-if (!pb.authStore.isValid) location.href = "login.html";
-else document.getElementById("welcomeMsg").textContent =
-  "Welcome, " + (pb.authStore.model?.email || "User");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        document.getElementById("welcome").innerText = "Welcome, " + user.email;
+      }
+    }
 
-// Panel logic
-const panel = document.getElementById("panel");
-const frame = document.getElementById("frame");
-const ph = document.getElementById("ph");
+    checkAuth();
 
-function openPanel(type){
-  let url = "";
-  if(type === "music") url = "https://c08dc6fdc190.ngrok-free.app/";
-  if(type === "ai")    url = "https://huggingface.co/spaces/yuntian-deng/ChatGPT"; // iframe-friendly demo
-  if(!url){ return; }
-  frame.src = url;
-  panel.classList.add("active");
-  ph.style.display = "none";
-  // remember last
-  sessionStorage.setItem("lastPanelURL", url);
-}
-function closePanel(){
-  panel.classList.remove("active");
-  frame.src = "";
-  ph.style.display = "block";
-  sessionStorage.removeItem("lastPanelURL");
-}
-(() => {
-  const last = sessionStorage.getItem("lastPanelURL");
-  if(last){ frame.src = last; panel.classList.add("active"); ph.style.display="none"; }
-})();
-
-function logout(){
-  pb.authStore.clear();
-  location.href = "index.html";
-}
-</script>
+    async function logout() {
+      await supabase.auth.signOut();
+      localStorage.removeItem("sb_session");
+      window.location.href = "login.html";
+    }
+  </script>
 </body>
 </html>
