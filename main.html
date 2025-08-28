@@ -147,11 +147,12 @@
   <!-- Referrer Authentication Check -->
   <script>
     // --- Referrer Auth Check ---
-    const allowedReferrer = "badpass.html"; // Change this!
+    const allowedReferrer = "index.html"; // Change this!
+    const disallowedReferrer = "badpass.html"; // Change this!
 
     if (document.referrer !== allowedReferrer) {
       alert("Access denied. You must come from the login page.");
-      window.location.href = allowedReferrer;
+      window.location.href = disallowedReferrer;
     } else {
       // Show page if allowed
       document.body.style.display = "flex";
