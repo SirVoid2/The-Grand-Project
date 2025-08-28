@@ -93,8 +93,8 @@ body.light-theme {
 .side-panel {
   position: fixed;
   top: 0;
-  right: -420px;
-  width: 400px;
+  right: -1200px;
+  width: 1200px;
   height: 100%;
   background: rgba(20, 20, 20, 0.6);
   backdrop-filter: blur(20px);
