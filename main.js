@@ -1,253 +1,262 @@
-// === Knowledge Base with detailed topics ===
-const knowledgeBase = [
-  // History
-  {
-    category: "History",
-    keywords: ["civil war", "american civil war", "usa civil war", "north", "south", "1860s"],
-    title: "American Civil War",
-    snippet: `The American Civil War (1861–1865) was a pivotal conflict between the Northern states (Union) and the Southern states (Confederacy) primarily over slavery, states' rights, and economic differences.
-- Key battles: Gettysburg, Antietam, Fort Sumter.
-- Resulted in abolition of slavery (13th Amendment) and major social transformation.
-- Notable figures: Abraham Lincoln, Robert E. Lee, Ulysses S. Grant.
-[Learn more](https://en.wikipedia.org/wiki/American_Civil_War)`,
-    url: "https://en.wikipedia.org/wiki/American_Civil_War"
-  },
-  {
-    category: "History",
-    keywords: ["world war 1", "ww1", "first world war", "trench warfare", "assassination of Archduke Ferdinand"],
-    title: "World War I",
-    snippet: `World War I (1914–1918) involved global powers divided mainly between the Allies and Central Powers.
-- Triggered by the assassination of Archduke Franz Ferdinand of Austria.
-- Known for trench warfare, chemical weapons, and massive casualties.
-- Led to geopolitical changes, the fall of empires (Ottoman, Austro-Hungarian).
-- Set the stage for WWII due to Treaty of Versailles' harsh terms.
-[Learn more](https://en.wikipedia.org/wiki/World_War_I)`,
-    url: "https://en.wikipedia.org/wiki/World_War_I"
-  },
-  {
-    category: "History",
-    keywords: ["world war 2", "ww2", "second world war", "nazi germany", "allies", "axis powers"],
-    title: "World War II",
-    snippet: `World War II (1939–1945) was the deadliest conflict in history, involving the Axis Powers led by Nazi Germany, Italy, and Japan versus the Allies led by the US, USSR, UK, and others.
-- Notable events: Holocaust, D-Day, Hiroshima & Nagasaki atomic bombings.
-- Massive technological advancements in warfare (tanks, aircraft, radar).
-- Redrew global political landscape; led to Cold War.
-[Learn more](https://en.wikipedia.org/wiki/World_War_II)`,
-    url: "https://en.wikipedia.org/wiki/World_War_II"
-  },
+// === Mega AI Assistant JS ===
 
-  // Science
-  {
-    category: "Science",
-    keywords: ["rocket science", "rocket propulsion", "spaceflight", "orbital mechanics", "aerospace"],
-    title: "Rocket Science & Aerospace",
-    snippet: `Rocket science involves the design, testing, and use of rockets for space travel.
-- Key principles: Newton’s Third Law, propulsion, thrust-to-weight ratio.
-- Important fields: propulsion systems (liquid, solid fuels), guidance systems, aerodynamics.
-- Notable programs: Apollo missions, SpaceX reusable rockets.
-[Learn more](https://en.wikipedia.org/wiki/Rocket_science)`,
-    url: "https://en.wikipedia.org/wiki/Rocket_science"
-  },
-  {
-    category: "Science",
-    keywords: ["electronics", "electric circuits", "resistors", "capacitors", "semiconductors", "digital logic"],
-    title: "Electronics Fundamentals",
-    snippet: `Electronics studies the control of electric current via components.
-- Passive components: resistors, capacitors, inductors.
-- Active components: transistors, diodes, integrated circuits.
-- Applications: microprocessors, communication devices, sensors.
-- Digital electronics includes logic gates and microcontrollers.
-[Learn more](https://en.wikipedia.org/wiki/Electronics)`,
-    url: "https://en.wikipedia.org/wiki/Electronics"
-  },
-
-  // Religion
-  {
-    category: "Religion",
-    keywords: ["catholic faith", "catholicism", "pope", "sacraments", "vatican"],
-    title: "Catholic Faith Overview",
-    snippet: `Catholicism is the largest Christian denomination with over 1.3 billion adherents.
-- Central beliefs: Trinity, Jesus Christ, sacraments (Baptism, Eucharist, Confirmation).
-- Leadership: The Pope, headquartered in Vatican City.
-- Rich traditions in liturgy, theology, and social teachings.
-[Learn more](https://en.wikipedia.org/wiki/Catholic_Church)`,
-    url: "https://en.wikipedia.org/wiki/Catholic_Church"
-  },
-
-  // Languages
-  {
-    category: "Languages",
-    keywords: ["spanish", "spanish language", "español", "romance languages", "grammar", "vocabulary"],
-    title: "Spanish Language Insights",
-    snippet: `Spanish is a Romance language originating from the Iberian Peninsula.
-- Spoken by 460+ million native speakers worldwide.
-- Features gendered nouns, verb conjugations, and rich vocabulary.
-- Variations include Latin American Spanish and Castilian.
-[Learn more](https://en.wikipedia.org/wiki/Spanish_language)`,
-    url: "https://en.wikipedia.org/wiki/Spanish_language"
-  },
-
-  // Music
-  {
-    category: "Music",
-    keywords: ["music theory", "scales", "chords", "harmony", "melody"],
-    title: "Music Theory Essentials",
-    snippet: `Music theory explores the language and notation of music.
-- Includes understanding scales, chord progressions, rhythm patterns.
-- Foundation for composing and performing music.
-- Important for all genres from classical to pop.
-[Learn more](https://en.wikipedia.org/wiki/Music_theory)`,
-    url: "https://en.wikipedia.org/wiki/Music_theory"
-  },
-  {
-    category: "Music",
-    keywords: ["lyrical composition", "songwriting", "lyrics", "poetry", "rhyme"],
-    title: "Lyrical Composition",
-    snippet: `Lyrical composition is crafting the words of a song.
-- Techniques include rhyme schemes, meter, storytelling.
-- Often reflects emotions, social commentary, or narratives.
-- Collaborates closely with musical melody and rhythm.
-[Learn more](https://en.wikipedia.org/wiki/Songwriting)`,
-    url: "https://en.wikipedia.org/wiki/Songwriting"
-  },
-
-  // Cooking
-  {
-    category: "Cooking",
-    keywords: ["recipe", "cooking", "ingredients", "pancakes", "baking", "breakfast"],
-    title: "Classic Pancake Recipe",
-    snippet: `To make fluffy pancakes:
-- Mix 1 cup flour, 1 tbsp sugar, 1 tsp baking powder, 1 cup milk, 1 egg.
-- Stir until smooth; cook on hot griddle 2-3 mins per side.
-- Serve with syrup, butter, or fruit.
-[Learn more](https://en.wikipedia.org/wiki/Pancake)`,
-    url: "https://en.wikipedia.org/wiki/Pancake"
-  },
-
-  // Video Games
-  {
-    category: "Video Games",
-    keywords: ["video games", "game developers", "modding", "steam", "epic games", "game platforms", "gaming industry"],
-    title: "Video Games Industry Overview",
-    snippet: `Video games have grown into a global entertainment industry worth billions.
-- Major developers: Nintendo, Rockstar Games, Valve Corporation, Epic Games.
-- Platforms: PC (Steam, Epic Games Store), consoles (PlayStation, Xbox, Nintendo Switch).
-- Modding communities enable players to customize games with new content and mechanics.
-- Steam offers features like multiplayer, cloud saves, and game workshops.
-- Epic Games Store is known for exclusive titles and free game giveaways.
-- Esports and streaming have massively influenced gaming culture.
-[Learn more](https://en.wikipedia.org/wiki/Video_game_industry)`,
-    url: "https://en.wikipedia.org/wiki/Video_game_industry"
-  },
-  {
-    category: "Video Games",
-    keywords: ["steam", "valve", "steam workshop", "game mods"],
-    title: "Steam Platform & Mods",
-    snippet: `Steam is a digital distribution platform by Valve Corporation.
-- Features include a massive library, community forums, multiplayer matchmaking.
-- Steam Workshop allows players and developers to share mods, maps, and skins.
-- Supports achievements, trading cards, and cloud saves.
-- Popular for games like Half-Life, Portal, Dota 2.
-[Learn more](https://en.wikipedia.org/wiki/Steam_(service))`,
-    url: "https://en.wikipedia.org/wiki/Steam_(service)"
-  },
-  {
-    category: "Video Games",
-    keywords: ["epic games", "epic games store", "unreal engine", "free games", "exclusive titles"],
-    title: "Epic Games & Unreal Engine",
-    snippet: `Epic Games is a major developer and publisher known for Fortnite and Unreal Engine.
-- Epic Games Store competes with Steam, offering exclusive titles and weekly free games.
-- Unreal Engine powers high-end AAA and indie games with advanced graphics and physics.
-- Supports cross-platform play and development tools.
-[Learn more](https://en.wikipedia.org/wiki/Epic_Games)`,
-    url: "https://en.wikipedia.org/wiki/Epic_Games"
-  },
-
-  // Jokes
-  {
-    category: "Jokes",
-    keywords: ["joke", "funny", "prank", "laugh"],
-    title: "Why don’t scientists trust atoms?",
-    snippet: "Because they make up everything!",
-    url: ""
-  },
-
-  // Ham Radio and FCC basics
-  {
-    category: "Ham Radio",
-    keywords: ["ham radio", "amateur radio", "fcc", "licenses", "transmitters", "frequencies"],
-    title: "Ham Radio and FCC Licensing",
-    snippet: `Ham radio (amateur radio) is a hobby involving non-commercial radio communication.
-- Requires FCC licensing in the US (Technician, General, Extra classes).
-- Uses frequencies allocated for amateurs worldwide.
-- Operators communicate locally and globally via radio waves, satellites, and repeaters.
-- Great for emergency communication, electronics experimentation, and community building.
-[Learn more](https://en.wikipedia.org/wiki/Amateur_radio)`,
-    url: "https://en.wikipedia.org/wiki/Amateur_radio"
-  },
-
-  // AI Detection (basic overview)
-  {
-    category: "AI",
-    keywords: ["ai detection", "artificial intelligence", "machine learning", "deepfake", "text generation"],
-    title: "AI Content Detection Basics",
-    snippet: `Detecting AI-generated content involves analyzing linguistic patterns, syntax, and semantic consistency.
-- Tools use statistical models to differentiate human writing from AI.
-- Challenges include evolving AI models and human-AI collaboration.
-- Important for education, media verification, and cybersecurity.
-[Learn more](https://en.wikipedia.org/wiki/AI_text_detection)`,
-    url: "https://en.wikipedia.org/wiki/AI_text_detection"
-  }
-];
-
-// === Fuse.js setup ===
-const fuseOptions = {
-  keys: ['keywords', 'title', 'snippet', 'category'],
-  threshold: 0.3,
-  includeScore: true,
-  ignoreLocation: true,
-};
-
-const fuse = new Fuse(knowledgeBase, fuseOptions);
-
-// === Chat and Search handling ===
+// DOM refs
 const chatlog = document.getElementById("chatlog");
 const userInput = document.getElementById("userInput");
 const userText = document.getElementById("userText");
 
+// 1) Slang normalization
+const slangDict = {
+  u: "you", r: "are", ur: "your", pls: "please", thx: "thanks",
+  idk: "I don't know", imo: "in my opinion", btw: "by the way",
+  lol: "laughing out loud", brb: "be right back", wtf: "what the heck",
+  omg: "oh my god", lmk: "let me know", smh: "shaking my head"
+};
+function normalizeInput(input) {
+  return input
+    .toLowerCase()
+    .split(/\s+/)
+    .map(word => slangDict[word] || word)
+    .join(" ");
+}
+
+// 2) Math functions
+function factorial(n) {
+  if (n < 0) return "Factorial undefined for negative numbers.";
+  if (n === 0) return 1;
+  let f = 1;
+  for (let i = 1; i <= n; i++) f *= i;
+  return f;
+}
+function isPrime(num) {
+  if (num <= 1) return false;
+  if (num <= 3) return true;
+  if (num % 2 === 0 || num % 3 === 0) return false;
+  for (let i = 5; i * i <= num; i += 6)
+    if (num % i === 0 || num % (i + 2) === 0) return false;
+  return true;
+}
+function fibonacci(n) {
+  if (n < 0) return "No negative index in Fibonacci.";
+  let a = 0, b = 1;
+  for (let i = 0; i < n; i++) {
+    [a, b] = [b, a + b];
+  }
+  return a;
+}
+// More math helpers can be added here...
+
+// 3) Code explanation (basic, demo)
+function explainCode(code) {
+  return `This code snippet looks like:\n${code}\n\nSorry, full code analysis not implemented yet.`;
+}
+
+// 4) History info (brief snippets)
+const historyFacts = {
+  civilWar: "The American Civil War (1861–1865) was fought over states' rights and slavery.",
+  ww1: "World War I (1914–1918) involved trench warfare and was sparked by the assassination of Archduke Franz Ferdinand.",
+  ww2: "World War II (1939–1945) was the deadliest conflict in history, involving Axis and Allied powers.",
+  coldWar: "The Cold War (1947–1991) was a geopolitical tension between the Soviet Union and the United States."
+};
+// 5) Science facts (rocket, physics)
+const scienceFacts = {
+  rocket: "Rocket science involves propulsion principles, Newton's third law, and advanced fluid dynamics.",
+  physics: "Physics studies matter, energy, forces, and the fundamental laws of the universe."
+};
+// 6) Catholic faith basics
+const catholicFaith = {
+  prayer: "The Lord's Prayer is central: 'Our Father, who art in heaven...'",
+  sacraments: "There are seven sacraments: Baptism, Eucharist, Confirmation, Reconciliation, Anointing of the Sick, Marriage, Holy Orders.",
+  pope: "The Pope is the spiritual leader of the worldwide Catholic Church."
+};
+// 7) Spanish translations (basic dictionary)
+const spanishDict = {
+  hello: "hola",
+  goodbye: "adiós",
+  please: "por favor",
+  thank: "gracias",
+  yes: "sí",
+  no: "no",
+  friend: "amigo",
+  love: "amor"
+};
+function translateToSpanish(phrase) {
+  return phrase
+    .toLowerCase()
+    .split(/\s+/)
+    .map(word => spanishDict[word] || `[${word}]`)
+    .join(" ");
+}
+
+// 8) Music theory basics
+const musicTheory = {
+  scales: "Common scales: Major, Minor, Pentatonic, Blues.",
+  notes: "The musical alphabet: A B C D E F G.",
+  chords: "Chords combine notes: Major (happy), Minor (sad), Seventh (jazzy)."
+};
+
+// 9) Video games info (developers, platforms, mods)
+const videoGames = {
+  steam: "Steam is a popular digital distribution platform for PC games by Valve.",
+  epicGames: "Epic Games Store is another platform with exclusive titles and free games.",
+  mods: "Mods are player-made game modifications adding content or changing gameplay.",
+  developers: "Famous devs include Nintendo, Rockstar, Blizzard, Bethesda."
+};
+
+// 10) Ham radio / FCC basics
+const hamRadio = {
+  license: "Amateur radio requires FCC licensing, typically Technician, General, Extra classes.",
+  freqBands: "Common bands: 2m, 70cm, HF bands like 40m, 20m, etc.",
+  callSigns: "Call signs identify operators; format varies by country."
+};
+
+// 11) Jokes & pranks
+const jokes = [
+  "Why do programmers prefer dark mode? Because light attracts bugs!",
+  "There are 10 types of people: those who understand binary and those who don't.",
+  "Why did the scarecrow win an award? Because he was outstanding in his field!",
+  "Why was the math book sad? Because it had too many problems."
+];
+function getRandomJoke() {
+  return jokes[Math.floor(Math.random() * jokes.length)];
+}
+
+// 12) AI detection (very basic heuristic)
+function detectAIText(text) {
+  const patterns = [
+    /As an AI language model/i,
+    /I cannot browse the internet/i,
+    /I'm designed to/i
+  ];
+  return patterns.some(pat => pat.test(text)) ? "This text looks like it was generated by AI." : "This text likely was not generated by AI.";
+}
+
+// 13) Homework / writing help (basic)
+function homeworkHelp(topic) {
+  if (topic.includes("essay")) return "To write an essay, start with an intro, followed by body paragraphs with arguments, then a conclusion.";
+  if (topic.includes("math")) return "For math problems, carefully identify the formulas you need and show your work step by step.";
+  if (topic.includes("science")) return "Use the scientific method: question, hypothesis, experiment, results, conclusion.";
+  return "Can you specify the subject you need help with?";
+}
+
+// === MAIN RESPONDER ===
+function generateReply(input) {
+  const normalized = normalizeInput(input);
+
+  // Greetings
+  if (/(hello|hi|hey|greetings)/i.test(normalized)) return "Hello! How can I assist you today?";
+
+  // Help
+  if (normalized.includes("help")) {
+    return `I can help you with:
+- Explaining code snippets
+- Math calculations (factorial, prime, fibonacci)
+- History facts (Civil War, WWI, WWII)
+- Science and rocket science
+- Catholic faith basics
+- Spanish translations
+- Music theory
+- Video game info (Steam, mods, devs)
+- Ham radio and FCC info
+- Jokes and pranks
+- AI text detection
+- Homework help
+Ask me anything!`;
+  }
+
+  // Jokes
+  if (normalized.includes("joke")) return getRandomJoke();
+
+  // Factorial
+  let factMatch = normalized.match(/factorial of (\d+)/);
+  if (factMatch) {
+    const num = parseInt(factMatch[1]);
+    return `Factorial of ${num} is ${factorial(num)}.`;
+  }
+
+  // Prime
+  let primeMatch = normalized.match(/is (\d+) prime/);
+  if (primeMatch) {
+    const num = parseInt(primeMatch[1]);
+    return isPrime(num) ? `${num} is a prime number.` : `${num} is not prime.`;
+  }
+
+  // Fibonacci
+  let fibMatch = normalized.match(/fibonacci (?:number )?(\d+)/);
+  if (fibMatch) {
+    const num = parseInt(fibMatch[1]);
+    return `Fibonacci number #${num} is ${fibonacci(num)}.`;
+  }
+
+  // Code explanation
+  if (normalized.startsWith("explain code:") || normalized.startsWith("explain this code:")) {
+    const code = input.substring(input.indexOf(":") + 1).trim();
+    return explainCode(code);
+  }
+
+  // History facts
+  if (/civil war/.test(normalized)) return historyFacts.civilWar;
+  if (/world war i|ww1/.test(normalized)) return historyFacts.ww1;
+  if (/world war ii|ww2/.test(normalized)) return historyFacts.ww2;
+  if (/cold war/.test(normalized)) return historyFacts.coldWar;
+
+  // Science
+  if (/rocket science/.test(normalized)) return scienceFacts.rocket;
+  if (/physics/.test(normalized)) return scienceFacts.physics;
+
+  // Catholic faith
+  if (/catholic prayer/.test(normalized)) return catholicFaith.prayer;
+  if (/catholic sacraments/.test(normalized)) return catholicFaith.sacraments;
+  if (/pope/.test(normalized)) return catholicFaith.pope;
+
+  // Spanish translation
+  if (/translate (.+) to spanish/.test(normalized)) {
+    const phrase = normalized.match(/translate (.+) to spanish/)[1];
+    return translateToSpanish(phrase);
+  }
+
+  // Music theory
+  if (/music theory/.test(normalized)) return musicTheory.scales + " " + musicTheory.notes + " " + musicTheory.chords;
+
+  // Video games info
+  if (/steam/.test(normalized)) return videoGames.steam;
+  if (/epic games/.test(normalized)) return videoGames.epicGames;
+  if (/mod(s)?/.test(normalized)) return videoGames.mods;
+  if (/video game developer/.test(normalized)) return videoGames.developers;
+
+  // Ham radio / FCC
+  if (/ham radio/.test(normalized)) return hamRadio.license + " " + hamRadio.freqBands + " " + hamRadio.callSigns;
+
+  // AI detection
+  if (/detect ai/.test(normalized)) return detectAIText(input);
+
+  // Homework
+  if (/homework/.test(normalized) || /essay|math|science/.test(normalized)) return homeworkHelp(normalized);
+
+  // If no match
+  return "Sorry, I didn't understand that. Try typing 'help' for what I can do or ask for a joke!";
+}
+
+// === UI Interaction ===
 function addMessage(text, sender = "bot") {
-  const msgDiv = document.createElement("div");
-  msgDiv.classList.add("msg", sender);
-  msgDiv.innerHTML = text;
-  chatlog.appendChild(msgDiv);
+  const div = document.createElement("div");
+  div.classList.add("msg", sender);
+  div.textContent = text;
+  chatlog.appendChild(div);
   chatlog.scrollTop = chatlog.scrollHeight;
 }
 
-function searchKnowledgeBase(query) {
-  const results = fuse.search(query);
-  if (results.length === 0) {
-    return "Sorry, I couldn't find anything on that topic.";
-  }
-  // Compose response from top 1-2 results
-  let response = "";
-  const maxResults = Math.min(2, results.length);
-  for (let i = 0; i < maxResults; i++) {
-    const item = results[i].item;
-    response += `<strong>${item.title}</strong> (${item.category})<br>${item.snippet}<br>`;
-    if(item.url) response += `<a href="${item.url}" target="_blank">Learn more</a><br><br>`;
-  }
-  return response;
-}
-
-userInput.addEventListener("submit", (e) => {
+userInput.addEventListener("submit", e => {
   e.preventDefault();
   const query = userText.value.trim();
   if (!query) return;
   addMessage(query, "user");
-
-  // Simple commands could go here, e.g. math evaluation, but for now:
-  let answer = searchKnowledgeBase(query);
-
-  addMessage(answer, "bot");
+  setTimeout(() => {
+    const reply = generateReply(query);
+    addMessage(reply, "bot");
+  }, 500);
   userText.value = "";
 });
+
+// Initial greeting
+addMessage("Hi! I'm your mega AI assistant. Type 'help' to see what I can do.");
