@@ -1,5 +1,5 @@
 // ======================
-// AI + HAHA
+// Panels & Buttons
 // ======================
 const assistantPanel = document.getElementById("assistantPanel");
 const iframePanel = document.getElementById("iframePanel");
@@ -96,7 +96,7 @@ async function botReply(message) {
     const data = await response.json();
     const reply = data?.generated_text || "⚠️ No reply from AI.";
 
-    // Typing animation effect
+    // Typing animation
     typingMsg.textContent = "";
     typingMsg.classList.remove("typing");
 
