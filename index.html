@@ -38,8 +38,8 @@
 
     /* Navigation Links */
     nav a {
-      display: inline-block;
-      margin: 15px 20px;
+      display: block;
+      margin: 15px auto;
       padding: 15px 35px;
       font-size: 1.5em;
       text-decoration: none;
@@ -50,7 +50,7 @@
       -webkit-backdrop-filter: blur(10px);
       box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 8px 16px rgba(0,0,0,0.3);
       transition: all 0.3s ease;
-      cursor: pointer;
+      width: 220px;
     }
 
     nav a:hover {
@@ -64,28 +64,11 @@
   <div class="container">
     <h1>The Grand Project</h1>
     <nav>
-      <a href="#" onclick="navigateTo('games.html')">Games</a>
-      <a href="#" onclick="navigateTo('ai.html')">AI</a>
-      <a href="#" onclick="navigateTo('cloudpc.html')">Cloud PC</a>
+      <a href="#games">Games</a>
+      <a href="#ai">AI</a>
+      <a href="#cloudpc">Cloud PC</a>
       <a href="login.html">Login</a>
     </nav>
   </div>
-
-  <script>
-    function isLoggedIn() {
-      // Check localStorage for login status
-      return localStorage.getItem("loggedIn") === "true";
-    }
-
-    function navigateTo(page) {
-      if (isLoggedIn()) {
-        window.location.href = page; // Go directly
-      } else {
-        // Save where user wanted to go
-        localStorage.setItem("redirectAfterLogin", page);
-        window.location.href = "login.html";
-      }
-    }
-  </script>
 </body>
 </html>
