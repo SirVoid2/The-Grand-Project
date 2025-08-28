@@ -4,6 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Grand Project</title>
+
+  <!-- Math.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
   <style>
     :root {
       --bg: #111;
@@ -79,7 +92,6 @@
       z-index: 100;
     }
 
-    /* AI Chat Box */
     #chatbox {
       position: fixed;
       bottom: 0;
@@ -149,7 +161,6 @@
   <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
 </div>
 
-<!-- AI Bot -->
 <div id="chatbox">
   <div id="chatlog"></div>
   <div id="userInput">
@@ -191,26 +202,21 @@
     });
   }
 
-  // Simple AI Bot (client-side simulation)
   const log = document.getElementById("chatlog");
   const input = document.getElementById("userText");
   const sendBtn = document.getElementById("sendBtn");
 
-  function botReply(msg) {
-    const response = msg.toLowerCase().includes("hi") ? "Hello there! 👋" :
-                     msg.toLowerCase().includes("help") ? "How can I assist you today?" :
-                     msg.toLowerCase().includes("project") ? "This is part of The Grand Project!" :
-                     "I'm just a simple AI! Ask me anything.";
-
-    addMsg("bot", response);
-  }
-
-  function addMsg(type, text) {
+  function addMsg(type, text, raw = false) {
     const el = document.createElement("div");
     el.className = `msg ${type}`;
-    el.textContent = text;
+    if (raw) {
+      el.innerHTML = text;
+    } else {
+      el.textContent = text;
+    }
     log.appendChild(el);
     log.scrollTop = log.scrollHeight;
+    if (raw) MathJax.typesetPromise([el]);
   }
 
   sendBtn.onclick = () => {
@@ -218,12 +224,61 @@
     if (!val) return;
     addMsg("user", val);
     input.value = "";
-    setTimeout(() => botReply(val), 500);
+    setTimeout(() => botReply(val), 300);
   };
 
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendBtn.click();
   });
+
+  function botReply(msg) {
+    try {
+      const cleaned = msg.toLowerCase();
+
+      if (cleaned.includes("simplify")) {
+        const expr = msg.replace(/simplify/i, "").trim();
+        const simplified = math.simplify(expr).toString();
+        return addMsg("bot", `Simplified: $$${simplified}$$`, true);
+      }
+
+      if (cleaned.includes("solve")) {
+        const expr = msg.replace(/solve/i, "").trim();
+        const equation = expr.includes('=') ? expr : `${expr} = 0`;
+        const result = math.solve(equation, 'x');
+        return addMsg("bot", `Solution: $$x = ${result.toString()}$$`, true);
+      }
+
+      if (cleaned.includes("derivative of") || cleaned.includes("differentiate")) {
+        const expr = msg.replace(/(derivative of|differentiate)/i, "").trim();
+        const d = math.derivative(expr, 'x').toString();
+        return addMsg("bot", `Derivative: $$\\frac{d}{dx}(${expr}) = ${d}$$`, true);
+      }
+
+      if (cleaned.includes("integrate")) {
+        return addMsg("bot", `Sorry, integration isn't supported in this version.`);
+      }
+
+      if (cleaned.includes("convert")) {
+        const match = msg.match(/convert ([\d\.]+)\s*(\w+)\s*to\s*(\w+)/i);
+        if (match) {
+          const [, value, fromUnit, toUnit] = match;
+          const result = math.unit(Number(value), fromUnit).toNumber(toUnit);
+          return addMsg("bot", `${value} ${fromUnit} = ${result} ${toUnit}`);
+        } else {
+          return addMsg("bot", "Please format your conversion like: convert 5 km to m");
+        }
+      }
+
+      // Default to eval
+      const result = math.evaluate(msg);
+      if (typeof result === 'function') {
+        return addMsg("bot", "That's a function definition. Try using it in an expression.");
+      }
+      addMsg("bot", `Result: $$${math.format(result)}$$`, true);
+    } catch (e) {
+      addMsg("bot", `Error: ${e.message}`);
+    }
+  }
 </script>
 </body>
 </html>
