@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 25px;
+      padding: 40px 60px;
+      text-align: center;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 350px;
+    }
+
+    h2 {
+      font-size: 2em;
+      color: #fff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 1em;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      backdrop-filter: blur(5px);
+    }
+
+    input::placeholder {
+      color: #eee;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 15px;
+      border: none;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(145deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 8px 16px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: inset 0 3px 6px rgba(255,255,255,0.6), 0 12px 24px rgba(0,0,0,0.5);
+    }
+
+    .switch {
+      margin-top: 15px;
+      color: #fff;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="formTitle">Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="submitForm()">Login</button>
+    <div class="switch" onclick="toggleMode()">Don’t have an account? Register</div>
+  </div>
+
+  <script>
+    let isLogin = true; // Default mode
+
+    function toggleMode() {
+      isLogin = !isLogin;
+      document.getElementById("formTitle").innerText = isLogin ? "Login" : "Register";
+      document.querySelector("button").innerText = isLogin ? "Login" : "Register";
+      document.querySelector(".switch").innerText = isLogin ? "Don’t have an account? Register" : "Already have an account? Login";
+    }
+
+    function submitForm() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      // Get users "database"
+      let users = JSON.parse(localStorage.getItem("users")) || {};
+
+      if (isLogin) {
+        // LOGIN
+        if (users[username] && users[username] === password) {
+          localStorage.setItem("loggedIn", "true");
+          localStorage.setItem("currentUser", username);
+
+          // Redirect to saved page or home
+          const redirectPage = localStorage.getItem("redirectAfterLogin");
+          if (redirectPage) {
+            localStorage.removeItem("redirectAfterLogin");
+            window.location.href = redirectPage;
+          } else {
+            window.location.href = "index.html";
+          }
+        } else {
+          alert("Invalid username or password!");
+        }
+      } else {
+        // REGISTER
+        if (users[username]) {
+          alert("Username already exists!");
+        } else {
+          users[username] = password; // Save new user
+          localStorage.setItem("users", JSON.stringify(users));
+          alert("Account created! You can now login.");
+          toggleMode(); // Switch back to login mode
+        }
+      }
+    }
+  </script>
+</body>
+</html>
