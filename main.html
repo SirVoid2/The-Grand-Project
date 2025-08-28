@@ -7,6 +7,17 @@
   <link rel="stylesheet" href="main.css" />
 </head>
 <body>
+  <script>
+    // Run as soon as the page loads
+    (function() {
+      const ref = document.referrer;
+  
+      // Adjust path/URL check as needed
+      if (!ref.includes("index.html")) {
+        window.location.href = "badpass.html";
+      }
+    })();
+  </script>
 
   <!-- Sidebar Navigation -->
   <div class="sidebar">
