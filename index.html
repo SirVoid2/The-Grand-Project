@@ -104,16 +104,6 @@
       margin-top: 15px;
       color: #fff;
     }
-
-    @media (max-width: 480px) {
-      .login-box {
-        padding: 30px 20px;
-      }
-
-      input[type="password"] {
-        width: 100%;
-      }
-    }
   </style>
 </head>
 <body>
@@ -156,7 +146,7 @@
       }, 1000); // Simulate loading
     }
 
-    // Also allow "Enter" key
+    // Allow Enter key
     document.getElementById("password").addEventListener("keydown", function(e) {
       if (e.key === "Enter") {
         submitPassword();
