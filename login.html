@@ -51,9 +51,9 @@
       transform: scale(1.05);
     }
 
-    .error {
-      color: red;
-      font-size: 0.9em;
+    a {
+      color: #00c6ff;
+      text-decoration: none;
     }
   </style>
 </head>
@@ -63,11 +63,8 @@
     <input type="email" id="email" placeholder="Email" required>
     <input type="password" id="password" placeholder="Password" required>
     <button onclick="login()">Login</button>
-    <h3>Or Register</h3>
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPassword" placeholder="Password">
-    <button onclick="register()">Register</button>
-    <p id="errorBox" class="error"></p>
+    <p>Don't have an account? <a href="register.html">Register</a></p>
+    <p id="errorBox" style="color:red;"></p>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
@@ -81,36 +78,14 @@
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
         document.getElementById("errorBox").textContent = error.message;
       } else {
-        // ✅ Save token + username (from email prefix)
         localStorage.setItem("token", data.session.access_token);
-        const username = email.split("@")[0]; 
-        localStorage.setItem("username", username);
-
+        localStorage.setItem("username", email.split("@")[0]);
         window.location.href = "main.html";
-      }
-    }
-
-    async function register() {
-      const email = document.getElementById("regEmail").value;
-      const password = document.getElementById("regPassword").value;
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password
-      });
-
-      if (error) {
-        document.getElementById("errorBox").textContent = error.message;
-      } else {
-        document.getElementById("errorBox").textContent = "✅ Registered! Now log in.";
       }
     }
   </script>
