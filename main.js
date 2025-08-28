@@ -1,143 +1,99 @@
-// ======================
-// Panels & Buttons
-// ======================
-const assistantPanel = document.getElementById("assistantPanel");
-const iframePanel = document.getElementById("iframePanel");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI + HAHA Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+    body.light-theme {
+      background: #f2f2f2;
+      color: black;
+    }
+    .sidebar {
+      width: 200px;
+      background: #333;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sidebar button {
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #assistantPanel, #iframePanel {
+      display: none;
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    #assistantPanel.visible, #iframePanel.visible {
+      display: block;
+    }
+    #chatlog {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #444;
+      margin-bottom: 10px;
+    }
+    .msg {
+      padding: 5px 8px;
+      margin-bottom: 6px;
+      border-radius: 6px;
+    }
+    .msg.user {
+      background: #4caf50;
+      color: white;
+      text-align: right;
+    }
+    .msg.bot {
+      background: #555;
+      color: white;
+      text-align: left;
+    }
+    .msg.typing {
+      font-style: italic;
+      opacity: 0.8;
+    }
+    #userInput {
+      display: flex;
+      gap: 5px;
+    }
+    #userText {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+    #clearChatBtn {
+      margin-top: 5px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <button id="toggleAssistant">Toggle Assistant</button>
+    <button id="toggleIframe">Toggle Iframe</button>
+    <button id="themeToggle">🌙</button>
+    <button id="clearChatBtn">Clear Chat</button>
+  </div>
 
-document.getElementById("toggleAssistant").onclick = () => {
-  playClick();
-  assistantPanel.classList.toggle("visible");
-  iframePanel.classList.remove("visible");
-};
-
-document.getElementById("toggleIframe").onclick = () => {
-  playClick();
-  iframePanel.classList.toggle("visible");
-  assistantPanel.classList.remove("visible");
-};
-
-document.getElementById("themeToggle").onclick = () => {
-  playClick();
-  document.body.classList.toggle("light-theme");
-  document.getElementById("themeToggle").textContent =
-    document.body.classList.contains("light-theme") ? "☀️" : "🌙";
-};
-
-// ======================
-// Click Sounds
-// ======================
-const clickSound = new Howl({
-  src: ["https://actions.google.com/sounds/v1/buttons/button_click.mp3"],
-  volume: 0.3,
-});
-
-function playClick() {
-  clickSound.play();
-}
-
-document.querySelectorAll("button, .sidebar a").forEach((el) => {
-  el.addEventListener("click", playClick);
-});
-
-// ======================
-// Chatbot Logic (NO persistence)
-// ======================
-const chatlog = document.getElementById("chatlog");
-const userInputForm = document.getElementById("userInput");
-const userText = document.getElementById("userText");
-const clearChatBtn = document.getElementById("clearChatBtn");
-
-// In-memory structures (reset on refresh)
-let conversationHistory = [];
-let chatlogMessages = [];
-
-// ---- UI rendering ----
-function addMessage(text, sender, isTyping = false) {
-  const msgDiv = document.createElement("div");
-  msgDiv.className = `msg ${sender}`;
-  msgDiv.textContent = isTyping ? "🤖 typing…" : text;
-  chatlog.appendChild(msgDiv);
-  chatlog.scrollTop = chatlog.scrollHeight;
-
-  if (!isTyping) chatlogMessages.push({ sender, text });
-  return msgDiv;
-}
-
-function renderChatlog() {
-  chatlog.innerHTML = "";
-  for (const m of chatlogMessages) {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = `msg ${m.sender}`;
-    msgDiv.textContent = m.text;
-    chatlog.appendChild(msgDiv);
-  }
-  chatlog.scrollTop = chatlog.scrollHeight;
-}
-
-// ---- Bot interaction ----
-async function botReply(message) {
-  const typingMsg = addMessage("", "bot", true);
-
-  conversationHistory.push({ role: "user", content: message });
-
-  try {
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer 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"
-        },
-        body: JSON.stringify({ inputs: message }),
-      }
-    );
-
-    const data = await response.json();
-    const reply = data?.generated_text || "⚠️ No reply from AI.";
-
-    // Typing animation
-    typingMsg.textContent = "";
-    typingMsg.classList.remove("typing");
-
-    const words = reply.split(" ");
-    let i = 0;
-    const interval = setInterval(() => {
-      typingMsg.textContent += (i > 0 ? " " : "") + words[i];
-      chatlog.scrollTop = chatlog.scrollHeight;
-      i++;
-      if (i >= words.length) {
-        clearInterval(interval);
-        chatlogMessages.push({ sender: "bot", text: typingMsg.textContent });
-        conversationHistory.push({ role: "assistant", content: reply });
-      }
-    }, 60);
-
-  } catch (e) {
-    typingMsg.textContent = "⚠️ Error: AI service not available.";
-    typingMsg.classList.remove("typing");
-    chatlogMessages.push({ sender: "bot", text: typingMsg.textContent });
-  }
-}
-
-// ---- Form submit ----
-userInputForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const text = userText.value.trim();
-  if (!text) return;
-  addMessage(text, "user");
-  conversationHistory.push({ role: "user", content: text });
-  userText.value = "";
-  setTimeout(() => botReply(text), 300);
-});
-
-// ---- Clear Chat ----
-clearChatBtn.addEventListener("click", () => {
-  playClick();
-  conversationHistory = [];
-  chatlogMessages = [];
-  renderChatlog();
-});
-
-// ---- Initialize ----
-renderChatlog();
+  <!-- Main -->
+  <div
