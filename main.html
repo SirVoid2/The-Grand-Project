@@ -47,6 +47,22 @@
   <div id="iframePanel" class="side-panel" aria-label="Side iframe panel">
     <iframe src="https://example.com" title="Side Iframe Content"></iframe>
   </div>
+  <div id="assistantPanel" class="side-panel" aria-label="AI Assistant Panel">
+    <div class="chat-container">
+      <div class="chat-header">
+        AI Assistant
+        <button id="clearChatBtn" style="float:right; font-size: 0.9rem; padding: 6px 10px; margin-left: 10px;">
+          Clear Chat
+        </button>
+      </div>
+      <div id="chatlog" aria-live="polite" aria-relevant="additions"></div>
+      <form id="userInput" autocomplete="off">
+        <input type="text" id="userText" placeholder="Ask me something…" aria-label="User input" />
+        <button type="submit" id="sendBtn" aria-label="Send message">Send</button>
+      </form>
+    </div>
+  </div>
+
 
   <!-- External Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
