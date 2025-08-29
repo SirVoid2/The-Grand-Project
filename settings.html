@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings - The Grand Project</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      color: white;
+      width: 380px;
+      box-shadow: 0px 4px 25px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      margin-bottom: 5px;
+    }
+
+    #username-display {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 8px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    select:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    option {
+      background: #222;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+      transform: scale(1.05);
+    }
+
+    #status {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>⚙ Settings</h2>
+    <p id="username-display">👤 Loading user...</p>
+
+    <!-- Core Settings -->
+    <label for="proxy">🌐 Proxy:</label>
+    <select id="proxy">
+      <option value="direct">Direct</option>
+      <option value="gardevoir">Gardevoir Proxy</option>
+      <option value="allorigins">AllOrigins</option>
+    </select>
+
+    <label for="theme">🌗 Theme:</label>
+    <select id="theme">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="neon">Neon</option>
+    </select>
+
+    <label for="background">🖼 Background:</label>
+    <select id="background">
+      <option value="default">Default</option>
+      <option value="abstract">Abstract</option>
+      <option value="space">Space</option>
+      <option value="nature">Nature</option>
+    </select>
+
+    <label for="accent">🌈 Accent Color:</label>
+    <select id="accent">
+      <option value="blue">Blue</option>
+      <option value="purple">Purple</option>
+      <option value="green">Green</option>
+      <option value="red">Red</option>
+    </select>
+
+    <label for="sound">🔊 Sound Effects:</label>
+    <select id="sound">
+      <option value="true">On</option>
+      <option value="false">Off</option>
+    </select>
+
+    <label for="music">🎵 Music Autoplay:</label>
+    <select id="music">
+      <option value="true">On</option>
+      <option value="false">Off</option>
+    </select>
+
+    <label for="notifications">🔔 Notifications:</label>
+    <select id="notifications">
+      <option value="true">On</option>
+      <option value="false">Off</option>
+    </select>
+
+    <label for="performance">🏎️ Performance Mode:</label>
+    <select id="performance">
+      <option value="balanced">Balanced</option>
+      <option value="high">High Performance</option>
+      <option value="battery">Battery Saver</option>
+    </select>
+
+    <label for="ui">✨ UI Style:</label>
+    <select id="ui">
+      <option value="glass">Glass</option>
+      <option value="minimal">Minimal</option>
+      <option value="cyberpunk">Cyberpunk</option>
+    </select>
+
+    <label for="logout">🔒 Auto-Logout:</label>
+    <select id="logout">
+      <option value="never">Never</option>
+      <option value="5min">5 Minutes</option>
+      <option value="15min">15 Minutes</option>
+      <option value="1hr">1 Hour</option>
+    </select>
+
+    <button onclick="saveSettings()">Save</button>
+    <button onclick="window.location.href='main.html'">⬅ Back</button>
+    <p id="status"></p>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const username = localStorage.getItem("username");
+    if (!username) {
+      window.location.href = "login.html";
+    }
+    document.getElementById("username-display").textContent = "👤 " + username;
+
+    async function loadSettings() {
+      const { data, error } = await supabase
+        .from("users")
+        .select("proxy_preference, theme, background, accent, sound_effects, music_autoplay, notifications, performance_mode, ui_style, auto_logout")
+        .eq("username", username)
+        .single();
+
+      if (!error && data) {
+        document.getElementById("proxy").value = data.proxy_preference || "direct";
+        document.getElementById("theme").value = data.theme || "dark";
+        document.getElementById("background").value = data.background || "default";
+        document.getElementById("accent").value = data.accent || "blue";
+        document.getElementById("sound").value = data.sound_effects ? "true" : "false";
+        document.getElementById("music").value = data.music_autoplay ? "true" : "false";
+        document.getElementById("notifications").value = data.notifications ? "true" : "false";
+        document.getElementById("performance").value = data.performance_mode || "balanced";
+        document.getElementById("ui").value = data.ui_style || "glass";
+        document.getElementById("logout").value = data.auto_logout || "never";
+      }
+    }
+
+    async function saveSettings() {
+      const { error } = await supabase
+        .from("users")
+        .update({
+          proxy_preference: document.getElementById("proxy").value,
+          theme: document.getElementById("theme").value,
+          background: document.getElementById("background").value,
+          accent: document.getElementById("accent").value,
+          sound_effects: document.getElementById("sound").value === "true",
+          music_autoplay: document.getElementById("music").value === "true",
+          notifications: document.getElementById("notifications").value === "true",
+          performance_mode: document.getElementById("performance").value,
+          ui_style: document.getElementById("ui").value,
+          auto_logout: document.getElementById("logout").value
+        })
+        .eq("username", username);
+
+      document.getElementById("status").textContent = error ? "❌ Failed to save" : "✅ Settings saved!";
+    }
+
+    loadSettings();
+  </script>
+</body>
+</html>

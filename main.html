@@ -2,56 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Grand Project - Main</title>
+  <title>Main - The Grand Project</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .sidebar {
-      width: 250px;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      transition: background 0.5s ease, color 0.5s ease;
     }
 
-    .sidebar h2 {
-      font-size: 1.5em;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .sidebar p {
-      font-size: 1em;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .sidebar button {
-      margin: 8px 0;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1em;
-      cursor: pointer;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+    header {
+      width: 100%;
+      padding: 15px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       color: white;
       font-weight: bold;
-      transition: 0.3s;
     }
 
-    .sidebar button:hover {
-      background: linear-gradient(135deg, #0072ff, #00c6ff);
-      transform: scale(1.05);
+    header span {
+      font-size: 18px;
     }
 
     .content {
@@ -59,72 +36,132 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      overflow: hidden;
+      font-size: 24px;
+      color: white;
     }
 
-    .iframe-panel {
-      position: absolute;
-      top: 0;
-      right: -100%;
-      width: calc(100% - 250px);
-      height: 100%;
+    button {
+      margin: 10px;
+      padding: 12px 18px;
       border: none;
-      transition: right 0.5s ease-in-out;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(15px);
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
-    .iframe-panel.active {
-      right: 0;
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      backdrop-filter: blur(12px);
     }
 
-    .welcome {
-      font-size: 2em;
-      background: rgba(0,0,0,0.5);
-      padding: 20px;
-      border-radius: 15px;
-      backdrop-filter: blur(8px);
+    .minimal {
+      background: #eee;
+      color: #222;
+    }
+
+    .cyberpunk {
+      background: linear-gradient(135deg, #ff00ff, #00ffff);
+      color: black;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #f0f;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>The Grand Project</h2>
-    <p id="userBox">Welcome, <span id="username">User</span></p>
-    <button onclick="openIframe('https://discord.com')">Discord</button>
-    <button onclick="openIframe('https://huggingface.co/spaces/yuntian-deng/ChatGPT')">AI Chatbot</button>
-    <button onclick="openIframe('https://www.nvidia.com/en-us/geforce-now/')">GeForce Now</button>
-    <button onclick="openIframe('https://music.youtube.com')">Music</button>
-    <button onclick="logout()">Logout</button>
-  </div>
-
+  <header>
+    <span id="username-display">👤 Loading...</span>
+    <button onclick="window.location.href='settings.html'">⚙ Settings</button>
+  </header>
   <div class="content">
-    <div class="welcome">Select an option from the sidebar</div>
-    <iframe id="iframePanel" class="iframe-panel"></iframe>
+    🚀 Welcome to The Grand Project!
   </div>
 
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
-    // 🔹 Load username from localStorage (set during login)
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const username = localStorage.getItem("username");
-    if (username) {
-      document.getElementById("username").textContent = username;
-    } else {
-      // If not logged in → redirect
+    if (!username) {
       window.location.href = "login.html";
     }
+    document.getElementById("username-display").textContent = "👤 " + username;
 
-    function openIframe(url) {
-      const panel = document.getElementById("iframePanel");
-      panel.src = url;
-      panel.classList.add("active");
+    async function applySettings() {
+      const { data, error } = await supabase
+        .from("users")
+        .select("theme, background, accent, ui_style, sound_effects, music_autoplay, notifications")
+        .eq("username", username)
+        .single();
+
+      if (error) {
+        console.error("Settings load error:", error.message);
+        return;
+      }
+
+      // 🎨 Theme
+      if (data.theme === "dark") {
+        document.body.style.color = "white";
+      } else if (data.theme === "light") {
+        document.body.style.color = "black";
+      } else if (data.theme === "neon") {
+        document.body.style.color = "#0ff";
+        document.body.style.textShadow = "0 0 10px #0ff, 0 0 20px #f0f";
+      }
+
+      // 🖼 Backgrounds
+      if (data.background === "default") {
+        document.body.style.background = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed";
+      } else if (data.background === "abstract") {
+        document.body.style.background = "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') no-repeat center center fixed";
+      } else if (data.background === "space") {
+        document.body.style.background = "url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa') no-repeat center center fixed";
+      } else if (data.background === "nature") {
+        document.body.style.background = "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470') no-repeat center center fixed";
+      }
+      document.body.style.backgroundSize = "cover";
+
+      // 🌈 Accent
+      let accent = data.accent || "blue";
+      document.querySelectorAll("button").forEach(btn => {
+        if (accent === "blue") btn.style.background = "linear-gradient(135deg, #00c6ff, #0072ff)";
+        if (accent === "purple") btn.style.background = "linear-gradient(135deg, #8e2de2, #4a00e0)";
+        if (accent === "green") btn.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+        if (accent === "red") btn.style.background = "linear-gradient(135deg, #ff416c, #ff4b2b)";
+        btn.style.color = "white";
+      });
+
+      // ✨ UI Style
+      document.querySelectorAll("button").forEach(btn => {
+        btn.classList.remove("glass", "minimal", "cyberpunk");
+        if (data.ui_style === "glass") btn.classList.add("glass");
+        if (data.ui_style === "minimal") btn.classList.add("minimal");
+        if (data.ui_style === "cyberpunk") btn.classList.add("cyberpunk");
+      });
+
+      // 🔊 Sound + Music
+      if (data.sound_effects) {
+        console.log("✅ Sound effects enabled");
+        // could hook into button clicks
+      }
+      if (data.music_autoplay) {
+        let bgMusic = new Audio("https://www.bensound.com/bensound-music/bensound-summer.mp3");
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        bgMusic.play().catch(()=>console.log("Autoplay blocked until user interacts"));
+      }
+
+      // 🔔 Notifications
+      if (data.notifications && Notification.permission === "granted") {
+        new Notification("🎉 Welcome back, " + username + "!");
+      } else if (data.notifications && Notification.permission !== "denied") {
+        Notification.requestPermission();
+      }
     }
 
-    function logout() {
-      localStorage.removeItem("username");
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-    }
+    applySettings();
   </script>
 </body>
 </html>

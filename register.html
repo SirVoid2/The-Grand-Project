@@ -16,46 +16,45 @@
     }
 
     .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
-      padding: 30px;
+      padding: 40px 30px;
       border-radius: 15px;
       text-align: center;
       color: white;
-      width: 340px;
+      width: 320px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
     }
 
-    .input-group {
-      position: relative;
+    h2 {
+      margin-bottom: 20px;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 10px 0;
       border: none;
       border-radius: 10px;
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 12px;
-      top: 35%;
-      cursor: pointer;
-      color: #ccc;
-      font-size: 14px;
-      user-select: none;
+      font-size: 16px;
+      text-align: center;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 12px 0;
       border: none;
       border-radius: 12px;
       background: linear-gradient(135deg, #00c6ff, #0072ff);
       color: white;
       font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -70,158 +69,50 @@
       text-decoration: none;
     }
 
-    .rules {
-      font-size: 0.85em;
-      text-align: left;
-      color: #ccc;
+    #errorBox {
       margin-top: 10px;
-    }
-
-    .strength {
-      height: 6px;
-      border-radius: 6px;
-      margin: 5px 0 10px;
-      background: #444;
-      overflow: hidden;
-    }
-
-    .strength-bar {
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s, background 0.3s;
-    }
-
-    .strength-text {
-      font-size: 0.85em;
-      margin-bottom: 10px;
+      color: #ff4d4d;
+      font-size: 14px;
+      min-height: 18px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Register</h2>
-    <input type="text" id="regUsername" placeholder="Username" required>
-
-    <!-- Password with toggle -->
-    <div class="input-group">
-      <input type="password" id="regPassword" placeholder="Password" required oninput="checkStrength()">
-      <span class="toggle-password" onclick="togglePassword('regPassword', this)">👁️</span>
-    </div>
-
-    <!-- Confirm Password with toggle -->
-    <div class="input-group">
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-      <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁️</span>
-    </div>
-
-    <!-- Strength meter -->
-    <div class="strength">
-      <div class="strength-bar" id="strengthBar"></div>
-    </div>
-    <p id="strengthText" class="strength-text">Enter a password</p>
-
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
     <button onclick="register()">Register</button>
-    <p class="rules">Password must be at least 6 characters, include at least 1 letter and 1 number.</p>
     <p>Already have an account? <a href="login.html">Login</a></p>
-    <p id="errorBox" style="color:red;"></p>
+    <p id="errorBox"></p>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
     const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function togglePassword(id, el) {
-      const input = document.getElementById(id);
-      if (input.type === "password") {
-        input.type = "text";
-        el.textContent = "🙈";
-      } else {
-        input.type = "password";
-        el.textContent = "👁️";
-      }
-    }
-
-    function checkStrength() {
-      const password = document.getElementById("regPassword").value;
-      const bar = document.getElementById("strengthBar");
-      const text = document.getElementById("strengthText");
-
-      let score = 0;
-      if (password.length >= 6) score++;
-      if (/[A-Z]/.test(password)) score++;
-      if (/[0-9]/.test(password)) score++;
-      if (/[^A-Za-z0-9]/.test(password)) score++;
-
-      if (password.length === 0) {
-        bar.style.width = "0%";
-        text.textContent = "Enter a password";
-        text.style.color = "#ccc";
-      } else if (score <= 1) {
-        bar.style.width = "33%";
-        bar.style.background = "red";
-        text.textContent = "Weak";
-        text.style.color = "red";
-      } else if (score === 2) {
-        bar.style.width = "66%";
-        bar.style.background = "orange";
-        text.textContent = "Medium";
-        text.style.color = "orange";
-      } else {
-        bar.style.width = "100%";
-        bar.style.background = "limegreen";
-        text.textContent = "Strong";
-        text.style.color = "limegreen";
-      }
-    }
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function register() {
-      const username = document.getElementById("regUsername").value.trim();
-      const password = document.getElementById("regPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
       const errorBox = document.getElementById("errorBox");
 
-      if (password !== confirmPassword) {
-        errorBox.style.color = "red";
-        errorBox.textContent = "❌ Passwords do not match!";
+      if (!username || !password) {
+        errorBox.textContent = "❌ Please fill in all fields.";
         return;
       }
 
-      if (password.length < 6 || !/[0-9]/.test(password) || !/[A-Za-z]/.test(password)) {
-        errorBox.style.color = "red";
-        errorBox.textContent = "❌ Password must be at least 6 chars, contain 1 letter & 1 number!";
-        return;
-      }
-
-      // check if username exists
-      const { data: existing } = await supabaseClient
-        .from("users")
-        .select("id")
-        .eq("username", username)
-        .maybeSingle();
-
-      if (existing) {
-        errorBox.style.color = "red";
-        errorBox.textContent = "❌ Username already taken!";
-        return;
-      }
-
-      // insert into users table
-      const { error } = await supabaseClient
+      const { data, error } = await client
         .from("users")
         .insert([{ username, password }]);
 
       if (error) {
-        errorBox.style.color = "red";
         errorBox.textContent = "❌ " + error.message;
       } else {
-        localStorage.setItem("username", username);
-        errorBox.style.color = "lime";
-        errorBox.textContent = "✅ Registered! Redirecting to login...";
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 1500);
+        alert("✅ Registration successful! Please login.");
+        window.location.href = "login.html";
       }
     }
   </script>

@@ -16,32 +16,45 @@
     }
 
     .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
-      padding: 30px;
+      padding: 40px 30px;
       border-radius: 15px;
       text-align: center;
       color: white;
-      width: 300px;
+      width: 320px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+      margin-bottom: 20px;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 10px 0;
       border: none;
       border-radius: 10px;
+      font-size: 16px;
+      text-align: center;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 12px 0;
       border: none;
       border-radius: 12px;
       background: linear-gradient(135deg, #00c6ff, #0072ff);
       color: white;
       font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -55,6 +68,13 @@
       color: #00c6ff;
       text-decoration: none;
     }
+
+    #errorBox {
+      margin-top: 10px;
+      color: #ff4d4d;
+      font-size: 14px;
+      min-height: 18px;
+    }
   </style>
 </head>
 <body>
@@ -64,7 +84,7 @@
     <input type="password" id="password" placeholder="Password" required>
     <button onclick="login()">Login</button>
     <p>Don't have an account? <a href="register.html">Register</a></p>
-    <p id="errorBox" style="color:red;"></p>
+    <p id="errorBox"></p>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
@@ -79,7 +99,6 @@
       const password = document.getElementById("password").value;
       const errorBox = document.getElementById("errorBox");
 
-      // Query the users table
       const { data: user, error } = await client
         .from("users")
         .select("*")
