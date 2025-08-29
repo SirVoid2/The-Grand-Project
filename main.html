@@ -3,16 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <title>Main - The Grand Project</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
       height: 100vh;
+      overflow: hidden;
       transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      color: white;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -21,13 +63,10 @@
       background: rgba(0,0,0,0.5);
       backdrop-filter: blur(10px);
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       color: white;
       font-weight: bold;
-    }
-
-    header span {
       font-size: 18px;
     }
 
@@ -36,10 +75,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 26px;
       color: white;
     }
 
+    /* Buttons with accent */
     button {
       margin: 10px;
       padding: 12px 18px;
@@ -50,6 +90,7 @@
       transition: 0.3s;
     }
 
+    /* UI Styles */
     .glass {
       background: rgba(255, 255, 255, 0.15);
       color: white;
@@ -69,12 +110,21 @@
   </style>
 </head>
 <body>
-  <header>
-    <span id="username-display">👤 Loading...</span>
-    <button onclick="window.location.href='settings.html'">⚙ Settings</button>
-  </header>
-  <div class="content">
-    🚀 Welcome to The Grand Project!
+  <div class="sidebar">
+    <h2>🚀 Menu</h2>
+    <a href="main.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="chat.html"><i class="fa-solid fa-robot"></i> AI Chat</a>
+    <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <span id="username-display">👤 Loading...</span>
+    </header>
+    <div class="content">
+      Welcome to <b>The Grand Project</b>!
+    </div>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
@@ -89,6 +139,11 @@
     }
     document.getElementById("username-display").textContent = "👤 " + username;
 
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
     async function applySettings() {
       const { data, error } = await supabase
         .from("users")
@@ -101,7 +156,7 @@
         return;
       }
 
-      // 🎨 Theme
+      // Theme
       if (data.theme === "dark") {
         document.body.style.color = "white";
       } else if (data.theme === "light") {
@@ -111,7 +166,7 @@
         document.body.style.textShadow = "0 0 10px #0ff, 0 0 20px #f0f";
       }
 
-      // 🖼 Backgrounds
+      // Backgrounds
       if (data.background === "default") {
         document.body.style.background = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed";
       } else if (data.background === "abstract") {
@@ -123,17 +178,17 @@
       }
       document.body.style.backgroundSize = "cover";
 
-      // 🌈 Accent
+      // Accent
       let accent = data.accent || "blue";
-      document.querySelectorAll("button").forEach(btn => {
-        if (accent === "blue") btn.style.background = "linear-gradient(135deg, #00c6ff, #0072ff)";
-        if (accent === "purple") btn.style.background = "linear-gradient(135deg, #8e2de2, #4a00e0)";
-        if (accent === "green") btn.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-        if (accent === "red") btn.style.background = "linear-gradient(135deg, #ff416c, #ff4b2b)";
-        btn.style.color = "white";
+      document.querySelectorAll("button, .sidebar a").forEach(el => {
+        if (accent === "blue") el.style.background = "linear-gradient(135deg, #00c6ff, #0072ff)";
+        if (accent === "purple") el.style.background = "linear-gradient(135deg, #8e2de2, #4a00e0)";
+        if (accent === "green") el.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+        if (accent === "red") el.style.background = "linear-gradient(135deg, #ff416c, #ff4b2b)";
+        el.style.color = "white";
       });
 
-      // ✨ UI Style
+      // UI Style
       document.querySelectorAll("button").forEach(btn => {
         btn.classList.remove("glass", "minimal", "cyberpunk");
         if (data.ui_style === "glass") btn.classList.add("glass");
@@ -141,11 +196,7 @@
         if (data.ui_style === "cyberpunk") btn.classList.add("cyberpunk");
       });
 
-      // 🔊 Sound + Music
-      if (data.sound_effects) {
-        console.log("✅ Sound effects enabled");
-        // could hook into button clicks
-      }
+      // Music autoplay
       if (data.music_autoplay) {
         let bgMusic = new Audio("https://www.bensound.com/bensound-music/bensound-summer.mp3");
         bgMusic.loop = true;
@@ -153,7 +204,7 @@
         bgMusic.play().catch(()=>console.log("Autoplay blocked until user interacts"));
       }
 
-      // 🔔 Notifications
+      // Notifications
       if (data.notifications && Notification.permission === "granted") {
         new Notification("🎉 Welcome back, " + username + "!");
       } else if (data.notifications && Notification.permission !== "denied") {
