@@ -108,17 +108,17 @@
       <span class="toggle-password" onclick="togglePassword('regPassword', this)">👁️</span>
     </div>
 
-    <!-- Strength meter -->
-    <div class="strength">
-      <div class="strength-bar" id="strengthBar"></div>
-    </div>
-    <p id="strengthText" class="strength-text">Enter a password</p>
-
     <!-- Confirm Password with toggle -->
     <div class="input-group">
       <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
       <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁️</span>
     </div>
+
+    <!-- Strength meter -->
+    <div class="strength">
+      <div class="strength-bar" id="strengthBar"></div>
+    </div>
+    <p id="strengthText" class="strength-text">Enter a password</p>
 
     <button onclick="register()">Register</button>
     <p class="rules">Password must be at least 6 characters, include at least 1 letter and 1 number.</p>
