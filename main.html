@@ -13,15 +13,18 @@
     }
     /* Sidebar */
     .sidebar {
-      position: fixed;
-      left: -220px;
-      top: 0;
       width: 220px;
-      height: 100%;
       background: #1e3c72;
       color: #fff;
-      transition: left 0.3s;
-      padding-top: 60px;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin: 0 0 20px;
+      font-size: 1.2rem;
+      font-weight: normal;
     }
     .sidebar a {
       display: block;
@@ -29,67 +32,65 @@
       text-decoration: none;
       color: #fff;
       transition: background 0.3s;
+      font-size: 1rem;
     }
     .sidebar a:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    .open-btn {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      background: #4facfe;
-      border: none;
-      padding: 10px 15px;
-      color: #fff;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    /* Main content */
-    .content {
-      flex: 1;
-      margin-left: 0;
-      transition: margin-left 0.3s;
-      display: flex;
-      flex-direction: column;
-    }
-    iframe {
-      flex: 1;
-      border: none;
-      width: 100%;
-    }
-    .topbar {
-      background: #2a5298;
-      color: #fff;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: rgba(255,255,255,0.15);
     }
     .logout-btn {
+      margin-top: auto;
+      padding: 15px;
+      text-align: center;
       background: #f44336;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      color: #fff;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+    .logout-btn:hover {
+      background: #d32f2f;
+    }
+
+    /* Main area */
+    .main {
+      flex: 1;
+      position: relative;
+      background: linear-gradient(135deg, #2a5298, #1e3c72);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.5rem;
+      transition: background 0.5s;
+      overflow: hidden;
+    }
+
+    /* Iframe slides in */
+    iframe {
+      position: absolute;
+      top: 0;
+      right: -100%;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+      transition: right 0.5s;
+    }
+    iframe.open {
+      right: 0;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar">
+    <h2>Menu</h2>
     <a href="#" onclick="loadPage('page1.html')">📄 Page 1</a>
     <a href="#" onclick="loadPage('page2.html')">📄 Page 2</a>
     <a href="#" onclick="loadPage('page3.html')">📄 Page 3</a>
+    <div class="logout-btn" onclick="logout()">🚪 Log Out</div>
   </div>
 
-  <div class="content" id="content">
-    <div class="topbar">
-      <button class="open-btn" onclick="toggleSidebar()">☰</button>
-      <h2>Main Page</h2>
-      <button class="logout-btn" onclick="logout()">Log Out</button>
-    </div>
-    <iframe id="mainFrame" src="welcome.html"></iframe>
+  <div class="main" id="mainArea">
+    <div class="welcome">Welcome! Select a page.</div>
+    <iframe id="mainFrame"></iframe>
   </div>
 
   <script>
@@ -98,20 +99,10 @@
       window.location.href = "badpass.html";
     }
 
-    function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      const content = document.getElementById("content");
-      if (sidebar.style.left === "0px") {
-        sidebar.style.left = "-220px";
-        content.style.marginLeft = "0";
-      } else {
-        sidebar.style.left = "0px";
-        content.style.marginLeft = "220px";
-      }
-    }
-
     function loadPage(page) {
-      document.getElementById("mainFrame").src = page;
+      const iframe = document.getElementById("mainFrame");
+      iframe.src = page;
+      iframe.classList.add("open");
     }
 
     function logout() {
