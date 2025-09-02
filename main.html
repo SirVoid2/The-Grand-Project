@@ -4,84 +4,79 @@
   <meta charset="UTF-8">
   <title>Main App</title>
   <style>
-    /* ====== Global Reset ====== */
+    /* ===== Reset ===== */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
     body {
       height: 100vh;
       display: flex;
       font-family: "Inter", "Segoe UI", sans-serif;
-      background: linear-gradient(145deg, #0a0a0f, #14161c);
-      color: #e4e6eb;
+      background: linear-gradient(145deg, #0b0d11, #121418);
+      color: #e5e7eb;
       overflow: hidden;
     }
 
-    /* ====== Sidebar ====== */
+    /* ===== Sidebar ===== */
     .sidebar {
-      width: 300px;
-      background: rgba(20, 22, 28, 0.95);
-      backdrop-filter: blur(14px);
+      width: 320px;
+      background: #14161c;
       display: flex;
       flex-direction: column;
-      padding: 24px 0;
+      padding: 28px 0;
       border-right: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 6px 0 25px rgba(0,0,0,0.55);
     }
     .sidebar h2 {
       text-align: center;
-      font-size: 1.6rem;
-      font-weight: 700;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
       margin-bottom: 40px;
-      background: linear-gradient(90deg, #4cc9f0, #4361ee, #7209b7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #f3f4f6;
     }
     .sidebar a {
       display: flex;
       align-items: center;
       gap: 14px;
-      margin: 8px 20px;
+      margin: 6px 22px;
       padding: 14px 20px;
       text-decoration: none;
-      font-size: 1.05rem;
-      color: #c7c9d1;
-      border-radius: 14px;
+      font-size: 1rem;
+      color: #a1a5b1;
+      border-radius: 12px;
       transition: all 0.25s ease;
-      position: relative;
       cursor: pointer;
     }
     .sidebar a svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       fill: currentColor;
       flex-shrink: 0;
     }
     .sidebar a:hover,
     .sidebar a.active {
       color: #fff;
-      background: linear-gradient(90deg, rgba(67,97,238,0.2), rgba(114,9,183,0.2));
+      background: rgba(67, 97, 238, 0.12);
     }
     .logout-btn {
       margin-top: auto;
-      margin: 30px 20px 0;
-      padding: 16px;
+      margin: 30px 22px 0;
+      padding: 14px;
       text-align: center;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #ef233c, #d90429);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
       color: #fff;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      transition: background 0.3s ease;
     }
     .logout-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 14px rgba(239, 35, 60, 0.6);
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
     }
 
-    /* ====== Main Area ====== */
+    /* ===== Main Content ===== */
     .main {
       flex: 1;
       position: relative;
@@ -90,47 +85,47 @@
       align-items: center;
       overflow: hidden;
     }
-    .welcome {
+    .placeholder {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #9ca3af;
+      max-width: 520px;
       text-align: center;
-      font-size: 1.5rem;
-      font-weight: 500;
-      opacity: 0.7;
       line-height: 1.6;
-      max-width: 540px;
     }
 
-    /* ====== Animated Glow Background ====== */
+    /* ===== Background Glow ===== */
     .glow {
       position: absolute;
       width: 700px;
       height: 700px;
-      background: radial-gradient(circle at center, rgba(67,97,238,0.2), transparent 70%);
+      background: radial-gradient(circle at center, rgba(67,97,238,0.15), transparent 70%);
       filter: blur(120px);
-      animation: float 12s infinite ease-in-out;
+      animation: float 14s infinite ease-in-out;
       z-index: 0;
     }
     .glow.two {
-      background: radial-gradient(circle at center, rgba(114,9,183,0.25), transparent 70%);
-      animation-delay: -6s;
+      background: radial-gradient(circle at center, rgba(114,9,183,0.18), transparent 70%);
+      animation-delay: -7s;
     }
     @keyframes float {
-      0%, 100% { transform: translate(-100px, -50px) scale(1); }
+      0%, 100% { transform: translate(-100px, -60px) scale(1); }
       50% { transform: translate(120px, 90px) scale(1.2); }
     }
 
-    /* ====== Iframe Panel ====== */
+    /* ===== Iframe Panel ===== */
     iframe {
       position: absolute;
       top: 0;
       right: -100%;
-      width: calc(100% - 300px);
+      width: calc(100% - 320px);
       height: 100%;
       border: none;
-      background: #18191c;
+      background: #1a1c20;
       transition: right 0.5s cubic-bezier(.77,0,.18,1);
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
-      box-shadow: -8px 0 24px rgba(0,0,0,0.75);
+      border-top-left-radius: 18px;
+      border-bottom-left-radius: 18px;
+      box-shadow: -10px 0 28px rgba(0,0,0,0.75);
       z-index: 1;
     }
     iframe.open {
@@ -140,7 +135,7 @@
 </head>
 <body>
   <div class="sidebar">
-    <h2>✨ Dashboard</h2>
+    <h2>Dashboard</h2>
     <a href="#" onclick="togglePage('page1.html', this)">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>
       Page 1
@@ -159,15 +154,14 @@
   <div class="main" id="mainArea">
     <div class="glow"></div>
     <div class="glow two"></div>
-    <div class="welcome">
-      👋 Welcome to your <strong>magnificent dashboard</strong>.<br>
-      Click an option on the left to open it in the sliding panel.
+    <div class="placeholder">
+      Select an option from the sidebar to open it in the panel.
     </div>
     <iframe id="mainFrame"></iframe>
   </div>
 
   <script>
-    // Protect route
+    // Route protection
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "badpass.html";
     }
