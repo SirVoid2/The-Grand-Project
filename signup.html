@@ -5,88 +5,96 @@
   <title>Sign Up</title>
   <style>
     body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      margin: 0;
       background: #0f172a;
+      font-family: Arial, sans-serif;
       color: white;
     }
-    .container {
+    .form-box {
       background: #1e293b;
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
       width: 320px;
+    }
+    h2 {
+      margin-bottom: 20px;
       text-align: center;
     }
     .form-group {
-      margin-bottom: 16px;
-      text-align: left;
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
     }
     input {
-      width: calc(100% - 40px);
+      width: 100%;
       padding: 10px;
       border: none;
       border-radius: 8px;
-      margin-top: 6px;
       background: #334155;
       color: white;
     }
     .password-wrapper {
-      display: flex;
-      align-items: center;
-    }
-    .password-wrapper input {
-      flex: 1;
+      position: relative;
     }
     .toggle-password {
-      margin-left: 8px;
-      background: #475569;
+      position: absolute;
+      right: 10px;
+      top: 32px;
+      background: none;
       border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
       cursor: pointer;
-      color: white;
+      color: #94a3b8;
     }
-    .btn {
+    button {
       width: 100%;
       padding: 12px;
-      background: #9333ea;
       border: none;
       border-radius: 8px;
+      background: #10b981;
       color: white;
-      font-size: 1rem;
+      font-weight: bold;
       cursor: pointer;
+      transition: 0.3s;
     }
-    .btn:hover {
-      opacity: 0.9;
+    button:hover {
+      background: #059669;
     }
     .small-text {
-      margin-top: 12px;
+      margin-top: 15px;
+      text-align: center;
       font-size: 0.9rem;
     }
-    a { color: #3b82f6; }
+    .small-text a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="form-box">
     <h2>Sign Up</h2>
     <form id="signup-form">
       <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="signup-username" required>
+      </div>
+      <div class="form-group">
         <label>Email</label>
-        <input type="email" id="email" required>
+        <input type="email" id="signup-email" required>
       </div>
       <div class="form-group password-wrapper">
-        <div style="flex:1">
-          <label>Password</label>
-          <input type="password" id="password" required>
-        </div>
-        <button type="button" class="toggle-password" onclick="togglePassword()">👁</button>
+        <label>Password</label>
+        <input type="password" id="signup-password" required>
+        <button type="button" class="toggle-password" onclick="togglePassword('signup-password')">👁</button>
       </div>
-      <button type="submit" class="btn">Sign Up</button>
+      <button type="submit">Sign Up</button>
     </form>
     <p class="small-text">Already have an account? <a href="login.html">Login</a></p>
   </div>
@@ -95,26 +103,29 @@
   <script>
     const supabase = window.supabase.createClient(
       "https://keijxjexmfwlgetxyczr.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww"
     );
 
     document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const username = document.getElementById("signup-username").value;
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
 
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         alert("❌ " + error.message);
       } else {
-        alert("✅ Account created! Check your email for confirmation.");
+        const userId = data.user.id;
+        await supabase.from("profiles").insert([{ id: userId, username, email }]);
+        alert("✅ Account created! Please check your email to confirm.");
         window.location.href = "login.html";
       }
     });
 
-    function togglePassword() {
-      const pwd = document.getElementById("password");
-      pwd.type = pwd.type === "password" ? "text" : "password";
+    function togglePassword(id) {
+      const field = document.getElementById(id);
+      field.type = field.type === "password" ? "text" : "password";
     }
   </script>
 </body>

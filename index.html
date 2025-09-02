@@ -5,44 +5,45 @@
   <title>Welcome</title>
   <style>
     body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #3b82f6, #9333ea);
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
       color: white;
       text-align: center;
     }
-    .box {
-      background: rgba(0,0,0,0.4);
+    .container {
+      background: rgba(0, 0, 0, 0.6);
       padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
-    .btn {
+    a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      border-radius: 8px;
       background: #2563eb;
       color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
       transition: 0.3s;
-      margin: 10px;
     }
-    .btn:hover {
-      opacity: 0.8;
+    a:hover {
+      background: #1d4ed8;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>🌌 Welcome</h1>
-    <p>Login or sign up to continue</p>
-    <button class="btn" onclick="location.href='login.html'">Login</button>
-    <button class="btn" onclick="location.href='signup.html'">Sign Up</button>
+  <div class="container">
+    <h1>🌌 Welcome to the Portal</h1>
+    <p>Please log in or create an account to continue.</p>
+    <a href="login.html">Login</a>
+    <a href="signup.html">Sign Up</a>
   </div>
 </body>
 </html>
