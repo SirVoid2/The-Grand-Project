@@ -5,109 +5,115 @@
   <title>Login</title>
   <style>
     body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
-      background: #0f172a;
-      font-family: Arial, sans-serif;
       color: white;
     }
-    .form-box {
+    .container {
       background: #1e293b;
-      padding: 30px;
+      padding: 2rem;
       border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
-      width: 320px;
-    }
-    h2 {
-      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      width: 350px;
       text-align: center;
     }
+    h1 {
+      margin-bottom: 1.5rem;
+    }
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 1rem;
+      text-align: left;
     }
     label {
+      font-size: 0.9rem;
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 0.5rem;
     }
     input {
       width: 100%;
-      padding: 10px;
+      padding: 0.7rem;
       border: none;
       border-radius: 8px;
-      background: #334155;
-      color: white;
+      outline: none;
     }
     .password-wrapper {
-      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrapper input {
+      flex: 1;
     }
     .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 32px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #94a3b8;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
+      margin-left: 8px;
+      padding: 0.6rem;
+      background: #334155;
       border: none;
       border-radius: 8px;
-      background: #2563eb;
       color: white;
-      font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
     }
-    button:hover {
-      background: #1d4ed8;
+    .btn {
+      width: 100%;
+      padding: 0.8rem;
+      background: #3b82f6;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    .btn:hover {
+      background: #2563eb;
     }
     .small-text {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 0.9rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
     }
-    .small-text a {
-      color: #38bdf8;
+    a {
+      color: #3b82f6;
       text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="form-box">
-    <h2>Login</h2>
+  <div class="container">
+    <h1>Login</h1>
     <form id="login-form">
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="login-email" required>
+        <input type="email" id="email" required>
       </div>
       <div class="form-group password-wrapper">
-        <label>Password</label>
-        <input type="password" id="login-password" required>
-        <button type="button" class="toggle-password" onclick="togglePassword('login-password')">👁</button>
+        <div style="flex: 1;">
+          <label>Password</label>
+          <input type="password" id="password" required>
+        </div>
+        <button type="button" class="toggle-password" onclick="togglePassword()">👁</button>
       </div>
-      <button type="submit">Login</button>
+      <button type="submit" class="btn">Login</button>
     </form>
-    <p class="small-text">Don’t have an account? <a href="signup.html">Sign Up</a></p>
+    <p class="small-text">Don’t have an account? <a href="signup.html">Sign up</a></p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabase = window.supabase.createClient(
-      "https://keijxjexmfwlgetxyczr.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww"
-    );
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
       if (error) {
         alert("❌ " + error.message);
       } else {
@@ -117,9 +123,9 @@
       }
     });
 
-    function togglePassword(id) {
-      const field = document.getElementById(id);
-      field.type = field.type === "password" ? "text" : "password";
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      pwd.type = pwd.type === "password" ? "text" : "password";
     }
   </script>
 </body>
