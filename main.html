@@ -5,79 +5,84 @@
   <title>Main</title>
   <style>
     body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      display: flex;
-      height: 100vh;
-      background: #0f172a;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       color: white;
-    }
-    .sidebar {
-      width: 240px;
-      background: #1e293b;
-      padding: 20px;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
     }
-    .sidebar h2 {
-      font-size: 1.2rem;
+    .container {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      width: 400px;
     }
-    .sidebar button {
-      background: #334155;
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .btn {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.2rem;
+      background: #ef4444;
       border: none;
-      padding: 12px;
       border-radius: 8px;
-      margin-top: 12px;
       color: white;
       cursor: pointer;
+      font-size: 1rem;
     }
-    .sidebar button:hover {
-      background: #475569;
-    }
-    iframe {
-      flex: 1;
-      border: none;
-      border-radius: 12px;
-      margin: 20px;
-      background: #111827;
+    .btn:hover {
+      background: #dc2626;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div>
-      <h2 id="user-email"></h2>
-      <button onclick="loadPage('https://9f2bb2c8343f.ngrok-free.app/')">🎵 Music</button>
-      <button onclick="loadPage('https://www.nvidia.com/en-us/geforce-now/')">Geforce Now</button>
-      <button onclick="loadPage('https://discord.com')">Discord</button>
-    </div>
-    <button onclick="logout()">Logout</button>
+  <div class="container">
+    <h1 id="welcome-text">Welcome!</h1>
+    <button class="btn" onclick="logout()">Logout</button>
   </div>
-  <iframe id="content" src=""></iframe>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabase = window.supabase.createClient(
-      "https://keijxjexmfwlgetxyczr.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    );
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    if (!localStorage.getItem("loggedIn")) {
-      window.location.href = "login.html";
-    }
+    async function loadUser() {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    document.getElementById("user-email").textContent = localStorage.getItem("email");
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
 
-    function loadPage(url) {
-      document.getElementById("content").src = url;
+      // fetch username from profiles table
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Profile fetch error:", error);
+        document.getElementById("welcome-text").textContent = "Welcome!";
+      } else {
+        document.getElementById("welcome-text").textContent = `Welcome, ${data.username}!`;
+      }
     }
 
     async function logout() {
       await supabase.auth.signOut();
-      localStorage.clear();
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("email");
       window.location.href = "login.html";
     }
+
+    loadUser();
   </script>
 </body>
 </html>
