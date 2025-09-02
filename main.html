@@ -4,101 +4,134 @@
   <meta charset="UTF-8">
   <title>Main App</title>
   <style>
-    /* Global */
-    body {
+    /* ====== Global Reset ====== */
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: "Inter", sans-serif;
-      display: flex;
+      padding: 0;
+    }
+    body {
       height: 100vh;
+      display: flex;
+      font-family: "Inter", "Segoe UI", sans-serif;
+      background: linear-gradient(145deg, #0a0a0f, #14161c);
+      color: #e4e6eb;
       overflow: hidden;
-      background: #121212;
-      color: #e0e0e0;
     }
 
-    /* Sidebar */
+    /* ====== Sidebar ====== */
     .sidebar {
-      width: 240px;
-      background: #1e1e1e;
-      color: #fff;
+      width: 300px;
+      background: rgba(20, 22, 28, 0.95);
+      backdrop-filter: blur(14px);
       display: flex;
       flex-direction: column;
-      padding: 20px 0;
-      box-shadow: 4px 0 15px rgba(0,0,0,0.5);
-      border-right: 1px solid #2a2a2a;
+      padding: 24px 0;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 6px 0 25px rgba(0,0,0,0.55);
     }
     .sidebar h2 {
       text-align: center;
-      margin: 0 0 25px;
-      font-weight: 600;
-      font-size: 1.2rem;
-      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      background: linear-gradient(90deg, #4cc9f0, #4361ee, #7209b7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .sidebar a {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      margin: 8px 20px;
       padding: 14px 20px;
       text-decoration: none;
-      color: #b0b0b0;
-      font-size: 0.95rem;
-      border-radius: 10px;
-      margin: 6px 15px;
-      transition: all 0.25s;
+      font-size: 1.05rem;
+      color: #c7c9d1;
+      border-radius: 14px;
+      transition: all 0.25s ease;
+      position: relative;
+      cursor: pointer;
     }
-    .sidebar a:hover {
-      background: #2a2a2a;
-      color: #fff;
-    }
-    .sidebar svg {
-      width: 20px;
-      height: 20px;
+    .sidebar a svg {
+      width: 22px;
+      height: 22px;
       fill: currentColor;
+      flex-shrink: 0;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: #fff;
+      background: linear-gradient(90deg, rgba(67,97,238,0.2), rgba(114,9,183,0.2));
     }
     .logout-btn {
       margin-top: auto;
-      padding: 14px 20px;
-      margin: 15px;
-      border-radius: 10px;
-      background: #d32f2f;
+      margin: 30px 20px 0;
+      padding: 16px;
       text-align: center;
-      cursor: pointer;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ef233c, #d90429);
+      color: #fff;
       font-weight: 600;
-      transition: background 0.3s;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .logout-btn:hover {
-      background: #b71c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(239, 35, 60, 0.6);
     }
 
-    /* Main area */
+    /* ====== Main Area ====== */
     .main {
       flex: 1;
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #121212;
       overflow: hidden;
     }
     .welcome {
       text-align: center;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      font-weight: 500;
       opacity: 0.7;
-      color: #888;
+      line-height: 1.6;
+      max-width: 540px;
     }
 
-    /* Iframe */
+    /* ====== Animated Glow Background ====== */
+    .glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle at center, rgba(67,97,238,0.2), transparent 70%);
+      filter: blur(120px);
+      animation: float 12s infinite ease-in-out;
+      z-index: 0;
+    }
+    .glow.two {
+      background: radial-gradient(circle at center, rgba(114,9,183,0.25), transparent 70%);
+      animation-delay: -6s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(-100px, -50px) scale(1); }
+      50% { transform: translate(120px, 90px) scale(1.2); }
+    }
+
+    /* ====== Iframe Panel ====== */
     iframe {
       position: absolute;
       top: 0;
       right: -100%;
-      width: 100%;
+      width: calc(100% - 300px);
       height: 100%;
       border: none;
-      background: #181818;
-      transition: right 0.5s ease;
-      border-top-left-radius: 16px;
-      border-bottom-left-radius: 16px;
-      box-shadow: -6px 0 20px rgba(0,0,0,0.6);
+      background: #18191c;
+      transition: right 0.5s cubic-bezier(.77,0,.18,1);
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+      box-shadow: -8px 0 24px rgba(0,0,0,0.75);
+      z-index: 1;
     }
     iframe.open {
       right: 0;
@@ -107,16 +140,16 @@
 </head>
 <body>
   <div class="sidebar">
-    <h2>Dashboard</h2>
-    <a href="#" onclick="loadPage('page1.html')">
+    <h2>✨ Dashboard</h2>
+    <a href="#" onclick="togglePage('page1.html', this)">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>
       Page 1
     </a>
-    <a href="#" onclick="loadPage('page2.html')">
+    <a href="#" onclick="togglePage('page2.html', this)">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
       Page 2
     </a>
-    <a href="#" onclick="loadPage('page3.html')">
+    <a href="#" onclick="togglePage('page3.html', this)">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 11.5l-8.5-6v5h-7v2h7v5l8.5-6z"/></svg>
       Page 3
     </a>
@@ -124,20 +157,39 @@
   </div>
 
   <div class="main" id="mainArea">
-    <div class="welcome">👋 Welcome to your dark dashboard.<br>Select a page from the sidebar.</div>
+    <div class="glow"></div>
+    <div class="glow two"></div>
+    <div class="welcome">
+      👋 Welcome to your <strong>magnificent dashboard</strong>.<br>
+      Click an option on the left to open it in the sliding panel.
+    </div>
     <iframe id="mainFrame"></iframe>
   </div>
 
   <script>
-    // Protect main.html
+    // Protect route
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "badpass.html";
     }
-    function loadPage(page) {
-      const iframe = document.getElementById("mainFrame");
-      iframe.src = page;
-      iframe.classList.add("open");
+
+    const iframe = document.getElementById("mainFrame");
+    const links = document.querySelectorAll(".sidebar a");
+    let currentPage = null;
+
+    function togglePage(page, el) {
+      if (iframe.classList.contains("open") && currentPage === page) {
+        iframe.classList.remove("open");
+        el.classList.remove("active");
+        currentPage = null;
+      } else {
+        iframe.src = page;
+        iframe.classList.add("open");
+        currentPage = page;
+        links.forEach(l => l.classList.remove("active"));
+        el.classList.add("active");
+      }
     }
+
     function logout() {
       localStorage.removeItem("loggedIn");
       window.location.href = "index.html";
