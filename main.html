@@ -6,43 +6,58 @@
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Inter", sans-serif;
       display: flex;
       height: 100vh;
       overflow: hidden;
+      background: #f0f2f5;
     }
     /* Sidebar */
     .sidebar {
-      width: 220px;
-      background: #1e3c72;
+      width: 240px;
+      background: #2a5298;
       color: #fff;
       display: flex;
       flex-direction: column;
-      padding-top: 20px;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      padding: 20px 0;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.15);
     }
     .sidebar h2 {
       text-align: center;
-      margin: 0 0 20px;
-      font-size: 1.2rem;
-      font-weight: normal;
+      margin-bottom: 20px;
+      font-weight: 600;
     }
     .sidebar a {
-      display: block;
-      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
       text-decoration: none;
       color: #fff;
-      transition: background 0.3s;
       font-size: 1rem;
+      border-radius: 12px;
+      margin: 5px 15px;
+      transition: background 0.3s;
     }
     .sidebar a:hover {
       background: rgba(255,255,255,0.15);
     }
+    .sidebar svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
     .logout-btn {
       margin-top: auto;
-      padding: 15px;
-      text-align: center;
+      padding: 14px 20px;
+      margin: 15px;
+      border-radius: 12px;
       background: #f44336;
+      text-align: center;
       cursor: pointer;
+      font-weight: 600;
       transition: background 0.3s;
     }
     .logout-btn:hover {
@@ -53,17 +68,18 @@
     .main {
       flex: 1;
       position: relative;
-      background: linear-gradient(135deg, #2a5298, #1e3c72);
       display: flex;
       justify-content: center;
       align-items: center;
-      color: white;
+      color: #2a5298;
       font-size: 1.5rem;
-      transition: background 0.5s;
+      font-weight: 600;
       overflow: hidden;
     }
-
-    /* Iframe slides in */
+    .welcome {
+      text-align: center;
+      opacity: 0.8;
+    }
     iframe {
       position: absolute;
       top: 0;
@@ -73,6 +89,9 @@
       border: none;
       background: #fff;
       transition: right 0.5s;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+      box-shadow: -6px 0 15px rgba(0,0,0,0.1);
     }
     iframe.open {
       right: 0;
@@ -81,30 +100,36 @@
 </head>
 <body>
   <div class="sidebar">
-    <h2>Menu</h2>
-    <a href="#" onclick="loadPage('page1.html')">📄 Page 1</a>
-    <a href="#" onclick="loadPage('page2.html')">📄 Page 2</a>
-    <a href="#" onclick="loadPage('page3.html')">📄 Page 3</a>
-    <div class="logout-btn" onclick="logout()">🚪 Log Out</div>
+    <h2>Dashboard</h2>
+    <a href="#" onclick="loadPage('page1.html')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Page 1
+    </a>
+    <a href="#" onclick="loadPage('page2.html')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+      Page 2
+    </a>
+    <a href="#" onclick="loadPage('page3.html')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 11.5l-8.5-6v5h-7v2h7v5l8.5-6z"/></svg>
+      Page 3
+    </a>
+    <div class="logout-btn" onclick="logout()">Log Out</div>
   </div>
 
   <div class="main" id="mainArea">
-    <div class="welcome">Welcome! Select a page.</div>
+    <div class="welcome">👋 Welcome! Select a page from the sidebar.</div>
     <iframe id="mainFrame"></iframe>
   </div>
 
   <script>
-    // Protect main.html
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "badpass.html";
     }
-
     function loadPage(page) {
       const iframe = document.getElementById("mainFrame");
       iframe.src = page;
       iframe.classList.add("open");
     }
-
     function logout() {
       localStorage.removeItem("loggedIn");
       window.location.href = "index.html";
