@@ -2,173 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <title>Main</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      height: 100vh;
       background: #0f172a;
       color: #f9fafb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
     }
 
-    .auth-container {
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
       background: #1e293b;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-    }
-
-    h2 {
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
-
-    .input-group {
-      margin: 1rem 0;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: space-between;
+      box-shadow: 4px 0 12px rgba(0,0,0,0.5);
     }
 
-    .input-group label {
-      margin-bottom: 0.4rem;
-      font-weight: 500;
+    .user-info {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
     }
 
-    .input-field {
-      width: 90%;
-      max-width: 320px;
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #f9fafb;
+      background: #334155;
       padding: 0.7rem;
       border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-    }
-
-    .password-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 90%;
-      max-width: 320px;
-    }
-
-    .password-row input {
-      flex: 1;
-      padding: 0.7rem;
-      border-radius: 8px 0 0 8px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-    }
-
-    .password-row button {
-      width: 42px;
-      height: 42px;
-      border: none;
-      border-radius: 0 8px 8px 0;
-      background: #334155;
-      color: #f9fafb;
-      cursor: pointer;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      text-align: center;
       transition: background 0.2s;
     }
 
-    .password-row button:hover {
+    .nav a:hover {
       background: #475569;
     }
 
-    button.auth-btn {
-      width: 100%;
-      margin-top: 1.2rem;
-      padding: 0.8rem;
-      border: none;
-      border-radius: 8px;
-      background: #3b82f6;
+    .logout-btn {
+      margin-top: auto;
+      background: #ef4444;
       color: white;
-      font-size: 1rem;
+      border: none;
+      padding: 0.7rem;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 1rem;
       transition: background 0.2s;
     }
 
-    button.auth-btn:hover {
-      background: #2563eb;
+    .logout-btn:hover {
+      background: #dc2626;
     }
 
-    .switch-link {
-      margin-top: 1rem;
-      font-size: 0.9rem;
+    /* Iframe */
+    .iframe-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
     }
 
-    .switch-link a {
-      color: #60a5fa;
-      text-decoration: none;
+    iframe {
+      width: 90%;
+      height: 90%;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transform: translateX(100%);
+      transition: transform 0.7s ease;
+    }
+
+    iframe.show {
+      transform: translateX(0);
     }
   </style>
 </head>
 <body>
-  <div class="auth-container">
-    <h2>Sign Up</h2>
-    <div class="input-group">
-      <label for="username">Username</label>
-      <input class="input-field" type="text" id="username" placeholder="Choose a username" required>
-    </div>
-    <div class="input-group">
-      <label for="email">Email</label>
-      <input class="input-field" type="email" id="email" placeholder="Enter your email" required>
-    </div>
-    <div class="input-group">
-      <label for="password">Password</label>
-      <div class="password-row">
-        <input type="password" id="password" placeholder="Enter your password" required>
-        <button type="button" id="togglePassword">👁</button>
+  <div class="sidebar">
+    <div>
+      <div class="user-info" id="username-display">Loading...</div>
+      <div class="nav">
+        <a href="https://www.nvidia.com/en-us/geforce-now/">GeForce NOW</a>
+        <a href="https://discord.com/">Discord</a>
+        <a href="https://chat.openai.com/">ChatGPT</a>
       </div>
     </div>
-    <button class="auth-btn" onclick="signup()">Sign Up</button>
-    <div class="switch-link">
-      Already have an account? <a href="login.html">Log In</a>
-    </div>
+    <button class="logout-btn" id="logout">Logout</button>
   </div>
 
+  <div class="iframe-container">
+    <iframe id="appFrame" src="https://9f2bb2c8343f.ngrok-free.app/"></iframe>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
     const supabaseUrl = "https://keijxjexmfwlgetxyczr.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    document.getElementById("togglePassword").addEventListener("click", () => {
-      const passwordInput = document.getElementById("password");
-      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-    });
+    const iframe = document.getElementById("appFrame");
+    const usernameDisplay = document.getElementById("username-display");
 
-    async function signup() {
-      const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    // Animate iframe in
+    window.onload = () => {
+      setTimeout(() => {
+        iframe.classList.add("show");
+      }, 300);
+    };
 
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: { data: { username } }
-      });
+    // Check auth
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
 
-      if (error) {
-        alert("Signup failed: " + error.message);
+      if (!session) {
+        window.location.href = "login.html";
       } else {
-        localStorage.setItem("supabaseUser", JSON.stringify(data.user));
-        window.location.href = "main.html";
+        const userId = session.user.id;
+        const { data, error } = await supabaseClient
+          .from("profiles")
+          .select("username")
+          .eq("id", userId)
+          .single();
+
+        if (error || !data) {
+          usernameDisplay.textContent = "User";
+        } else {
+          usernameDisplay.textContent = data.username;
+        }
       }
-    }
+    })();
+
+    // Logout
+    document.getElementById("logout").addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>
