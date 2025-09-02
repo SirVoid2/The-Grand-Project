@@ -5,45 +5,46 @@
   <title>Welcome</title>
   <style>
     body {
+      margin: 0;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      font-family: 'Segoe UI', sans-serif;
       color: white;
-      text-align: center;
     }
     .container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      text-align: center;
+      background: #1e293b;
+      padding: 3rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     }
-    a {
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 24px;
-      border-radius: 8px;
-      background: #2563eb;
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+    .btn {
+      background: #3b82f6;
+      border: none;
+      padding: 0.9rem 1.8rem;
+      border-radius: 10px;
       color: white;
-      text-decoration: none;
-      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
       transition: 0.3s;
     }
-    a:hover {
-      background: #1d4ed8;
+    .btn:hover {
+      background: #2563eb;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🌌 Welcome to the Portal</h1>
-    <p>Please log in or create an account to continue.</p>
-    <a href="login.html">Login</a>
-    <a href="signup.html">Sign Up</a>
+    <h1>Welcome to the App</h1>
+    <button class="btn" onclick="location.href='login.html'">Login</button>
+    <button class="btn" style="margin-left:10px;" onclick="location.href='signup.html'">Sign Up</button>
   </div>
 </body>
 </html>

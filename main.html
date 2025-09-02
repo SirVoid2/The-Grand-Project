@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Main</title>
+  <title>Main Dashboard</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f172a;
-      color: white;
       display: flex;
       height: 100vh;
-      overflow: hidden;
+      background: #0f172a;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
     }
     .sidebar {
       width: 220px;
@@ -19,89 +18,90 @@
       padding: 1rem;
       display: flex;
       flex-direction: column;
-      border-right: 2px solid #334155;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
     }
     .sidebar h2 {
-      margin-bottom: 1rem;
+      margin: 0 0 2rem 0;
+      text-align: center;
+      font-size: 1.3rem;
     }
-    .sidebar button {
+    .sidebar button, .sidebar a {
+      background: #3b82f6;
+      border: none;
       margin: 0.5rem 0;
       padding: 0.8rem;
-      border: none;
-      border-radius: 8px;
-      background: #334155;
+      border-radius: 10px;
       color: white;
-      font-size: 1rem;
+      text-align: center;
+      text-decoration: none;
       cursor: pointer;
       transition: 0.3s;
     }
-    .sidebar button:hover {
-      background: #475569;
+    .sidebar button:hover, .sidebar a:hover {
+      background: #2563eb;
     }
-    .iframe-container {
+    .content {
       flex-grow: 1;
-      position: relative;
-      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
     }
     iframe {
-      position: absolute;
-      top: 0;
-      right: -100%;
-      width: 100%;
-      height: 100%;
+      width: 90%;
+      height: 90%;
       border: none;
-      border-radius: 16px 0 0 16px;
-      transition: right 0.5s ease;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      transform: translateX(100%);
+      animation: slideIn 0.8s forwards;
     }
-    iframe.open { right: 0; }
+    @keyframes slideIn {
+      to { transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <h2 id="username">User</h2>
-    <button onclick="openIframe('https://9f2bb2c8343f.ngrok-free.app/')">🎵 Music</button>
-    <button onclick="window.open('https://play.geforcenow.com', '_blank')">🎮 GeForce Now</button>
-    <button onclick="window.open('https://discord.com', '_blank')">💬 Discord</button>
-    <button onclick="window.open('https://chat.openai.com', '_blank')">🤖 ChatGPT</button>
-    <button onclick="logout()">🚪 Logout</button>
+    <h2 id="welcome">Welcome</h2>
+    <button onclick="showIframe()">Open Music</button>
+    <a href="https://www.nvidia.com/en-us/geforce-now/" target="_blank">GeForce Now</a>
+    <a href="https://discord.com" target="_blank">Discord</a>
+    <a href="https://chat.openai.com" target="_blank">ChatGPT</a>
+    <button onclick="logout()">Logout</button>
   </div>
-  <div class="iframe-container">
-    <iframe id="app-frame"></iframe>
+
+  <div class="content">
+    <iframe id="musicFrame" src="https://9f2bb2c8343f.ngrok-free.app/" style="display:none;"></iframe>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
-    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function loadUser() {
+    async function getUser() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = "login.html";
-        return;
+      } else {
+        let { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
+        document.getElementById("welcome").innerText = "Welcome, " + (profile?.username || "User");
       }
-      const { data } = await supabase.from("profiles").select("username").eq("id", user.id).single();
-      document.getElementById("username").textContent = `👤 ${data?.username || "User"}`;
     }
 
-    function openIframe(url) {
-      const iframe = document.getElementById("app-frame");
-      if (iframe.classList.contains("open") && iframe.src === url) {
-        iframe.classList.remove("open");
-      } else {
-        iframe.src = url;
-        iframe.classList.add("open");
-      }
+    function showIframe() {
+      document.getElementById("musicFrame").style.display = "block";
     }
 
     async function logout() {
       await supabase.auth.signOut();
-      localStorage.clear();
-      window.location.href = "login.html";
+      localStorage.removeItem("loggedIn");
+      window.location.href = "index.html";
     }
 
-    loadUser();
+    getUser();
   </script>
 </body>
 </html>
