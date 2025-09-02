@@ -115,14 +115,13 @@
   <div class="auth-container">
     <h2 id="formTitle">Login</h2>
 
-    <!-- Email input always visible -->
+    <!-- Email input -->
     <div class="input-group">
       <input type="email" id="email" placeholder="Email">
     </div>
-    <button id="nextBtn">Next</button>
 
-    <!-- Password input hidden until "Next" clicked -->
-    <div class="input-group hidden" id="passwordGroup">
+    <!-- Password input -->
+    <div class="input-group" id="passwordGroup">
       <input type="password" id="password" placeholder="Password">
       <button type="button" class="toggle-password" id="togglePassword">
         <!-- SVG eye -->
@@ -133,7 +132,7 @@
       </button>
     </div>
 
-    <button id="authBtn" class="hidden">Login</button>
+    <button id="authBtn">Login</button>
 
     <div class="toggle-text" id="toggleForm">
       Don’t have an account? <span>Sign up</span>
@@ -148,7 +147,6 @@
 
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
-    const nextBtn = document.getElementById("nextBtn");
     const authBtn = document.getElementById("authBtn");
     const toggleForm = document.getElementById("toggleForm");
     const formTitle = document.getElementById("formTitle");
@@ -164,18 +162,6 @@
       passwordInput.value = "";
     };
 
-    // Show password input only after Next
-    nextBtn.addEventListener("click", () => {
-      if (!emailInput.value) {
-        errorMsg.textContent = "Please enter your email.";
-        return;
-      }
-      passwordGroup.classList.remove("hidden");
-      authBtn.classList.remove("hidden");
-      nextBtn.classList.add("hidden");
-      errorMsg.textContent = "";
-    });
-
     // Toggle between login/signup
     toggleForm.addEventListener("click", () => {
       isLogin = !isLogin;
@@ -183,17 +169,16 @@
         formTitle.textContent = "Login";
         authBtn.textContent = "Login";
         toggleForm.innerHTML = `Don’t have an account? <span>Sign up</span>`;
+        passwordGroup.classList.remove("hidden");
       } else {
         formTitle.textContent = "Sign Up";
         authBtn.textContent = "Sign Up";
         toggleForm.innerHTML = `Already have an account? <span>Login</span>`;
+        passwordGroup.classList.add("hidden");
       }
       errorMsg.textContent = "";
       emailInput.value = "";
       passwordInput.value = "";
-      passwordGroup.classList.add("hidden");
-      authBtn.classList.add("hidden");
-      nextBtn.classList.remove("hidden");
     });
 
     // Handle login/signup
@@ -203,7 +188,7 @@
 
       errorMsg.textContent = "";
 
-      if (!email || !password) {
+      if (!email || (!isLogin && !password)) {
         errorMsg.textContent = "Please fill in all fields.";
         return;
       }
