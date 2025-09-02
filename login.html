@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Inter", sans-serif;
+      background: #0d1117;
+      color: #e5e7eb;
+    }
+    .auth-container {
+      background: #161b22;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 360px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: white;
+    }
+    .input-group {
+      position: relative;
+      margin: 10px auto;
+      width: 80%;
+    }
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: #1f2937;
+      color: white;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: #9ca3af;
+    }
+    button {
+      width: 80%;
+      padding: 10px;
+      margin: 12px auto 0;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: block;
+    }
+    .toggle-text {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+    .toggle-text a {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+    .error {
+      color: #ef4444;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Login</h2>
+
+    <div class="input-group">
+      <input type="email" id="email" placeholder="Email">
+    </div>
+
+    <div class="input-group hidden" id="passwordGroup">
+      <input type="password" id="password" placeholder="Password">
+      <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+    </div>
+
+    <button id="nextBtn">Next</button>
+    <button id="loginBtn" class="hidden">Login</button>
+
+    <div class="toggle-text">
+      Don’t have an account? <a href="signup.html">Sign up</a>
+    </div>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_KEY = "YOUR_KEY_HERE";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const passwordGroup = document.getElementById("passwordGroup");
+    const nextBtn = document.getElementById("nextBtn");
+    const loginBtn = document.getElementById("loginBtn");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const errorMsg = document.getElementById("errorMsg");
+
+    nextBtn.addEventListener("click", () => {
+      if (!emailInput.value) {
+        errorMsg.textContent = "Enter your email first.";
+        return;
+      }
+      passwordGroup.classList.remove("hidden");
+      nextBtn.classList.add("hidden");
+      loginBtn.classList.remove("hidden");
+      errorMsg.textContent = "";
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: emailInput.value,
+        password: passwordInput.value
+      });
+      if (error) errorMsg.textContent = error.message;
+      else window.location.href = "main.html";
+    });
+
+    togglePasswordBtn.addEventListener("click", () => {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>
