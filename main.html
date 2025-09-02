@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Main App</title>
+  <title>The Grand Project</title>
   <style>
     /* ===== Reset ===== */
     * {
@@ -135,18 +135,21 @@
 </head>
 <body>
   <div class="sidebar">
-    <h2>Dashboard</h2>
-    <a href="#" onclick="togglePage('page1.html', this)">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>
-      Page 1
+    <h2>The Grand Project</h2>
+    <!-- Music iframe -->
+    <a href="#" onclick="togglePage('https://9f2bb2c8343f.ngrok-free.app/', this)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+      Music
     </a>
-    <a href="#" onclick="togglePage('page2.html', this)">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-      Page 2
+    <!-- Geforce NOW external -->
+    <a href="https://www.geforcenow.com/" target="_blank">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L1.5 9l10.5 7 9.5-6-9.5-8zm0 18.5L1.5 13 12 20l10.5-7-10.5 7.5z"/></svg>
+      GeForce NOW
     </a>
-    <a href="#" onclick="togglePage('page3.html', this)">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 11.5l-8.5-6v5h-7v2h7v5l8.5-6z"/></svg>
-      Page 3
+    <!-- Discord external -->
+    <a href="https://discord.com/" target="_blank">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 0H4C1.8 0 0 1.8 0 4v16c0 2.2 1.8 4 4 4h13.5l-.6-2.2 1.5 1.4L22 24V4c0-2.2-1.8-4-4-4z"/></svg>
+      Discord
     </a>
     <div class="logout-btn" onclick="logout()">Log Out</div>
   </div>
@@ -155,7 +158,7 @@
     <div class="glow"></div>
     <div class="glow two"></div>
     <div class="placeholder">
-      Select an option from the sidebar to open it in the panel.
+      Select <strong>Music</strong> or open an external app from the sidebar.
     </div>
     <iframe id="mainFrame"></iframe>
   </div>
