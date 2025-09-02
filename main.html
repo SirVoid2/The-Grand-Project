@@ -5,80 +5,99 @@
   <title>Main</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
       color: white;
       display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
-      margin: 0;
-      text-align: center;
+      overflow: hidden;
     }
-    .container {
+    .sidebar {
+      width: 220px;
       background: #1e293b;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      width: 400px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #334155;
     }
-    h1 {
+    .sidebar h2 {
       margin-bottom: 1rem;
     }
-    .btn {
-      margin-top: 1.5rem;
-      padding: 0.8rem 1.2rem;
-      background: #ef4444;
+    .sidebar button {
+      margin: 0.5rem 0;
+      padding: 0.8rem;
       border: none;
       border-radius: 8px;
+      background: #334155;
       color: white;
-      cursor: pointer;
       font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
     }
-    .btn:hover {
-      background: #dc2626;
+    .sidebar button:hover {
+      background: #475569;
     }
+    .iframe-container {
+      flex-grow: 1;
+      position: relative;
+      background: #0f172a;
+    }
+    iframe {
+      position: absolute;
+      top: 0;
+      right: -100%;
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 16px 0 0 16px;
+      transition: right 0.5s ease;
+    }
+    iframe.open { right: 0; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="welcome-text">Welcome!</h1>
-    <button class="btn" onclick="logout()">Logout</button>
+  <div class="sidebar">
+    <h2 id="username">User</h2>
+    <button onclick="openIframe('https://9f2bb2c8343f.ngrok-free.app/')">🎵 Music</button>
+    <button onclick="window.open('https://play.geforcenow.com', '_blank')">🎮 GeForce Now</button>
+    <button onclick="window.open('https://discord.com', '_blank')">💬 Discord</button>
+    <button onclick="window.open('https://chat.openai.com', '_blank')">🤖 ChatGPT</button>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+  <div class="iframe-container">
+    <iframe id="app-frame"></iframe>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function loadUser() {
       const { data: { user } } = await supabase.auth.getUser();
-
       if (!user) {
         window.location.href = "login.html";
         return;
       }
+      const { data } = await supabase.from("profiles").select("username").eq("id", user.id).single();
+      document.getElementById("username").textContent = `👤 ${data?.username || "User"}`;
+    }
 
-      // fetch username from profiles table
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("username")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        console.error("Profile fetch error:", error);
-        document.getElementById("welcome-text").textContent = "Welcome!";
+    function openIframe(url) {
+      const iframe = document.getElementById("app-frame");
+      if (iframe.classList.contains("open") && iframe.src === url) {
+        iframe.classList.remove("open");
       } else {
-        document.getElementById("welcome-text").textContent = `Welcome, ${data.username}!`;
+        iframe.src = url;
+        iframe.classList.add("open");
       }
     }
 
     async function logout() {
       await supabase.auth.signOut();
-      localStorage.removeItem("loggedIn");
-      localStorage.removeItem("email");
+      localStorage.clear();
       window.location.href = "login.html";
     }
 
