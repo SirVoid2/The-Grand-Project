@@ -6,66 +6,43 @@
   <style>
     body {
       margin: 0;
-      height: 100vh;
+      font-family: system-ui, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(135deg, #3b82f6, #06b6d4);
-      color: #1f2937;
-    }
-    .welcome-container {
+      height: 100vh;
+      background: linear-gradient(135deg, #3b82f6, #9333ea);
+      color: white;
       text-align: center;
-      padding: 2rem;
+    }
+    .box {
+      background: rgba(0,0,0,0.4);
+      padding: 40px;
       border-radius: 20px;
-      max-width: 500px;
-      width: 90%;
-      background: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      backdrop-filter: blur(8px);
-    }
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
-    p {
-      color: #4b5563;
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
     }
     .btn {
-      width: 80%;
-      padding: 14px;
-      margin: 12px auto;
+      background: #2563eb;
+      color: white;
       border: none;
-      border-radius: 12px;
+      padding: 12px 20px;
+      border-radius: 8px;
       font-size: 1rem;
-      font-weight: 600;
       cursor: pointer;
-      display: block;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .btn-login {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: white;
-    }
-    .btn-signup {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
+      transition: 0.3s;
+      margin: 10px;
     }
     .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
-  <div class="welcome-container">
-    <h1>Welcome</h1>
-    <p>Log in or sign up to continue</p>
-    <button class="btn btn-login" onclick="location.href='login.html'">Login</button>
-    <button class="btn btn-signup" onclick="location.href='signup.html'">Sign Up</button>
+  <div class="box">
+    <h1>🌌 Welcome</h1>
+    <p>Login or sign up to continue</p>
+    <button class="btn" onclick="location.href='login.html'">Login</button>
+    <button class="btn" onclick="location.href='signup.html'">Sign Up</button>
   </div>
 </body>
 </html>

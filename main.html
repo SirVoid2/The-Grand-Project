@@ -3,159 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <title>Main</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       margin: 0;
-      font-family: "Inter", sans-serif;
-      background: #0d1117;
-      color: white;
+      font-family: system-ui, sans-serif;
       display: flex;
       height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: #161b22;
-      display: flex;
-      flex-direction: column;
-      padding: 1.5rem 1rem;
-      box-shadow: 4px 0 12px rgba(0,0,0,0.4);
-    }
-
-    .user-info {
-      font-size: 0.9rem;
-      color: #9ca3af;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .sidebar button {
-      background: #1f2937;
-      color: #d1d5db;
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      margin: 8px 0;
-      cursor: pointer;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background 0.3s, transform 0.2s;
-    }
-
-    .sidebar button:hover {
-      background: #374151;
-      transform: scale(1.03);
-    }
-
-    /* Iframe container */
-    .iframe-container {
-      flex: 1;
-      position: relative;
-      background: #0d1117;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    iframe {
-      position: absolute;
-      top: 50%;
-      left: 100%;
-      transform: translateY(-50%);
-      width: 80%;
-      height: 80%;
-      border: none;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-      transition: left 0.5s ease-in-out;
-      background: #111;
-    }
-
-    iframe.open {
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    #logoutBtn {
-      margin-top: auto;
-      background: linear-gradient(135deg, #ef4444, #dc2626);
+      background: #0f172a;
       color: white;
     }
-
-    #logoutBtn:hover {
-      opacity: 0.85;
+    .sidebar {
+      width: 240px;
+      background: #1e293b;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h2 {
+      font-size: 1.2rem;
+    }
+    .sidebar button {
+      background: #334155;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      color: white;
+      cursor: pointer;
+    }
+    .sidebar button:hover {
+      background: #475569;
+    }
+    iframe {
+      flex: 1;
+      border: none;
+      border-radius: 12px;
+      margin: 20px;
+      background: #111827;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <div class="user-info" id="userEmail">Loading...</div>
-    <button id="musicBtn">🎵 Music</button>
-    <button id="gfnBtn">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Nvidia_GeForce_Now_logo.svg" alt="GFN" height="18"> Geforce Now
-    </button>
-    <button id="discordBtn">
-      <img src="https://upload.wikimedia.org/commons/9/98/Discord_logo.svg" alt="Discord" height="18"> Discord
-    </button>
-    <button id="logoutBtn">Logout</button>
+    <div>
+      <h2 id="user-email"></h2>
+      <button onclick="loadPage('https://9f2bb2c8343f.ngrok-free.app/')">🎵 Music</button>
+      <button onclick="loadPage('https://www.nvidia.com/en-us/geforce-now/')">Geforce Now</button>
+      <button onclick="loadPage('https://discord.com')">Discord</button>
+    </div>
+    <button onclick="logout()">Logout</button>
   </div>
+  <iframe id="content" src=""></iframe>
 
-  <div class="iframe-container">
-    <iframe id="appFrame"></iframe>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = window.supabase.createClient(
+      "https://keijxjexmfwlgetxyczr.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    );
 
-    const iframe = document.getElementById("appFrame");
-    const musicBtn = document.getElementById("musicBtn");
-    const gfnBtn = document.getElementById("gfnBtn");
-    const discordBtn = document.getElementById("discordBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userEmail = document.getElementById("userEmail");
-
-    // ✅ Redirect back to login if not logged in
-    const loggedIn = localStorage.getItem("loggedIn");
-    if (!loggedIn) {
-      window.location.href = "index.html";
-    } else {
-      userEmail.textContent = localStorage.getItem("email");
+    if (!localStorage.getItem("loggedIn")) {
+      window.location.href = "login.html";
     }
 
-    // 🎵 Music button toggles iframe
-    musicBtn.addEventListener("click", () => {
-      if (iframe.classList.contains("open")) {
-        iframe.classList.remove("open");
-        setTimeout(() => iframe.src = "", 400);
-      } else {
-        iframe.src = "https://9f2bb2c8343f.ngrok-free.app/";
-        iframe.classList.add("open");
-      }
-    });
+    document.getElementById("user-email").textContent = localStorage.getItem("email");
 
-    // 🌐 Redirects
-    gfnBtn.addEventListener("click", () => {
-      window.open("https://play.geforcenow.com", "_blank");
-    });
+    function loadPage(url) {
+      document.getElementById("content").src = url;
+    }
 
-    discordBtn.addEventListener("click", () => {
-      window.open("https://discord.com", "_blank");
-    });
-
-    // 🚪 Logout
-    logoutBtn.addEventListener("click", async () => {
+    async function logout() {
       await supabase.auth.signOut();
-      localStorage.removeItem("loggedIn");
-      localStorage.removeItem("email");
-      window.location.href = "index.html";
-    });
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
   </script>
 </body>
 </html>

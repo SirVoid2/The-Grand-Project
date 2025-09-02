@@ -3,128 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <title>Sign Up</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       margin: 0;
-      height: 100vh;
+      font-family: system-ui, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: "Inter", sans-serif;
-      background: #0d1117;
-      color: #e5e7eb;
+      height: 100vh;
+      background: #0f172a;
+      color: white;
     }
-    .auth-container {
-      background: #161b22;
-      padding: 2rem;
+    .container {
+      background: #1e293b;
+      padding: 30px;
       border-radius: 16px;
-      width: 360px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+      width: 320px;
       text-align: center;
     }
-    h2 {
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-      color: white;
-    }
-    .input-group {
-      position: relative;
-      margin: 10px auto;
-      width: 80%;
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
     }
     input {
-      width: 100%;
-      padding: 10px 14px;
+      width: calc(100% - 40px);
+      padding: 10px;
       border: none;
-      border-radius: 10px;
-      background: #1f2937;
+      border-radius: 8px;
+      margin-top: 6px;
+      background: #334155;
       color: white;
-      font-size: 0.95rem;
-      outline: none;
+    }
+    .password-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    .password-wrapper input {
+      flex: 1;
     }
     .toggle-password {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
+      margin-left: 8px;
+      background: #475569;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
       cursor: pointer;
-      background: none;
-      border: none;
-      color: #9ca3af;
+      color: white;
     }
-    button {
-      width: 80%;
-      padding: 10px;
-      margin: 12px auto 0;
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #9333ea;
       border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 8px;
       color: white;
       font-size: 1rem;
-      font-weight: 500;
       cursor: pointer;
-      display: block;
     }
-    .toggle-text {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #9ca3af;
+    .btn:hover {
+      opacity: 0.9;
     }
-    .toggle-text a {
-      color: #3b82f6;
-      text-decoration: underline;
-    }
-    .error {
-      color: #ef4444;
-      margin-top: 0.5rem;
+    .small-text {
+      margin-top: 12px;
       font-size: 0.9rem;
     }
+    a { color: #3b82f6; }
   </style>
 </head>
 <body>
-  <div class="auth-container">
+  <div class="container">
     <h2>Sign Up</h2>
-
-    <div class="input-group">
-      <input type="email" id="email" placeholder="Email">
-    </div>
-    <div class="input-group">
-      <input type="password" id="password" placeholder="Password">
-      <button type="button" class="toggle-password" id="togglePassword">👁️</button>
-    </div>
-
-    <button id="signupBtn">Sign Up</button>
-
-    <div class="toggle-text">
-      Already have an account? <a href="index.html">Login</a>
-    </div>
-    <div class="error" id="errorMsg"></div>
+    <form id="signup-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group password-wrapper">
+        <div style="flex:1">
+          <label>Password</label>
+          <input type="password" id="password" required>
+        </div>
+        <button type="button" class="toggle-password" onclick="togglePassword()">👁</button>
+      </div>
+      <button type="submit" class="btn">Sign Up</button>
+    </form>
+    <p class="small-text">Already have an account? <a href="login.html">Login</a></p>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
-    const SUPABASE_KEY = "YOUR_KEY_HERE";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = window.supabase.createClient(
+      "https://keijxjexmfwlgetxyczr.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    );
 
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const signupBtn = document.getElementById("signupBtn");
-    const togglePasswordBtn = document.getElementById("togglePassword");
-    const errorMsg = document.getElementById("errorMsg");
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-    signupBtn.addEventListener("click", async () => {
-      const { error } = await supabase.auth.signUp({
-        email: emailInput.value,
-        password: passwordInput.value
-      });
-      if (error) errorMsg.textContent = error.message;
-      else window.location.href = "main.html";
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        alert("❌ " + error.message);
+      } else {
+        alert("✅ Account created! Check your email for confirmation.");
+        window.location.href = "login.html";
+      }
     });
 
-    togglePasswordBtn.addEventListener("click", () => {
-      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-    });
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+    }
   </script>
 </body>
 </html>
