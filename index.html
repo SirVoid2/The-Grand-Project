@@ -11,46 +11,61 @@
       justify-content: center;
       align-items: center;
       font-family: "Inter", sans-serif;
-      background: #0d1117;
-      color: #e5e7eb;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      color: #1f2937;
     }
     .welcome-container {
-      background: #161b22;
-      padding: 3rem 2rem;
-      border-radius: 16px;
-      width: 400px;
       text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      backdrop-filter: blur(8px);
     }
     h1 {
-      color: white;
-      margin-bottom: 1rem;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
     }
     p {
-      color: #9ca3af;
+      color: #4b5563;
       margin-bottom: 2rem;
+      font-size: 1.1rem;
     }
-    button {
+    .btn {
       width: 80%;
-      padding: 12px;
-      margin: 10px auto;
+      padding: 14px;
+      margin: 12px auto;
       border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: white;
+      border-radius: 12px;
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       display: block;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-login {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+    }
+    .btn-signup {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
   <div class="welcome-container">
     <h1>Welcome</h1>
-    <p>Choose an option below to continue</p>
-    <button onclick="location.href='login.html'">Login</button>
-    <button onclick="location.href='signup.html'">Sign Up</button>
+    <p>Log in or sign up to continue</p>
+    <button class="btn btn-login" onclick="location.href='login.html'">Login</button>
+    <button class="btn btn-signup" onclick="location.href='signup.html'">Sign Up</button>
   </div>
 </body>
 </html>
