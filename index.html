@@ -37,18 +37,17 @@
     .input-group {
       position: relative;
       margin: 10px 0;
-      width: 100%;
+      width: 80%; /* not full width */
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      padding-right: 40px;
+      padding: 10px 40px 10px 12px;
       border: none;
       border-radius: 10px;
       background: #1f2937;
       color: white;
-      font-size: 1rem;
+      font-size: 0.95rem;
       outline: none;
       transition: background 0.3s;
     }
@@ -60,20 +59,19 @@
     .toggle-password {
       position: absolute;
       top: 50%;
-      right: 12px;
+      right: 10px;
       transform: translateY(-50%);
       cursor: pointer;
       background: none;
       border: none;
-      padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .toggle-password svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       stroke: #9ca3af;
       transition: stroke 0.3s;
     }
@@ -83,14 +81,14 @@
     }
 
     button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 16px;
+      width: 80%; /* smaller width */
+      padding: 10px;
+      margin-top: 14px;
       border: none;
       border-radius: 10px;
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: white;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 500;
       cursor: pointer;
       transition: opacity 0.3s, transform 0.2s;
@@ -103,7 +101,7 @@
 
     .toggle-text {
       margin-top: 1rem;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #9ca3af;
     }
 
@@ -119,8 +117,17 @@
       font-size: 0.9rem;
     }
 
-    #passwordGroup {
-      display: none; /* hidden until email filled */
+    #passwordGroup, #authBtn {
+      display: none; /* hidden until Next clicked */
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -130,10 +137,11 @@
     <div class="input-group">
       <input type="email" id="email" placeholder="Email">
     </div>
+    <button id="nextBtn">Next</button>
+
     <div class="input-group" id="passwordGroup">
       <input type="password" id="password" placeholder="Password">
       <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
-        <!-- Default: eye icon -->
         <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -145,6 +153,7 @@
       </button>
     </div>
     <button id="authBtn">Login</button>
+
     <div class="toggle-text" id="toggleForm">
       Don’t have an account? <span>Sign up</span>
     </div>
@@ -159,6 +168,7 @@
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
     const passwordGroup = document.getElementById("passwordGroup");
+    const nextBtn = document.getElementById("nextBtn");
     const authBtn = document.getElementById("authBtn");
     const toggleForm = document.getElementById("toggleForm");
     const formTitle = document.getElementById("formTitle");
@@ -173,18 +183,24 @@
       emailInput.value = "";
       passwordInput.value = "";
       passwordGroup.style.display = "none";
+      authBtn.style.display = "none";
     };
 
-    // Show password input only after typing email
-    emailInput.addEventListener("input", () => {
-      if (emailInput.value.trim() !== "") {
-        passwordGroup.style.display = "block";
-      } else {
-        passwordGroup.style.display = "none";
-        passwordInput.value = "";
+    // Step 1: Next button
+    nextBtn.addEventListener("click", () => {
+      if (emailInput.value.trim() === "") {
+        errorMsg.textContent = "Please enter your email first.";
+        return;
       }
+      errorMsg.textContent = "";
+      passwordGroup.style.display = "block";
+      authBtn.style.display = "block";
+      passwordGroup.classList.add("fade-in");
+      authBtn.classList.add("fade-in");
+      nextBtn.style.display = "none";
     });
 
+    // Toggle between login and signup
     toggleForm.addEventListener("click", () => {
       isLogin = !isLogin;
       if (isLogin) {
@@ -200,8 +216,11 @@
       emailInput.value = "";
       passwordInput.value = "";
       passwordGroup.style.display = "none";
+      authBtn.style.display = "none";
+      nextBtn.style.display = "block";
     });
 
+    // Login/Signup button
     authBtn.addEventListener("click", async () => {
       const email = emailInput.value;
       const password = passwordInput.value;
@@ -230,7 +249,7 @@
       }
     });
 
-    // Toggle show/hide password with SVG swap
+    // Toggle show/hide password
     togglePasswordBtn.addEventListener("click", () => {
       showingPassword = !showingPassword;
       passwordInput.type = showingPassword ? "text" : "password";
