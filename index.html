@@ -9,72 +9,92 @@
       margin: 0;
       height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      background: linear-gradient(145deg, #0b0d11, #121418);
+      justify-content: center;
       font-family: "Inter", sans-serif;
+      background: #0d1117;
       color: #fff;
     }
-    .login-box {
-      background: #14161c;
-      padding: 40px;
+
+    .auth-container {
+      background: #161b22;
+      padding: 2rem;
       border-radius: 16px;
-      width: 360px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    h2 {
       text-align: center;
-      box-shadow: 0 0 40px rgba(0,0,0,0.4);
-    }
-    .login-box h2 {
-      margin-bottom: 20px;
+      margin-bottom: 1.5rem;
       font-weight: 600;
+      color: #e5e7eb;
     }
+
     input {
       width: 100%;
       padding: 12px;
-      margin: 10px 0;
+      margin-bottom: 1rem;
       border: none;
       border-radius: 10px;
-      background: #1e2027;
+      background: #1f2937;
       color: #fff;
       font-size: 1rem;
+      outline: none;
     }
+
+    input:focus {
+      background: #374151;
+    }
+
     button {
       width: 100%;
       padding: 12px;
-      margin-top: 16px;
       border: none;
       border-radius: 10px;
-      background: linear-gradient(135deg, #4361ee, #3a0ca3);
-      color: #fff;
       font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: opacity 0.25s;
+      transition: background 0.3s;
     }
-    button:hover {
-      opacity: 0.85;
+
+    #loginBtn {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      margin-bottom: 0.75rem;
     }
-    .error {
-      color: #ef4444;
-      margin-top: 12px;
+
+    #loginBtn:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
     }
-    .toggle {
-      margin-top: 20px;
+
+    #signupBtn {
+      background: #1f2937;
+      color: #d1d5db;
+    }
+
+    #signupBtn:hover {
+      background: #374151;
+    }
+
+    .message {
+      text-align: center;
       font-size: 0.9rem;
-      cursor: pointer;
-      color: #93c5fd;
-    }
-    .toggle:hover {
-      text-decoration: underline;
+      margin-top: 1rem;
+      color: #f87171;
+      min-height: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2 id="formTitle">Login</h2>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="handleAuth()">Login</button>
-    <div id="error" class="error"></div>
-    <div class="toggle" onclick="toggleMode()">Don’t have an account? Sign up</div>
+  <div class="auth-container">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email" autocomplete="off">
+    <input type="password" id="password" placeholder="Password" autocomplete="off">
+    <button id="loginBtn">Login</button>
+    <button id="signupBtn">Sign Up</button>
+    <div class="message" id="message"></div>
   </div>
 
   <script>
@@ -82,43 +102,57 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let isSignup = false;
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const messageDiv = document.getElementById("message");
 
-    function toggleMode() {
-      isSignup = !isSignup;
-      document.getElementById("formTitle").textContent = isSignup ? "Sign Up" : "Login";
-      document.querySelector("button").textContent = isSignup ? "Sign Up" : "Login";
-      document.querySelector(".toggle").textContent = isSignup
-        ? "Already have an account? Login"
-        : "Don’t have an account? Sign up";
-      document.getElementById("error").textContent = "";
-    }
+    // Clear inputs on load
+    window.onload = () => {
+      emailInput.value = "";
+      passwordInput.value = "";
+    };
 
-    async function handleAuth() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const errorDiv = document.getElementById("error");
+    // Handle login
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
 
       if (!email || !password) {
-        errorDiv.textContent = "Please fill in both fields.";
+        messageDiv.textContent = "Please fill in all fields.";
         return;
       }
 
-      let result;
-      if (isSignup) {
-        result = await supabase.auth.signUp({ email, password });
-      } else {
-        result = await supabase.auth.signInWithPassword({ email, password });
-      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-      if (result.error) {
-        errorDiv.textContent = result.error.message;
+      if (error) {
+        messageDiv.textContent = error.message;
       } else {
         localStorage.setItem("loggedIn", "true");
         localStorage.setItem("email", email);
         window.location.href = "main.html";
       }
-    }
+    });
+
+    // Handle sign up
+    document.getElementById("signupBtn").addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!email || !password) {
+        messageDiv.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        messageDiv.textContent = error.message;
+      } else {
+        messageDiv.textContent = "Account created! Please log in.";
+        emailInput.value = "";
+        passwordInput.value = "";
+      }
+    });
   </script>
 </body>
 </html>
