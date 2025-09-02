@@ -2,155 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Main</title>
+  <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      display: flex;
       height: 100vh;
-      background: #0f172a;
-      color: #f9fafb;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 250px;
-      background: #1e293b;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 4px 0 12px rgba(0,0,0,0.5);
-    }
-
-    .user-info {
-      font-size: 1.1rem;
-      font-weight: bold;
-      margin-bottom: 2rem;
-    }
-
-    .nav {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-
-    .nav a {
-      text-decoration: none;
-      color: #f9fafb;
-      background: #334155;
-      padding: 0.7rem;
-      border-radius: 8px;
-      text-align: center;
-      transition: background 0.2s;
-    }
-
-    .nav a:hover {
-      background: #475569;
-    }
-
-    .logout-btn {
-      margin-top: auto;
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 0.7rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.2s;
-    }
-
-    .logout-btn:hover {
-      background: #dc2626;
-    }
-
-    /* Iframe */
-    .iframe-container {
-      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
-      position: relative;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      font-family: "Segoe UI", sans-serif;
+      color: #f9fafb;
     }
 
-    iframe {
-      width: 90%;
-      height: 90%;
-      border: none;
+    .login-box {
+      background: #111827;
+      padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-      transform: translateX(100%);
-      transition: transform 0.7s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
     }
 
-    iframe.show {
-      transform: translateX(0);
+    h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.6rem;
+      color: #f9fafb;
+    }
+
+    .input-group {
+      margin: 0.8rem 0;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: #1f2937;
+      color: #f9fafb;
+    }
+
+    .password-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .password-row input {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 8px 0 0 8px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: #1f2937;
+      color: #f9fafb;
+    }
+
+    .password-row button {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      background: #334155;
+      color: #f9fafb;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .password-row button:hover {
+      background: #475569;
+    }
+
+    .btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-login {
+      background: #2563eb;
+      color: white;
+    }
+    .btn-login:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-signup {
+      margin-top: 0.7rem;
+      background: #6b7280;
+      color: white;
+    }
+    .btn-signup:hover {
+      background: #4b5563;
+    }
+
+    .error {
+      color: #ef4444;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div>
-      <div class="user-info" id="username-display">Loading...</div>
-      <div class="nav">
-        <a href="https://www.nvidia.com/en-us/geforce-now/">GeForce NOW</a>
-        <a href="https://discord.com/">Discord</a>
-        <a href="https://chat.openai.com/">ChatGPT</a>
+  <div class="login-box">
+    <h2>Login</h2>
+    <form id="login-form">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="input-field" required>
       </div>
-    </div>
-    <button class="logout-btn" id="logout">Logout</button>
-  </div>
 
-  <div class="iframe-container">
-    <iframe id="appFrame" src="https://9f2bb2c8343f.ngrok-free.app/"></iframe>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="password-row">
+          <input type="password" id="password" required>
+          <button type="button" id="togglePassword">👁</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-login">Login</button>
+    </form>
+
+    <a href="https://discord.gg/vUdF8Zpcw9">
+      <button class="btn btn-signup">Sign Up</button>
+    </a>
+
+    <div id="error-message" class="error"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
     const supabaseUrl = "https://keijxjexmfwlgetxyczr.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const iframe = document.getElementById("appFrame");
-    const usernameDisplay = document.getElementById("username-display");
+    const loginForm = document.getElementById("login-form");
+    const errorMessage = document.getElementById("error-message");
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
 
-    // Animate iframe in
-    window.onload = () => {
-      setTimeout(() => {
-        iframe.classList.add("show");
-      }, 300);
-    };
+    togglePassword.addEventListener("click", () => {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
 
-    // Check auth
-    (async () => {
-      const { data: { session } } = await supabaseClient.auth.getSession();
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMessage.textContent = "";
 
-      if (!session) {
-        window.location.href = "login.html";
+      const email = document.getElementById("email").value;
+      const password = passwordInput.value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorMessage.textContent = error.message;
       } else {
-        const userId = session.user.id;
-        const { data, error } = await supabaseClient
-          .from("profiles")
-          .select("username")
-          .eq("id", userId)
-          .single();
-
-        if (error || !data) {
-          usernameDisplay.textContent = "User";
-        } else {
-          usernameDisplay.textContent = data.username;
-        }
+        window.location.href = "main.html";
       }
-    })();
-
-    // Logout
-    document.getElementById("logout").addEventListener("click", async () => {
-      await supabaseClient.auth.signOut();
-      window.location.href = "login.html";
     });
   </script>
 </body>
