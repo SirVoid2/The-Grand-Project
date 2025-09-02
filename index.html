@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       margin: 0;
@@ -10,85 +11,112 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      background: linear-gradient(145deg, #0b0d11, #121418);
       font-family: "Inter", sans-serif;
-      background: #f0f2f5;
+      color: #fff;
     }
     .login-box {
-      background: #fff;
-      padding: 2.5rem;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      background: #14161c;
+      padding: 40px;
+      border-radius: 16px;
+      width: 360px;
       text-align: center;
-      width: 350px;
-      animation: fadeIn 0.6s ease;
+      box-shadow: 0 0 40px rgba(0,0,0,0.4);
     }
-    .login-box svg {
-      width: 50px;
-      height: 50px;
-      margin-bottom: 15px;
-      fill: #2a5298;
-    }
-    h2 {
-      margin: 0 0 1.5rem;
-      color: #2a5298;
+    .login-box h2 {
+      margin-bottom: 20px;
       font-weight: 600;
     }
     input {
       width: 100%;
-      padding: 14px;
-      margin: 10px 0 20px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background: #1e2027;
+      color: #fff;
       font-size: 1rem;
-      outline: none;
-      transition: border 0.3s;
-    }
-    input:focus {
-      border-color: #2a5298;
     }
     button {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
+      margin-top: 16px;
       border: none;
-      border-radius: 12px;
-      background: #2a5298;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4361ee, #3a0ca3);
       color: #fff;
       font-size: 1rem;
-      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: opacity 0.25s;
     }
     button:hover {
-      background: #1e3c72;
+      opacity: 0.85;
     }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+    .error {
+      color: #ef4444;
+      margin-top: 12px;
+    }
+    .toggle {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #93c5fd;
+    }
+    .toggle:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <div class="login-box">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M12 2a7 7 0 0 0-7 7v3H4a2 2 0 0 0-2 2v8h20v-8a2 2 0 0 0-2-2h-1V9a7 7 0 0 0-7-7zM7 9a5 5 0 0 1 10 0v3H7V9z"/>
-    </svg>
-    <h2>Sign In</h2>
-    <input type="password" id="codeInput" placeholder="Enter code">
-    <button onclick="checkCode()">Login</button>
+    <h2 id="formTitle">Login</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="handleAuth()">Login</button>
+    <div id="error" class="error"></div>
+    <div class="toggle" onclick="toggleMode()">Don’t have an account? Sign up</div>
   </div>
 
   <script>
-    if (localStorage.getItem("loggedIn") === "true") {
-      window.location.href = "main.html";
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let isSignup = false;
+
+    function toggleMode() {
+      isSignup = !isSignup;
+      document.getElementById("formTitle").textContent = isSignup ? "Sign Up" : "Login";
+      document.querySelector("button").textContent = isSignup ? "Sign Up" : "Login";
+      document.querySelector(".toggle").textContent = isSignup
+        ? "Already have an account? Login"
+        : "Don’t have an account? Sign up";
+      document.getElementById("error").textContent = "";
     }
-    function checkCode() {
-      const code = document.getElementById("codeInput").value.trim();
-      if (code === "admin") {
-        localStorage.setItem("loggedIn", "true");
-        window.location.href = "main.html";
+
+    async function handleAuth() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorDiv = document.getElementById("error");
+
+      if (!email || !password) {
+        errorDiv.textContent = "Please fill in both fields.";
+        return;
+      }
+
+      let result;
+      if (isSignup) {
+        result = await supabase.auth.signUp({ email, password });
       } else {
-        localStorage.removeItem("loggedIn");
-        window.location.href = "badpass.html";
+        result = await supabase.auth.signInWithPassword({ email, password });
+      }
+
+      if (result.error) {
+        errorDiv.textContent = result.error.message;
+      } else {
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("email", email);
+        window.location.href = "main.html";
       }
     }
   </script>

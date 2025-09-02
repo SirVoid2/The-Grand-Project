@@ -2,195 +2,170 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Grand Project</title>
+  <title>Main</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* ===== Reset ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
+      margin: 0;
       height: 100vh;
       display: flex;
-      font-family: "Inter", "Segoe UI", sans-serif;
-      background: linear-gradient(145deg, #0b0d11, #121418);
-      color: #e5e7eb;
+      font-family: "Inter", sans-serif;
+      background: #0d1117;
+      color: #fff;
       overflow: hidden;
     }
 
-    /* ===== Sidebar ===== */
+    /* Sidebar */
     .sidebar {
-      width: 320px;
-      background: #14161c;
+      width: 280px;
+      background: #161b22;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      padding: 28px 0;
-      border-right: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.4);
     }
-    .sidebar h2 {
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      margin-bottom: 40px;
-      color: #f3f4f6;
+
+    .user-info {
+      margin-bottom: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #a3a3a3;
+      word-break: break-all;
     }
-    .sidebar a {
+
+    .sidebar button {
+      background: #1f2937;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin: 6px 22px;
-      padding: 14px 20px;
-      text-decoration: none;
-      font-size: 1rem;
-      color: #a1a5b1;
-      border-radius: 12px;
-      transition: all 0.25s ease;
-      cursor: pointer;
+      gap: 10px;
+      transition: background 0.25s;
     }
-    .sidebar a svg {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
+
+    .sidebar button:hover {
+      background: #374151;
+    }
+
+    .sidebar svg {
+      width: 22px;
+      height: 22px;
       flex-shrink: 0;
     }
-    .sidebar a:hover,
-    .sidebar a.active {
-      color: #fff;
-      background: rgba(67, 97, 238, 0.12);
-    }
-    .logout-btn {
+
+    #logoutBtn {
       margin-top: auto;
-      margin: 30px 22px 0;
-      padding: 14px;
-      text-align: center;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-      color: #fff;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .logout-btn:hover {
-      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      background: linear-gradient(135deg, #ef4444, #dc2626);
     }
 
-    /* ===== Main Content ===== */
-    .main {
+    /* Iframe panel */
+    .iframe-panel {
       flex: 1;
-      position: relative;
+      background: #0d1117;
       display: flex;
-      justify-content: center;
       align-items: center;
-      overflow: hidden;
-    }
-    .placeholder {
-      font-size: 1.2rem;
-      font-weight: 400;
-      color: #9ca3af;
-      max-width: 520px;
-      text-align: center;
-      line-height: 1.6;
+      justify-content: center;
+      position: relative;
     }
 
-    /* ===== Background Glow ===== */
-    .glow {
-      position: absolute;
-      width: 700px;
-      height: 700px;
-      background: radial-gradient(circle at center, rgba(67,97,238,0.15), transparent 70%);
-      filter: blur(120px);
-      animation: float 14s infinite ease-in-out;
-      z-index: 0;
-    }
-    .glow.two {
-      background: radial-gradient(circle at center, rgba(114,9,183,0.18), transparent 70%);
-      animation-delay: -7s;
-    }
-    @keyframes float {
-      0%, 100% { transform: translate(-100px, -60px) scale(1); }
-      50% { transform: translate(120px, 90px) scale(1.2); }
-    }
-
-    /* ===== Iframe Panel ===== */
     iframe {
       position: absolute;
       top: 0;
-      right: -100%;
-      width: calc(100% - 320px);
-      height: 100%;
-      border: none;
-      background: #1a1c20;
-      transition: right 0.5s cubic-bezier(.77,0,.18,1);
-      border-top-left-radius: 18px;
-      border-bottom-left-radius: 18px;
-      box-shadow: -10px 0 28px rgba(0,0,0,0.75);
-      z-index: 1;
-    }
-    iframe.open {
       right: 0;
+      height: 100%;
+      width: 0;
+      border: none;
+      transition: width 0.4s ease;
+      background: #111827;
+    }
+
+    iframe.open {
+      width: calc(100% - 280px);
+    }
+
+    .placeholder {
+      font-size: 1.5rem;
+      color: #64748b;
+      user-select: none;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <h2>The Grand Project</h2>
-    <!-- Music iframe -->
-    <a href="#" onclick="togglePage('https://9f2bb2c8343f.ngrok-free.app/', this)">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
-      Music
-    </a>
-    <!-- Geforce NOW external -->
-    <a href="https://www.geforcenow.com/" target="_blank">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L1.5 9l10.5 7 9.5-6-9.5-8zm0 18.5L1.5 13 12 20l10.5-7-10.5 7.5z"/></svg>
-      GeForce NOW
-    </a>
-    <!-- Discord external -->
-    <a href="https://discord.com/" target="_blank">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 0H4C1.8 0 0 1.8 0 4v16c0 2.2 1.8 4 4 4h13.5l-.6-2.2 1.5 1.4L22 24V4c0-2.2-1.8-4-4-4z"/></svg>
-      Discord
-    </a>
-    <div class="logout-btn" onclick="logout()">Log Out</div>
+    <div class="user-info" id="userEmail">Loading...</div>
+
+    <button onclick="openIframe('https://9f2bb2c8343f.ngrok-free.app/')">
+      🎵 <span>Music</span>
+    </button>
+
+    <button onclick="openIframe('https://play.geforcenow.com')">
+      <!-- GeForce Now SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+        <path d="M128 0L256 128 128 256 0 128z"/>
+      </svg>
+      <span>GeForce Now</span>
+    </button>
+
+    <button onclick="openIframe('https://discord.com')">
+      <!-- Discord SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 245 240" fill="currentColor">
+        <path d="M104.4 104.4c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.6-11.1-10.2-11.1zm36.2 0c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.6-11.1-10.2-11.1z"/>
+        <path d="M189.5 20h-134C24.2 20 0 44.2 0 74.5v91c0 30.3 24.2 54.5 55.5 54.5h110.8l-5.2-18.1 12.5 11.6 11.8 10.8 21 18.7V74.5C206.5 44.2 182.3 20 151.9 20z"/>
+      </svg>
+      <span>Discord</span>
+    </button>
+
+    <button id="logoutBtn">Logout</button>
   </div>
 
-  <div class="main" id="mainArea">
-    <div class="glow"></div>
-    <div class="glow two"></div>
-    <div class="placeholder">
-      Select <strong>Music</strong> or open an external app from the sidebar.
-    </div>
-    <iframe id="mainFrame"></iframe>
+  <div class="iframe-panel">
+    <div class="placeholder">Select an app from the sidebar</div>
+    <iframe id="appFrame"></iframe>
   </div>
 
   <script>
-    // Route protection
-    if (localStorage.getItem("loggedIn") !== "true") {
-      window.location.href = "badpass.html";
-    }
+    const SUPABASE_URL = "https://keijxjexmfwlgetxyczr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaWp4amV4bWZ3bGdldHh5Y3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTAwNTMsImV4cCI6MjA3MTk4NjA1M30.d7eFhLdcSReewWWJ8qzSzOLDjzApmRsQuYJUV25MLww";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const iframe = document.getElementById("mainFrame");
-    const links = document.querySelectorAll(".sidebar a");
-    let currentPage = null;
+    const iframe = document.getElementById("appFrame");
+    const userEmailDiv = document.getElementById("userEmail");
 
-    function togglePage(page, el) {
-      if (iframe.classList.contains("open") && currentPage === page) {
-        iframe.classList.remove("open");
-        el.classList.remove("active");
-        currentPage = null;
+    // Protect route
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "badpass.html";
       } else {
-        iframe.src = page;
-        iframe.classList.add("open");
-        currentPage = page;
-        links.forEach(l => l.classList.remove("active"));
-        el.classList.add("active");
+        userEmailDiv.textContent = user.email;
       }
     }
 
-    function logout() {
-      localStorage.removeItem("loggedIn");
-      window.location.href = "index.html";
+    checkAuth();
+
+    // Open iframe with URL
+    function openIframe(url) {
+      if (iframe.src === url && iframe.classList.contains("open")) {
+        iframe.classList.remove("open");
+        setTimeout(() => (iframe.src = ""), 400);
+      } else {
+        iframe.src = url;
+        iframe.classList.add("open");
+      }
     }
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("email");
+      window.location.href = "index.html";
+    });
   </script>
 </body>
 </html>

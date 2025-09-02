@@ -10,36 +10,28 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: "Inter", sans-serif;
-      background: #000;
-      color: #ff4444;
-    }
-    .error-box {
-      text-align: center;
-    }
-    h2 {
-      margin-bottom: 20px;
-      font-size: 1.8rem;
+      background: black;
+      color: red;
+      font-family: monospace;
+      font-size: 1.5rem;
+      flex-direction: column;
     }
     a {
-      display: inline-block;
-      padding: 12px 18px;
-      border-radius: 8px;
-      background: #ff4444;
-      color: #fff;
+      margin-top: 20px;
+      color: white;
       text-decoration: none;
-      font-weight: 600;
-      transition: background 0.3s;
+      border: 1px solid red;
+      padding: 8px 16px;
+      border-radius: 6px;
     }
     a:hover {
-      background: #cc0000;
+      background: red;
+      color: black;
     }
   </style>
 </head>
 <body>
-  <div class="error-box">
-    <h2>❌ Wrong Password!</h2>
-    <a href="index.html">Try Again</a>
-  </div>
+  <div>Wrong password.</div>
+  <a href="index.html">Back to Login</a>
 </body>
 </html>
