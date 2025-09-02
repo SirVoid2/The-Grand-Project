@@ -3,17 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <title>Main Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: -220px;
+      top: 0;
+      width: 220px;
+      height: 100%;
+      background: #1e3c72;
+      color: #fff;
+      transition: left 0.3s;
+      padding-top: 60px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 15px;
+      text-decoration: none;
+      color: #fff;
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .open-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: #4facfe;
+      border: none;
+      padding: 10px 15px;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    /* Main content */
+    .content {
+      flex: 1;
+      margin-left: 0;
+      transition: margin-left 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+    }
+    .topbar {
+      background: #2a5298;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logout-btn {
+      background: #f44336;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h2>Welcome to the Main Page</h2>
-  <p>You got in with the correct password 🎉</p>
+  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="loadPage('page1.html')">📄 Page 1</a>
+    <a href="#" onclick="loadPage('page2.html')">📄 Page 2</a>
+    <a href="#" onclick="loadPage('page3.html')">📄 Page 3</a>
+  </div>
 
-  <button onclick="logout()">Log Out</button>
+  <div class="content" id="content">
+    <div class="topbar">
+      <button class="open-btn" onclick="toggleSidebar()">☰</button>
+      <h2>Main Page</h2>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+    <iframe id="mainFrame" src="welcome.html"></iframe>
+  </div>
 
   <script>
-    // Check login status
+    // Protect main.html
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "badpass.html";
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const content = document.getElementById("content");
+      if (sidebar.style.left === "0px") {
+        sidebar.style.left = "-220px";
+        content.style.marginLeft = "0";
+      } else {
+        sidebar.style.left = "0px";
+        content.style.marginLeft = "220px";
+      }
+    }
+
+    function loadPage(page) {
+      document.getElementById("mainFrame").src = page;
     }
 
     function logout() {
