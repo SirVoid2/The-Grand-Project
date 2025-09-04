@@ -1,50 +1,245 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Welcome</title>
+  <meta charset="UTF-8" />
+  <title>Mini Discord Clone</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    body {
-      margin: 0;
-      height: 100vh;
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #36393f; color: white; display: flex; height: 100vh; }
+    #server-bar {
+      width: 70px;
+      background: #202225;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
+      padding: 10px 0;
+      gap: 10px;
     }
-    .container {
-      text-align: center;
-      background: #1e293b;
-      padding: 3rem;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    }
-    h1 {
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-    }
-    .btn {
-      background: #3b82f6;
-      border: none;
-      padding: 0.9rem 1.8rem;
-      border-radius: 10px;
-      color: white;
+    .server-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #5865f2;
       cursor: pointer;
-      font-size: 1rem;
-      transition: 0.3s;
+      overflow: hidden;
     }
-    .btn:hover {
-      background: #2563eb;
+    .server-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #top-bar {
+      height: 50px;
+      background: #2f3136;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 15px;
+    }
+    #chat {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 8px 0;
+      padding: 10px;
+      background: #40444b;
+      border-radius: 5px;
+      max-width: 60%;
+    }
+    .user-msg { align-self: flex-end; background: #5865f2; }
+    .bot-msg { align-self: flex-start; background: #4f545c; }
+    #input-area {
+      display: flex;
+      padding: 10px;
+      background: #40444b;
+    }
+    #input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    #send {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background: #7289da;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #sidebar {
+      width: 250px;
+      background: #2f3136;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+    #profile, #settings, #games {
+      margin-top: auto;
+    }
+    .sidebar-section {
+      margin-bottom: 15px;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 300px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to the App</h1>
-    <button class="btn" onclick="location.href='login.html'">Login</button>
-    <button class="btn" style="margin-left:10px;" onclick="location.href='signup.html'">Sign Up</button>
+
+<!-- Server Sidebar -->
+<div id="server-bar">
+  <div class="server-icon" onclick="createServer()">+</div>
+</div>
+
+<!-- Side Panel -->
+<div id="sidebar">
+  <div class="sidebar-section">
+    <h3>Servers</h3>
+    <div id="server-list"></div>
   </div>
+  <div class="sidebar-section" id="profile">
+    <h3>Profile</h3>
+    <div id="profile-info"></div>
+  </div>
+  <div class="sidebar-section" id="settings">
+    <h3>Settings</h3>
+    <button onclick="logout()">Logout</button>
+  </div>
+  <div class="sidebar-section" id="games">
+    <h3>Games</h3>
+    <button onclick="loadGame()">Monkey Game</button>
+    <button onclick="window.open('https://chat.openai.com', '_blank')">ChatGPT</button>
+    <div id="game-frame"></div>
+  </div>
+</div>
+
+<!-- Main Chat Area -->
+<div id="main">
+  <div id="top-bar">
+    <div id="current-server">Select a server</div>
+  </div>
+  <div id="chat"></div>
+  <div id="input-area">
+    <input id="input" placeholder="Type a message..." />
+    <button id="send">Send</button>
+  </div>
+</div>
+
+<script>
+  const supabase = supabase.createClient(
+    'YOUR_SUPABASE_URL',
+    'YOUR_SUPABASE_KEY'
+  );
+
+  let user = null;
+  let currentServer = null;
+
+  async function init() {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      user = data.session.user;
+      loadProfile();
+      loadServers();
+    } else {
+      const email = prompt("Enter your email to login/signup:");
+      const password = prompt("Password:");
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) alert(error.message);
+      else location.reload();
+    }
+  }
+
+  async function loadProfile() {
+    const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    const profileDiv = document.getElementById("profile-info");
+    if (data) {
+      profileDiv.innerHTML = `
+        <p><strong>${data.username || user.email}</strong></p>
+        <p>${data.bio || ''}</p>
+        <img src="${data.avatar_url || 'https://placekitten.com/100/100'}" width="60" style="border-radius: 50%;" />
+      `;
+    } else {
+      profileDiv.innerHTML = `<p>Welcome!</p>`;
+    }
+  }
+
+  async function loadServers() {
+    const { data } = await supabase.from('servers').select('*');
+    const list = document.getElementById("server-list");
+    list.innerHTML = '';
+    data.forEach(server => {
+      const div = document.createElement('div');
+      div.textContent = server.name;
+      div.style.cursor = 'pointer';
+      div.onclick = () => switchServer(server);
+      list.appendChild(div);
+    });
+  }
+
+  async function createServer() {
+    const name = prompt("Server name:");
+    const { data, error } = await supabase.from('servers').insert([{ name }]);
+    if (error) alert(error.message);
+    else loadServers();
+  }
+
+  async function switchServer(server) {
+    currentServer = server;
+    document.getElementById("current-server").textContent = server.name;
+    loadMessages();
+  }
+
+  async function loadMessages() {
+    const { data } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('server_id', currentServer.id)
+      .order('created_at');
+    const chat = document.getElementById("chat");
+    chat.innerHTML = '';
+    data.forEach(msg => {
+      const div = document.createElement('div');
+      div.className = 'message ' + (msg.user_id === user.id ? 'user-msg' : 'bot-msg');
+      div.textContent = msg.content;
+      chat.appendChild(div);
+    });
+  }
+
+  async function sendMessage() {
+    const content = document.getElementById("input").value;
+    document.getElementById("input").value = '';
+    if (!currentServer) return alert("Select a server.");
+    await supabase.from("messages").insert([{ content, user_id: user.id, server_id: currentServer.id }]);
+    loadMessages();
+  }
+
+  document.getElementById("send").onclick = sendMessage;
+  document.getElementById("input").addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function logout() {
+    supabase.auth.signOut().then(() => location.reload());
+  }
+
+  function loadGame() {
+    document.getElementById("game-frame").innerHTML = `<iframe src="https://monkeygg2.github.io"></iframe>`;
+  }
+
+  init();
+</script>
+
 </body>
 </html>
